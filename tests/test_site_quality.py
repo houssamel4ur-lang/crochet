@@ -13,6 +13,7 @@ class Scan(HTMLParser):
     def __init__(self):
         super().__init__()
         self.titles = []
+        self.in_title = False
         self.descriptions = []
         self.canonicals = []
         self.headings = []
@@ -23,6 +24,7 @@ class Scan(HTMLParser):
         a = dict(attrs)
         if tag == "title":
             self.titles.append("")
+            self.in_title = True
         if tag == "meta" and a.get("name") == "description":
             self.descriptions.append(a.get("content", ""))
         if tag == "link" and a.get("rel") == "canonical":
@@ -35,8 +37,11 @@ class Scan(HTMLParser):
             self.main_count += 1
         if tag == "a":
             self.links.append(a.get("href", ""))
+    def handle_endtag(self, tag):
+        if tag == "title":
+            self.in_title = False
     def handle_data(self, text):
-        if self.titles:
+        if self.in_title:
             self.titles[-1] += text
 
 class SiteQualityTests(unittest.TestCase):
