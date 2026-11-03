@@ -36,15 +36,28 @@
       }
     } catch { /* Stats must never interrupt reading the article. */ }
   };
+  const status = document.getElementById("article-consent-status");
+  const optOut = document.getElementById("article-privacy-opt-out");
+  if (status) status.textContent = consent() === "yes" ? "Optional analytics: enabled." : "Optional analytics: disabled.";
+  if (optOut) optOut.addEventListener("click", () => {
+    try {
+      localStorage.setItem("cozyloops_analytics_consent", "no");
+      localStorage.removeItem("cozyloops_visitor_day");
+    } catch { /* Still update the visible state. */ }
+    banner.hidden = true;
+    if (status) status.textContent = "Optional analytics: disabled. No further visits will be counted from this browser.";
+  });
   if (!consent() && navigator.doNotTrack !== "1") banner.hidden = false;
   document.getElementById("privacy-accept").addEventListener("click", () => {
     try { localStorage.setItem("cozyloops_analytics_consent","yes"); } catch {}
     banner.hidden = true;
+    if (status) status.textContent = "Optional analytics: enabled.";
     record();
   });
   document.getElementById("privacy-decline").addEventListener("click", () => {
     try { localStorage.setItem("cozyloops_analytics_consent","no"); } catch {}
     banner.hidden = true;
+    if (status) status.textContent = "Optional analytics: disabled.";
   });
   record();
 })();
