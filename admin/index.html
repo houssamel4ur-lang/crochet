@@ -43,7 +43,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 </div><button id="save-theme" type="button">Save Theme</button><p id="theme-message" role="status"></p>
 <p class="muted">These settings are stored in Supabase. Applying them to the public site is a separate step.</p></section>
 <section id="panel-social" class="admin-panel"><h2>Social Media</h2><p class="muted">Manage your public social links.</p><div id="social-fields"></div><button id="save-social" type="button">Save Changes</button><p id="social-message" role="status"></p></section>
-<section id="panel-contact" class="admin-panel"><h2>Contact</h2><p>Contact email and WhatsApp are currently managed in Social Media. Dedicated contact settings are coming next.</p></section>
+<section id="panel-contact" class="admin-panel"><h2>Contact</h2><p class="muted">Set the contact details visitors can use to reach CozyLoops.</p><label for="contact-email">Contact email</label><input id="contact-email" type="email" placeholder="hello@example.com"><label class="visibility"><input id="contact-email-visible" type="checkbox">Show email on website</label><label for="contact-whatsapp">WhatsApp link</label><input id="contact-whatsapp" type="url" placeholder="https://wa.me/123456789"><label class="visibility"><input id="contact-whatsapp-visible" type="checkbox">Show WhatsApp on website</label><button id="save-contact" type="button">Save Contact</button><p id="contact-message" role="status"></p></section>
 <section id="panel-analytics" class="admin-panel"><h2>Analytics</h2><p class="notice">Analytics are not connected yet. No visitor counts are displayed until tracking is configured.</p></section>
 <section id="panel-settings" class="admin-panel"><h2>Settings</h2><p class="notice">Site information and SEO settings will be added here.</p></section>
 <section id="panel-account" class="admin-panel"><h2>Admin Account</h2><p class="notice">Super Admin access verified.</p><button id="logout">Sign out</button></section>
@@ -111,6 +111,29 @@ if(url&&publishableKey){
       $('visible-'+platform).checked=!!row?.is_visible;
     }
   };
+  const syncContact=()=>{
+    for(const p of ['email','whatsapp']){
+      $('contact-'+p).value=$('social-'+p).value;
+      $('contact-'+p+'-visible').checked=$('visible-'+p).checked;
+    }
+  };
+  $('save-contact').addEventListener('click',async()=>{
+    const button=$('save-contact'),msg=$('contact-message');button.disabled=true;msg.textContent='Saving...';msg.className='';
+    try{
+      for(const p of ['email','whatsapp']){
+        const value=$('contact-'+p).value.trim(),visible=$('contact-'+p+'-visible').checked;
+        if(visible&&!value)throw Error('Add '+p+' before making it visible.');
+        if(p==='email'&&value&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value))throw Error('Invalid email address.');
+        if(p==='whatsapp'&&value){const u=new URL(value);if(u.protocol!=='https:'||u.hostname!=='wa.me')throw Error('Use a valid https://wa.me/ WhatsApp link.');}
+        const existing=socialRows.get(p);
+        const payload={platform:p,url:value,is_visible:visible};
+        const result=existing?await supabase.from('social_links').update(payload).eq('id',existing.id):await supabase.from('social_links').insert(payload);
+        if(result.error)throw result.error;
+      }
+      await loadSocial();syncContact();msg.textContent='Contact details saved.';msg.className='success';
+    }catch(err){msg.textContent=err.message;msg.className='error';}
+    finally{button.disabled=false;}
+  });
   $('save-social').addEventListener('click',async()=>{
     const button=$('save-social');button.disabled=true;
     const msg=$('social-message');msg.textContent='Saving...';msg.className='';
@@ -144,7 +167,7 @@ if(url&&publishableKey){
     }
     $('login').classList.toggle('hide',!!user);
     $('dashboard').classList.toggle('hide',!allowed);
-    if(allowed){$('welcome').textContent='Signed in as '+user.email;await Promise.all([loadSocial(),loadTheme()]);}
+    if(allowed){$('welcome').textContent='Signed in as '+user.email;await Promise.all([loadSocial(),loadTheme()]);syncContact();}
     if(user&&!allowed){$('message').textContent='This account does not have Super Admin access.';$('message').className='error';$('login').classList.add('hide');}
   };
   $('login').addEventListener('submit',async e=>{
