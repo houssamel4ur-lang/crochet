@@ -69,6 +69,25 @@ const failures = [];
       await page.close();
       console.log('OK public browser smoke:', viewport.width + 'px');
     }
+    // Guard article reading progress and Back to Top against regressions.
+    for (const viewport of [{width:1365,height:900},{width:390,height:844}]) {
+      const articlePage = await browser.newPage({viewport,reducedMotion:'reduce'});
+      articlePage.on('pageerror', error => failures.push('static article '+viewport.width+'px: '+error.message));
+      await articlePage.addInitScript(() => localStorage.setItem('cozyloops_analytics_consent','no'));
+      await articlePage.goto(base+'/posts/crochet-stitch-counting/',{waitUntil:'domcontentloaded'});
+      await articlePage.locator('#reading-progress [style]').count();
+      assert.equal(await articlePage.locator('#back-to-top').isVisible(),false);
+      await articlePage.evaluate(() => scrollTo(0, Math.min(document.documentElement.scrollHeight - innerHeight, 900)));
+      await articlePage.waitForFunction(() => document.getElementById('back-to-top')?.hidden === false,{timeout:5000});
+      assert.ok(Number(await articlePage.locator('#reading-progress').getAttribute('aria-valuenow')) > 0);
+      await articlePage.locator('#back-to-top').click();
+      await articlePage.waitForFunction(() => scrollY < 10,{timeout:5000});
+      await articlePage.emulateMedia({media:'print'});
+      assert.equal(await articlePage.locator('#back-to-top').evaluate(el => getComputedStyle(el).display),'none');
+      assert.equal(await articlePage.locator('#reading-progress').evaluate(el => getComputedStyle(el).display),'none');
+      await articlePage.close();
+      console.log('OK static reading controls:',viewport.width+'px');
+    }
     // Regression: untrusted article image URLs must not become HTML attributes.
     const hostile = await browser.newPage();
     hostile.on('pageerror', error => failures.push('hostile article: ' + error.message));
