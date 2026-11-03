@@ -4,17 +4,17 @@
 <style>
 :root{font-family:system-ui,-apple-system,sans-serif;color:#29372d;background:#f7f5ef}*{box-sizing:border-box}
 body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px}
-main{width:min(100%,440px);background:white;border:1px solid #e3e7df;border-radius:18px;padding:28px;box-shadow:0 12px 35px #1c3b2212}
+main{width:min(100%,620px);background:white;border:1px solid #e3e7df;border-radius:18px;padding:28px;box-shadow:0 12px 35px #1c3b2212}
 h1{margin:0 0 5px;color:#50765a}p{color:#647267;line-height:1.5}label{display:block;margin:18px 0 6px;font-weight:600}
 input{width:100%;border:1px solid #bdcbbf;border-radius:10px;padding:13px;font:inherit}button{width:100%;background:#50765a;color:white;border:0;border-radius:10px;padding:13px;font:inherit;font-weight:700;margin-top:20px;cursor:pointer}
-button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6ef;border-radius:10px;font-size:14px}.error{color:#a42828}.hide{display:none}a{color:#50765a}
+button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6ef;border-radius:10px;font-size:14px}.error{color:#a42828}.hide{display:none}.social-item{padding:14px 0;border-bottom:1px solid #e6ebe5}.social-item label{margin:0 0 8px}.social-item input[type=checkbox]{width:auto;margin:0 8px 0 0}.visibility{display:flex;align-items:center;margin-top:10px;font-size:14px;color:#4c6552}.muted{font-size:13px;color:#718075}.success{color:#256a40}a{color:#50765a}
 </style></head><body><main>
 <h1>CozyLoops Admin</h1><p>Secure content management</p>
 <div id="setup" class="notice">Supabase connection has not been configured yet. The owner must complete the setup before login is available.</div>
 <form id="login" class="hide"><label for="email">Email</label><input id="email" type="email" autocomplete="username" required>
 <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
 <button type="submit">Sign in</button></form>
-<div id="dashboard" class="hide"><p id="welcome"></p><p class="notice">Your Super Admin account is verified. Article editing, theme controls, and analytics will be added in the next development steps.</p><button id="logout">Sign out</button></div>
+<div id="dashboard" class="hide"><p id="welcome"></p><p class="notice">Your Super Admin account is verified.</p><section id="social-panel"><h2>Social Media & Contact</h2><p class="muted">Manage public links. Hidden links will not be shown to visitors.</p><div id="social-fields"></div><button id="save-social" type="button">Save Changes</button><p id="social-message" role="status"></p></section><p class="muted">Articles, appearance, and analytics controls are coming next.</p><button id="logout">Sign out</button></div>
 <p id="message" role="status"></p><p><a href="../">← Back to CozyLoops</a></p>
 </main>
 <script type="module">
@@ -25,6 +25,54 @@ const $=id=>document.getElementById(id);
 if(url&&publishableKey){
   $('setup').classList.add('hide');
   const supabase=createClient(url,publishableKey);
+  const platforms=['pinterest','instagram','facebook','tiktok','youtube','whatsapp','email'];
+  const socialRows=new Map();
+  const socialFields=$('social-fields');
+  for(const platform of platforms){
+    const section=document.createElement('div');section.className='social-item';
+    const label=document.createElement('label');label.htmlFor='social-'+platform;label.textContent=platform.charAt(0).toUpperCase()+platform.slice(1);
+    const input=document.createElement('input');input.id='social-'+platform;input.type=platform==='email'?'email':'text';input.placeholder=platform==='email'?'contact@example.com':platform==='whatsapp'?'https://wa.me/123456789':'https://...';
+    const visibility=document.createElement('label');visibility.className='visibility';
+    const check=document.createElement('input');check.type='checkbox';check.id='visible-'+platform;
+    visibility.append(check,document.createTextNode('Visible on website'));
+    section.append(label,input,visibility);socialFields.append(section);
+  }
+  const loadSocial=async()=>{
+    $('social-message').textContent='';
+    const {data,error}=await supabase.from('social_links').select('id,platform,url,is_visible').in('platform',platforms);
+    if(error){$('social-message').textContent='Could not load links: '+error.message;$('social-message').className='error';return;}
+    socialRows.clear();
+    for(const row of data||[])socialRows.set(row.platform,row);
+    for(const platform of platforms){
+      const row=socialRows.get(platform);
+      $('social-'+platform).value=row?.url||'';
+      $('visible-'+platform).checked=!!row?.is_visible;
+    }
+  };
+  $('save-social').addEventListener('click',async()=>{
+    const button=$('save-social');button.disabled=true;
+    const msg=$('social-message');msg.textContent='Saving...';msg.className='';
+    try{
+      for(const platform of platforms){
+        const value=$('social-'+platform).value.trim(),visible=$('visible-'+platform).checked;
+        if(visible&&!value)throw Error('Add a link before making '+platform+' visible.');
+        if(value){
+          if(platform==='email'){
+            if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))throw Error('Invalid email address.');
+          }else{
+            const parsed=new URL(value);
+            if(!['https:','http:'].includes(parsed.protocol))throw Error('Invalid URL for '+platform);
+          }
+        }
+        const existing=socialRows.get(platform);
+        const payload={platform,url:value,is_visible:visible};
+        const result=existing?await supabase.from('social_links').update(payload).eq('id',existing.id):await supabase.from('social_links').insert(payload);
+        if(result.error)throw Error(platform+': '+result.error.message);
+      }
+      msg.textContent='Changes saved successfully.';msg.className='success';await loadSocial();msg.textContent='Changes saved successfully.';
+    }catch(err){msg.textContent=err.message;msg.className='error';}
+    finally{button.disabled=false;}
+  });
   const show=async()=>{
     const {data:{user}}=await supabase.auth.getUser();
     let allowed=false;
@@ -34,7 +82,7 @@ if(url&&publishableKey){
     }
     $('login').classList.toggle('hide',!!user);
     $('dashboard').classList.toggle('hide',!allowed);
-    if(allowed)$('welcome').textContent='Signed in as '+user.email;
+    if(allowed){$('welcome').textContent='Signed in as '+user.email;await loadSocial();}
     if(user&&!allowed){$('message').textContent='This account does not have Super Admin access.';$('message').className='error';$('login').classList.add('hide');}
   };
   $('login').addEventListener('submit',async e=>{
