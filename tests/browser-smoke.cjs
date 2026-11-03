@@ -90,7 +90,7 @@ const failures = [];
         ' signInWithPassword:async()=>({error:null})},',
         ' rpc:async()=>({data:false,error:null})',
         '};}'
-      ].join('\\n')
+      ].join('\n')
     }));
     await denied.goto(base + '/admin/', { waitUntil: 'domcontentloaded' });
     await denied.locator('#denied-logout').waitFor({ state:'visible', timeout: 12000 });
