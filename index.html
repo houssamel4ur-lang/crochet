@@ -38,6 +38,7 @@
 .card img{aspect-ratio:640/450}
 @media(max-width:560px){.mobile-links a{min-height:44px;display:flex;align-items:center}.chip{min-height:44px}.nav{gap:8px}}
 footer .brand{color:#f2f6ec}
+.article-toc{padding:20px 24px;margin:24px 0;border:1px solid var(--line);border-radius:16px;background:var(--white)}.article-toc ol{padding-left:24px;margin:8px 0 0}.article-toc li{margin:5px 0}.toc-jump{appearance:none;background:none;border:0;padding:0;color:var(--green);font:inherit;text-decoration:underline;text-underline-offset:3px;text-align:left;cursor:pointer}.article [id^="article-section-"]{scroll-margin-top:24px}
 .related-posts{margin:32px 0;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--white)}.related-posts ul{padding-left:22px;margin:12px 0 0}.related-posts li{margin:8px 0}.related-posts a{text-decoration:underline;text-underline-offset:3px}
 </style>
 </head>
@@ -199,6 +200,7 @@ function categoryPage(category){
   document.getElementById('app').innerHTML=`<section class="section"><div class="container"><a class="text-link" href="#home">← Home</a><h1>${esc(category)}</h1><p>${items.length} article(s)</p><div class="grid">${items.map(card).join('')}</div></div></section>`;
 }
 function renderArticleMarkdown(source){
+ let headingIndex=0;
  const inline=value=>{
   const parts=String(value).split(/(!\[[^\]]*\]\(https:\/\/[^\s)]+\))/g);
   return parts.map(part=>{
@@ -212,10 +214,17 @@ function renderArticleMarkdown(source){
   if(lines.every(line=>/^[-*] /.test(line.trim())))return '<ul>'+lines.map(line=>'<li>'+inline(line.trim().slice(2))+'</li>').join('')+'</ul>';
   return lines.map(line=>{
    const match=line.match(/^(#{1,3})\s+(.+)$/);
-   if(match){const level=Math.min(3,Math.max(2,match[1].length));return '<h'+level+'>'+inline(match[2])+'</h'+level+'>';}
+   if(match){const level=Math.min(3,Math.max(2,match[1].length));return '<h'+level+' id="article-section-'+(++headingIndex)+'">'+inline(match[2])+'</h'+level+'>';}
    return '<p>'+inline(line)+'</p>';
   }).join('');
  }).join('');
+}
+function articleTableOfContents(source){
+ const headings=String(source||'').split(/\n/).map(line=>line.trim().match(/^#{1,3}\s+(.+)$/)).filter(Boolean);
+ if(headings.length<2)return '';
+ return '<nav class="article-toc" aria-label="On this page"><strong>On this page</strong><ol>'+
+   headings.map((match,i)=>'<li><button type="button" class="toc-jump" data-heading="'+(i+1)+'">'+esc(match[1].replace(/\*\*/g,''))+'</button></li>').join('')+
+   '</ol></nav>';
 }
 function relatedArticleLinks(p){
  const related=posts.filter(item=>item.slug!==p.slug)
@@ -226,7 +235,11 @@ function relatedArticleLinks(p){
    related.map(item=>'<li><a href="'+esc(postHref(item.slug))+'" data-post-slug="'+esc(item.slug)+'">'+esc(item.title)+'</a></li>').join('')+
    '</ul></section>';
 }
-function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.date} · ${p.minutes} min read</p><p>${esc(p.excerpt)}</p><img src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div>${p.markdown?renderArticleMarkdown(p.markdown):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`}
+function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.date} · ${p.minutes} min read</p><p>${esc(p.excerpt)}</p><img src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div>${p.markdown?articleTableOfContents(p.markdown):""}${p.markdown?renderArticleMarkdown(p.markdown):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`;
+ document.querySelectorAll('.toc-jump').forEach(button=>button.addEventListener('click',()=>{
+   document.getElementById('article-section-'+button.dataset.heading)?.scrollIntoView({behavior:'smooth',block:'start'});
+ }));
+}
 function simplePage(title,content){document.title=title+" | "+siteTheme.site_name;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#home">← Home</a><h1>${title}</h1>${content}</article>`}
 function notFound(){simplePage("Page not found","<p>We couldn't find that page. Browse our crochet articles instead.</p>")}
 let publicContact=[];
