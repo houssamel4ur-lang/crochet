@@ -489,6 +489,13 @@ function route(preserveScroll=false){
  scheduleReadingProgress();
  recordCurrentView();
 }
+document.querySelector('.nav-search-trigger')?.addEventListener('click',event=>{
+ event.preventDefault();
+ if(location.hash!=='#search-articles')history.pushState(null,'','#search-articles');
+ route();
+ const input=document.getElementById('search');
+ if(input){input.scrollIntoView({block:'center',behavior:'instant'});input.focus({preventScroll:true});}
+});
 document.getElementById('back-to-top')?.addEventListener('click',()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
 window.addEventListener("hashchange",route);initAnalyticsConsent();route();loadTheme();loadPublishedPosts();loadPublicContact();loadGeneratedSeoLinks();
 </script>
