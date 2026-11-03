@@ -174,11 +174,14 @@ def render_page(article, css, articles=None):
 .article-share{{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0 24px}}.article-share-button{{border:1px solid var(--green,#4f694c);background:transparent;color:var(--green,#4f694c);border-radius:25px;padding:8px 16px;font:600 14px/1.4 system-ui,sans-serif;cursor:pointer}}.article-share-button:hover,.article-share-button:focus-visible{{background:var(--green,#4f694c);color:white}}#article-share-status{{font-size:14px;color:var(--muted,#68736a)}}
 .article-print-button{{border:1px solid var(--line,#e5e7df);background:var(--white,#fff);color:var(--ink,#29342d);border-radius:25px;padding:8px 16px;font:600 14px/1.4 system-ui,sans-serif;cursor:pointer}}.article-print-button:hover,.article-print-button:focus-visible{{border-color:var(--green,#4f694c);color:var(--green,#4f694c)}}
 @media print{{@page{{margin:16mm}}html,body{{background:white!important;color:#111!important;font:11pt/1.45 Georgia,serif!important}}header,footer,.back,.article-share,.article-toc,.related-posts,.article-privacy,.privacy-choice,.skip-link{{display:none!important}}main#content{{display:block!important;padding:0!important;margin:0!important}}.article{{max-width:none!important;width:100%!important;margin:0!important;padding:0!important;box-shadow:none!important;border:0!important;background:white!important}}.article-cover{{display:none!important}}.article h1{{font-size:24pt!important;margin:0 0 12pt!important}}.article h2{{font-size:16pt!important}}.article h3{{font-size:13pt!important}}.article h2,.article h3,.article h4{{break-after:avoid}}.article p,.article li{{orphans:3;widows:3}}.article figure img{{max-width:100%!important;height:auto!important;break-inside:avoid}}.article a{{color:#111!important;text-decoration:none!important}}.article>.btn{{display:none!important}}}}
+.reading-progress{{position:fixed;z-index:60;top:0;left:0;width:100%;height:4px;pointer-events:none;background:transparent}}.reading-progress span{{display:block;width:100%;height:100%;background:var(--green,#4f694c);transform:scaleX(0);transform-origin:left center;transition:transform .08s linear}}
+@media print{{.reading-progress{{display:none!important}}}}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#content">Skip to content</a>
 <header><nav class="nav"><a class="brand" href="{BASE}">CozyLoops ♡</a><div class="links"><a href="{BASE}">Home</a><a href="{BASE}#articles">Articles</a><a href="{BASE}#categories">Categories</a></div></nav></header>
+<div class="reading-progress" aria-hidden="true"><span></span></div>
 <main id="content"><article class="article">
 <a class="back" href="{BASE}#articles">← Back to all articles</a>
 <div class="tag">{esc(category)}</div>
