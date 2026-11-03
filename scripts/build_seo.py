@@ -176,12 +176,14 @@ def render_page(article, css, articles=None):
 @media print{{@page{{margin:16mm}}html,body{{background:white!important;color:#111!important;font:11pt/1.45 Georgia,serif!important}}header,footer,.back,.article-share,.article-toc,.related-posts,.article-privacy,.privacy-choice,.skip-link{{display:none!important}}main#content{{display:block!important;padding:0!important;margin:0!important}}.article{{max-width:none!important;width:100%!important;margin:0!important;padding:0!important;box-shadow:none!important;border:0!important;background:white!important}}.article-cover{{display:none!important}}.article h1{{font-size:24pt!important;margin:0 0 12pt!important}}.article h2{{font-size:16pt!important}}.article h3{{font-size:13pt!important}}.article h2,.article h3,.article h4{{break-after:avoid}}.article p,.article li{{orphans:3;widows:3}}.article figure img{{max-width:100%!important;height:auto!important;break-inside:avoid}}.article a{{color:#111!important;text-decoration:none!important}}.article>.btn{{display:none!important}}}}
 .reading-progress{{position:fixed;z-index:60;top:0;left:0;width:100%;height:4px;pointer-events:none;background:transparent}}.reading-progress span{{display:block;width:100%;height:100%;background:var(--green,#4f694c);transform:scaleX(0);transform-origin:left center;transition:transform .08s linear}}
 @media print{{.reading-progress{{display:none!important}}}}
+.reading-progress{{position:fixed;top:0;left:0;right:0;height:4px;background:transparent;z-index:9999;pointer-events:none}}.reading-progress span{{display:block;height:100%;width:0;background:var(--green,#4f694c);transition:width .12s linear}}@media print{{.reading-progress{{display:none!important}}}}@media(prefers-reduced-motion:reduce){{.reading-progress span{{transition:none}}}}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#content">Skip to content</a>
 <header><nav class="nav"><a class="brand" href="{BASE}">CozyLoops ♡</a><div class="links"><a href="{BASE}">Home</a><a href="{BASE}#articles">Articles</a><a href="{BASE}#categories">Categories</a></div></nav></header>
 <div class="reading-progress" aria-hidden="true"><span></span></div>
+<div class="reading-progress" id="reading-progress" role="progressbar" aria-label="Article reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
 <main id="content"><article class="article">
 <a class="back" href="{BASE}#articles">← Back to all articles</a>
 <div class="tag">{esc(category)}</div>
