@@ -5,6 +5,29 @@
   const match = location.pathname.match(/\/posts\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/);
   if (!match) return;
   const page = "post/" + match[1];
+  // Update once per frame and avoid blocking scrolling on long patterns.
+  const progress = document.getElementById("reading-progress");
+  const article = document.querySelector("main article.article");
+  if (progress && article) {
+    let queued = false;
+    const update = () => {
+      queued = false;
+      const total = Math.max(1, article.offsetHeight - window.innerHeight);
+      const scrolled = Math.max(0, -article.getBoundingClientRect().top);
+      const percentage = Math.max(0, Math.min(100, Math.round(scrolled / total * 100)));
+      progress.firstElementChild.style.width = percentage + "%";
+      progress.setAttribute("aria-valuenow", String(percentage));
+    };
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+    addEventListener("scroll", schedule, {passive:true});
+    addEventListener("resize", schedule, {passive:true});
+    schedule();
+  }
+
   const progressBar = document.querySelector(".reading-progress span");
   const article = document.querySelector("main .article");
   if (progressBar && article) {
