@@ -122,7 +122,7 @@ class LiveSiteTests(unittest.TestCase):
                     split = urlsplit(absolute)
                     self.assertIn(split.scheme, ("https",), "Insecure article link: " + absolute)
                     if split.hostname == EXPECTED_HOST:
-                        self.assertTrue(split.path.startswith("/crochet/"), "Link escapes project: " + absolute)
+                        self.assertTrue(split.path == "/" or split.path.startswith("/posts/"), "Unexpected site route: " + absolute)
 
 
     def test_navigation_assets_and_internal_destinations(self):
