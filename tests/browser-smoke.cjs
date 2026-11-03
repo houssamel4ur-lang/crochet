@@ -219,6 +219,7 @@ const failures = [];
     owner.once('dialog',dialog=>dialog.accept());
     await owner.locator('#save-post').click();
     await owner.waitForFunction(()=>window.__mockAdminRows.some(p=>p.slug==='crochet-patterns-for-beginners-guide'));
+    await owner.waitForFunction(() => document.querySelectorAll('#posts-list .editorial-import').length === 0 && !document.querySelector('#posts-list')?.classList.contains('hide'), {timeout:5000});
     assert.equal(await owner.locator('#posts-list .post-row .editorial-import').count(),0,'imported editorial is now a normal Admin post');
     await owner.locator('#posts-list .post-row',{hasText:'Crochet Patterns for Beginners'}).locator('button.secondary').click();
     await owner.locator('#post-title').fill('Crochet Patterns for Beginners (Edited)');
