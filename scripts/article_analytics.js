@@ -5,6 +5,21 @@
   const match = location.pathname.match(/\/posts\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/);
   if (!match) return;
   const page = "post/" + match[1];
+  const shareButton = document.getElementById("article-share-button");
+  if (shareButton) shareButton.addEventListener("click", async () => {
+    const status = document.getElementById("article-share-status");
+    const url = location.href.split("#")[0];
+    try {
+      if (navigator.share) {
+        try { await navigator.share({title:document.title,url}); if (status) status.textContent="Article shared."; return; }
+        catch (error) { if (error.name === "AbortError") return; }
+      }
+      await navigator.clipboard.writeText(url);
+      if (status) status.textContent="Article link copied!";
+    } catch {
+      if (status) status.textContent="Copy this article URL from your address bar.";
+    }
+  });
   const banner = document.getElementById("privacy-choice");
   if (!banner) return;
   const consent = () => { try { return localStorage.getItem("cozyloops_analytics_consent") || ""; } catch { return ""; } };
