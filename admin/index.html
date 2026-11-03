@@ -112,18 +112,18 @@ if(url&&publishableKey){
   });
   const previewInline=value=>{
     const escapeText=str=>String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const pieces=String(value).split(/(!\\[[^\\]]*\\]\\(https:\\/\\/[^\\s)]+\\))/g);
+    const pieces=String(value).split(/(!\[[^\]]*\]\(https:\/\/[^\s)]+\))/g);
     return pieces.map(part=>{
-      const image=part.match(/^!\\[([^\\]]*)\\]\\((https:\\/\\/[^\\s)]+)\\)$/);
+      const image=part.match(/^!\[([^\]]*)\]\((https:\/\/[^\s)]+)\)$/);
       if(image)return '<img loading="lazy" style="max-width:100%;border-radius:12px;margin:12px 0" src="'+escapeText(image[2])+'" alt="'+escapeText(image[1])+'">';
-      return escapeText(part).replace(/\\*\\*(.+?)\\*\\*/g,'<strong>$1</strong>');
+      return escapeText(part).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
     }).join('');
   };
-  const renderPreview=source=>String(source).split(/\\n\\s*\\n/).map(block=>{
-    const lines=block.split(/\\n/);
+  const renderPreview=source=>String(source).split(/\n\s*\n/).map(block=>{
+    const lines=block.split(/\n/);
     if(lines.every(line=>/^[-*] /.test(line.trim())))return '<ul>'+lines.map(line=>'<li>'+previewInline(line.trim().slice(2))+'</li>').join('')+'</ul>';
     return lines.map(line=>{
-      const match=line.match(/^(#{1,3})\\s+(.+)$/);
+      const match=line.match(/^(#{1,3})\s+(.+)$/);
       if(match){const level=Math.min(3,match[1].length+1);return '<h'+level+'>'+previewInline(match[2])+'</h'+level+'>';}
       return '<p>'+previewInline(line)+'</p>';
     }).join('');
@@ -164,9 +164,9 @@ if(url&&publishableKey){
     btn.disabled=true;msg.textContent='Uploading inline image...';msg.className='muted';
     try{
       const file=input.files[0],url=await uploadArticleImage(file);
-      const alt=file.name.replace(/\\.[^.]+$/,'').replace(/[-_]/g,' ').replace(/[\\[\\]()]/g,' ');
+      const alt=file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ').replace(/[\[\]()]/g,' ');
       const area=postField('content'),start=area.selectionStart,end=area.selectionEnd;
-      area.setRangeText('\\n\\n!['+alt+']('+url+')\\n\\n',start,end,'end');
+      area.setRangeText('\n\n!['+alt+']('+url+')\n\n',start,end,'end');
       area.dispatchEvent(new Event('input'));msg.textContent='Image inserted. Save the post to publish it.';msg.className='success';
     }catch(err){msg.textContent='Upload failed: '+err.message;msg.className='error';}
     finally{btn.disabled=false;input.value='';}
