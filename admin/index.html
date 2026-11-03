@@ -7,7 +7,7 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;padding:16px}
 main{width:min(100%,920px);background:white;border:1px solid #e3e7df;border-radius:18px;padding:28px;box-shadow:0 12px 35px #1c3b2212}
 h1{margin:0 0 5px;color:#50765a}p{color:#647267;line-height:1.5}label{display:block;margin:18px 0 6px;font-weight:600}
 input{width:100%;border:1px solid #bdcbbf;border-radius:10px;padding:13px;font:inherit}button{width:100%;background:#50765a;color:white;border:0;border-radius:10px;padding:13px;font:inherit;font-weight:700;margin-top:20px;cursor:pointer}
-button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6ef;border-radius:10px;font-size:14px}.error{color:#a42828}.hide{display:none}.social-item{padding:14px 0;border-bottom:1px solid #e6ebe5}.social-item label{margin:0 0 8px}.social-item input[type=checkbox]{width:auto;margin:0 8px 0 0}.visibility{display:flex;align-items:center;margin-top:10px;font-size:14px;color:#4c6552}.muted{font-size:13px;color:#718075}.success{color:#256a40}a{color:#50765a}.admin-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;margin-top:20px}.admin-nav{display:flex;flex-direction:column;gap:6px}.admin-nav button{margin:0;text-align:left;background:#f2f6ef;color:#35513d;padding:12px;font-size:14px}.admin-nav button.active{background:#50765a;color:white}.admin-content{min-width:0}.admin-panel{display:none}.admin-panel.active{display:block}.admin-panel h2{margin-top:0}.admin-panel .notice{margin-top:14px}@media(max-width:650px){main{padding:18px}.admin-layout{display:block}.admin-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:24px}.admin-nav button{font-size:13px;padding:11px 8px}}
+button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6ef;border-radius:10px;font-size:14px}.error{color:#a42828}.hide{display:none}.social-item{padding:14px 0;border-bottom:1px solid #e6ebe5}.social-item label{margin:0 0 8px}.social-item input[type=checkbox]{width:auto;margin:0 8px 0 0}.visibility{display:flex;align-items:center;margin-top:10px;font-size:14px;color:#4c6552}.muted{font-size:13px;color:#718075}.success{color:#256a40}a{color:#50765a}.admin-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;margin-top:20px}.admin-nav{display:flex;flex-direction:column;gap:6px}.admin-nav button{margin:0;text-align:left;background:#f2f6ef;color:#35513d;padding:12px;font-size:14px}.admin-nav button.active{background:#50765a;color:white}.admin-content{min-width:0}.admin-panel{display:none}.admin-panel.active{display:block}.admin-panel h2{margin-top:0}.admin-panel .notice{margin-top:14px}.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.theme-grid label{font-size:14px}.theme-grid input[type=color]{height:48px;padding:5px}.theme-grid input[type=number]{max-width:180px}@media(max-width:650px){.theme-grid{grid-template-columns:1fr}}@media(max-width:650px){main{padding:18px}.admin-layout{display:block}.admin-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:24px}.admin-nav button{font-size:13px;padding:11px 8px}}
 </style></head><body><main>
 <h1>CozyLoops Admin</h1><p>Secure content management</p>
 <div id="setup" class="notice">Supabase connection has not been configured yet. The owner must complete the setup before login is available.</div>
@@ -27,7 +27,21 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 </nav><div class="admin-content">
 <section id="panel-overview" class="admin-panel active"><h2>Dashboard</h2><p class="notice">Your Super Admin account is verified.</p><p>Welcome to your CozyLoops control panel. Choose a section from the menu.</p></section>
 <section id="panel-posts" class="admin-panel"><h2>Posts</h2><p class="notice">Post management is coming in the next development step. Existing articles are unchanged.</p></section>
-<section id="panel-theme" class="admin-panel"><h2>Theme</h2><p class="notice">Theme controls will be connected to your site settings in the next steps.</p></section>
+<section id="panel-theme" class="admin-panel"><h2>Theme</h2><p class="muted">Customize CozyLoops branding, colors, fonts, and corners.</p>
+<div class="theme-grid">
+<div><label for="theme-site_name">Site name</label><input id="theme-site_name" maxlength="120"></div>
+<div><label for="theme-site_description">Site description</label><input id="theme-site_description" maxlength="500"></div>
+<div><label for="theme-logo_url">Logo URL</label><input id="theme-logo_url" type="url" placeholder="https://..."></div>
+<div><label for="theme-favicon_url">Favicon URL</label><input id="theme-favicon_url" type="url" placeholder="https://..."></div>
+<div><label for="theme-primary_color">Primary color</label><input id="theme-primary_color" type="color"></div>
+<div><label for="theme-secondary_color">Secondary color</label><input id="theme-secondary_color" type="color"></div>
+<div><label for="theme-background_color">Background color</label><input id="theme-background_color" type="color"></div>
+<div><label for="theme-text_color">Text color</label><input id="theme-text_color" type="color"></div>
+<div><label for="theme-heading_font">Heading font</label><input id="theme-heading_font" maxlength="100" placeholder="Georgia"></div>
+<div><label for="theme-body_font">Body font</label><input id="theme-body_font" maxlength="100" placeholder="Arial"></div>
+<div><label for="theme-border_radius">Corner radius (px)</label><input id="theme-border_radius" type="number" min="0" max="50"></div>
+</div><button id="save-theme" type="button">Save Theme</button><p id="theme-message" role="status"></p>
+<p class="muted">These settings are stored in Supabase. Applying them to the public site is a separate step.</p></section>
 <section id="panel-social" class="admin-panel"><h2>Social Media</h2><p class="muted">Manage your public social links.</p><div id="social-fields"></div><button id="save-social" type="button">Save Changes</button><p id="social-message" role="status"></p></section>
 <section id="panel-contact" class="admin-panel"><h2>Contact</h2><p>Contact email and WhatsApp are currently managed in Social Media. Dedicated contact settings are coming next.</p></section>
 <section id="panel-analytics" class="admin-panel"><h2>Analytics</h2><p class="notice">Analytics are not connected yet. No visitor counts are displayed until tracking is configured.</p></section>
@@ -45,6 +59,34 @@ if(url&&publishableKey){
   $('setup').classList.add('hide');
   const supabase=createClient(url,publishableKey);
   document.querySelectorAll('.admin-nav button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.admin-nav button').forEach(b=>b.classList.toggle('active',b===button));document.querySelectorAll('.admin-panel').forEach(panel=>panel.classList.toggle('active',panel.id==='panel-'+button.dataset.panel));}));
+  const themeFields=['site_name','site_description','logo_url','favicon_url','primary_color','secondary_color','background_color','text_color','heading_font','body_font','border_radius'];
+  const themeDefaults={primary_color:'#63846d',secondary_color:'#c77d87',background_color:'#fff9f0',text_color:'#29372d'};
+  const loadTheme=async()=>{
+    const msg=$('theme-message');msg.textContent='';
+    const {data,error}=await supabase.from('site_settings').select(themeFields.join(',')).eq('id',1).maybeSingle();
+    if(error){msg.textContent='Could not load theme: '+error.message;msg.className='error';return;}
+    if(!data){msg.textContent='No site settings row found (id 1).';msg.className='error';return;}
+    for(const key of themeFields){const input=$('theme-'+key);const val=data[key];input.value=key.endsWith('_color')?(/^#[0-9a-f]{6}$/i.test(val||'')?val:themeDefaults[key]):(val??'');}
+  };
+  $('save-theme').addEventListener('click',async()=>{
+    const btn=$('save-theme'),msg=$('theme-message');btn.disabled=true;msg.textContent='Saving...';msg.className='';
+    try{
+      const payload={};
+      for(const key of themeFields){
+        const input=$('theme-'+key);let value=input.value.trim();
+        if(key==='border_radius'){value=value===''?0:Number(value);if(!Number.isInteger(value)||value<0||value>50)throw Error('Corner radius must be 0–50.');}
+        if((key==='logo_url'||key==='favicon_url')&&value){const u=new URL(value);if(u.protocol!=='https:')throw Error(key+' must use HTTPS.');}
+        if(key.endsWith('_color')&&!/^#[0-9a-f]{6}$/i.test(value))throw Error('Invalid color for '+key);
+        payload[key]=value;
+      }
+      if(!payload.site_name)throw Error('Site name cannot be empty.');
+      const {data,error}=await supabase.from('site_settings').update(payload).eq('id',1).select('id');
+      if(error)throw error;
+      if(!data?.length)throw Error('No settings were updated. Check your Super Admin permissions.');
+      msg.textContent='Theme saved successfully.';msg.className='success';
+    }catch(err){msg.textContent=err.message;msg.className='error';}
+    finally{btn.disabled=false;}
+  });
   const platforms=['pinterest','instagram','facebook','tiktok','youtube','whatsapp','email'];
   const socialRows=new Map();
   const socialFields=$('social-fields');
@@ -102,7 +144,7 @@ if(url&&publishableKey){
     }
     $('login').classList.toggle('hide',!!user);
     $('dashboard').classList.toggle('hide',!allowed);
-    if(allowed){$('welcome').textContent='Signed in as '+user.email;await loadSocial();}
+    if(allowed){$('welcome').textContent='Signed in as '+user.email;await Promise.all([loadSocial(),loadTheme()]);}
     if(user&&!allowed){$('message').textContent='This account does not have Super Admin access.';$('message').className='error';$('login').classList.add('hide');}
   };
   $('login').addEventListener('submit',async e=>{
