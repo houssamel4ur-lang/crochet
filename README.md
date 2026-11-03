@@ -26,7 +26,7 @@ Each workflow is available in the repository's **Actions** tab. A green run only
 - [ ] In Supabase, review RLS and table/Storage policies: public may read only `published` articles and visible public settings; only the Super Admin can write content, settings and Storage; anonymous users cannot directly read `page_views`.
 - [ ] Audit `SECURITY DEFINER` functions, execute grants, and ensure public view-count functions have anti-abuse safeguards. Current automated tests do not try unauthorized writes.
 - [ ] Verify article image uploads (JPG/PNG/WebP/GIF, up to 5 MB) and that published images load on phones and desktop.
-- [ ] Verify privacy consent and analytics opt-out on homepage and static articles. The Privacy page can withdraw future collection from the homepage.
+- [ ] Verify privacy consent and analytics opt-out on homepage and static articles. The Privacy page and each generated article have a local opt-out control that stops future optional analytics in that browser. Previously recorded counts are not deleted.
 - [ ] Complete real operator contact information, Terms, and Privacy Policy before monetization, analytics extensions, or collecting visitor information.
 - [ ] Add the exact URL-prefix property `https://houssamel4ur-lang.github.io/crochet/` to [Google Search Console](https://search.google.com/search-console), **verify ownership in the owner's Google account**, and submit `https://houssamel4ur-lang.github.io/crochet/sitemap.xml`. The static `robots.txt` within this project is *not* a host-root robots.txt.
 - [ ] Use URL Inspection in Search Console after Google discovers pages; sitemap inclusion does **not** prove Google indexing.
