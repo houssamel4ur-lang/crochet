@@ -101,6 +101,39 @@ const failures = [];
     assert.equal(await denied.locator('#dashboard').isVisible(), false);
     await denied.close();
     console.log('OK denied Admin sign-out and recovery (mocked auth)');
+    // Exercise an authorized editor with an in-memory test database.
+    const fs = require('node:fs');
+    const owner = await browser.newPage({viewport:{width:1365,height:900}});
+    owner.on('pageerror', error => failures.push('owner admin: '+error.message));
+    const mockSource=fs.readFileSync('tests/mock-admin-supabase.mjs','utf8');
+    await owner.route('https://esm.sh/@supabase/supabase-js@2', route => route.fulfill({
+      status:200,contentType:'application/javascript',
+      headers:{'access-control-allow-origin':'*'},body:mockSource
+    }));
+    await owner.goto(base+'/admin/',{waitUntil:'domcontentloaded'});
+    await owner.locator('#dashboard').waitFor({state:'visible',timeout:12000});
+    await owner.locator('.admin-nav button[data-panel="posts"]').click();
+    await owner.locator('#new-post').click();
+    await owner.locator('#post-title').fill('Safe CRUD Test Crochet');
+    await owner.locator('#post-excerpt').fill('A test draft created in memory only.');
+    await owner.locator('#post-content').fill('## Steps\\n\\nChain 10 stitches.');
+    await owner.locator('#post-status').selectOption('draft');
+    await owner.locator('#save-post').click();
+    await owner.locator('#posts-list .post-row').first().waitFor();
+    assert.equal(await owner.evaluate(()=>window.__mockAdminRows.length),1,'draft stored only in test memory');
+    assert.equal(await owner.evaluate(()=>window.__mockAdminRows[0].status),'draft');
+    await owner.locator('#posts-list .post-row .secondary').first().click();
+    await owner.locator('#post-status').selectOption('published');
+    await owner.locator('#post-title').fill('Safe CRUD Test Crochet Updated');
+    await owner.locator('#save-post').click();
+    await owner.waitForFunction(()=>window.__mockAdminRows[0]?.status==='published');
+    assert.equal(await owner.evaluate(()=>window.__mockAdminRows[0].title),'Safe CRUD Test Crochet Updated');
+    owner.once('dialog',dialog=>dialog.accept());
+    await owner.locator('#posts-list .post-row .danger').first().click();
+    await owner.waitForFunction(()=>window.__mockAdminRows.length===0);
+    assert.equal(await owner.locator('#posts-list .post-row').count(),0);
+    await owner.close();
+    console.log('OK authenticated Admin create/edit/publish/delete (in-memory mock)');
     assert.deepEqual(failures, [], 'no browser JavaScript errors');
     console.log('All Chromium smoke checks passed');
   } finally {
