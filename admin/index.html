@@ -59,7 +59,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <section id="panel-social" class="admin-panel"><h2>Social Media</h2><p class="muted">Manage your public social links.</p><div id="social-fields"></div><button id="save-social" type="button">Save Changes</button><p id="social-message" role="status"></p></section>
 <section id="panel-contact" class="admin-panel"><h2>Contact</h2><p class="muted">Set the contact details visitors can use to reach CozyLoops.</p><label for="contact-email">Contact email</label><input id="contact-email" type="email" placeholder="hello@example.com"><label class="visibility"><input id="contact-email-visible" type="checkbox">Show email on website</label><label for="contact-whatsapp">WhatsApp link</label><input id="contact-whatsapp" type="url" placeholder="https://wa.me/123456789"><label class="visibility"><input id="contact-whatsapp-visible" type="checkbox">Show WhatsApp on website</label><button id="save-contact" type="button">Save Contact</button><p id="contact-message" role="status"></p></section>
 <section id="panel-analytics" class="admin-panel"><h2>Analytics</h2><p class="muted">Content statistics from Supabase — updated when articles load.</p><div id="analytics-stats" class="stats-grid" aria-live="polite"><p>Loading...</p></div><h3>Articles by section</h3><div id="analytics-categories"></div><h3>Visitor analytics</h3><p class="muted">Counts consenting browser visits once per page per day. Not exact unique people.</p><div id="visitor-stats" class="stats-grid"><p>Loading visitor counts...</p></div><h3>Top 10 articles by views</h3><div id="top-viewed-posts"></div><p id="visitor-analytics-message" class="muted"></p><p class="notice">Countries, traffic sources and detailed user analytics need a separate privacy-reviewed Google Analytics integration.</p><p><a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer">Set up Google Analytics ↗</a></p></section>
-<section id="panel-settings" class="admin-panel"><h2>Settings</h2><p class="notice">Site information and SEO settings will be added here.</p></section>
+<section id="panel-settings" class="admin-panel"><h2>SEO &amp; Site Health</h2><p class="muted">Check the public SEO files without changing your published articles.</p><div class="stats-grid"><div class="stat-box"><strong id="seo-page-count">—</strong><span>Generated SEO pages</span></div><div class="stat-box"><strong id="seo-sitemap-count">—</strong><span>URLs in sitemap</span></div></div><p id="seo-health-message" class="notice" role="status">Select "Check SEO health" to verify the published files.</p><button id="check-seo-health" type="button">Check SEO health</button><h3>Google Search Console</h3><p class="muted">To monitor Google indexing, add a URL-prefix property for the exact public address below and verify ownership in your Google account. Google verification must be completed by the site owner.</p><p><strong>Website:</strong> <a href="https://houssamel4ur-lang.github.io/crochet/" target="_blank" rel="noopener noreferrer">https://houssamel4ur-lang.github.io/crochet/</a></p><p><strong>Sitemap:</strong> <a href="../sitemap.xml" target="_blank" rel="noopener noreferrer">Open sitemap.xml ↗</a></p><p><a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer">Open Google Search Console ↗</a></p><p><a href="https://github.com/houssamel4ur-lang/crochet/actions/workflows/update-seo-pages.yml" target="_blank" rel="noopener noreferrer">SEO generation workflow ↗</a></p><p class="notice">SEO pages are updated by GitHub Actions on an hourly schedule, not immediately after you publish. A valid sitemap does not guarantee Google indexing. Project-level robots.txt is not the host-root robots.txt.</p></section>
 <section id="panel-account" class="admin-panel"><h2>Admin Account</h2><p class="notice">Super Admin access verified.</p><button id="logout">Sign out</button></section>
 </div></div></div>
 <p id="message" role="status"></p><p><a href="../">← Back to CozyLoops</a></p>
@@ -73,6 +73,31 @@ if(url&&publishableKey){
   $('setup').classList.add('hide');
   const supabase=createClient(url,publishableKey);
   document.querySelectorAll('.admin-nav button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.admin-nav button').forEach(b=>b.classList.toggle('active',b===button));document.querySelectorAll('.admin-panel').forEach(panel=>panel.classList.toggle('active',panel.id==='panel-'+button.dataset.panel));}));
+  const seoBase='https://houssamel4ur-lang.github.io/crochet/';
+  $('check-seo-health').addEventListener('click',async()=>{
+    const button=$('check-seo-health'),notice=$('seo-health-message');
+    button.disabled=true;
+    notice.className='notice';notice.textContent='Checking live SEO files...';
+    $('seo-page-count').textContent='—';$('seo-sitemap-count').textContent='—';
+    try{
+      const [manifestResponse,sitemapResponse]=await Promise.all([
+        fetch('../posts/manifest.json',{cache:'no-store'}),
+        fetch('../sitemap.xml',{cache:'no-store'})
+      ]);
+      if(!manifestResponse.ok||!sitemapResponse.ok)throw Error('One of the public SEO files is unavailable (HTTP '+manifestResponse.status+'/'+sitemapResponse.status+').');
+      const slugs=await manifestResponse.json(),xml=await sitemapResponse.text();
+      if(!Array.isArray(slugs)||!slugs.every(v=>typeof v==='string'&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(v)))throw Error('Article manifest is not valid.');
+      const parsed=new DOMParser().parseFromString(xml,'application/xml');
+      if(parsed.querySelector('parsererror'))throw Error('Sitemap XML is invalid.');
+      const urls=Array.from(parsed.getElementsByTagName('loc'),node=>node.textContent.trim());
+      const expected=new Set([seoBase,...slugs.map(slug=>seoBase+'posts/'+slug+'/')]);
+      $('seo-page-count').textContent=String(slugs.length);$('seo-sitemap-count').textContent=String(urls.length);
+      if(urls.length!==expected.size||urls.some(url=>!expected.has(url)))throw Error('Sitemap and published SEO article list do not match.');
+      notice.textContent='SEO files verified: '+slugs.length+' generated pages and '+urls.length+' unique sitemap URLs. Google indexing is not verified.';
+      notice.className='success';
+    }catch(err){notice.textContent='SEO health check: '+err.message;notice.className='error';}
+    finally{button.disabled=false;}
+  });
   const postForm=$('post-form'),postList=$('posts-list'),postMsg=$('posts-message');
   let postRows=[],editingPost=null;
   const slugify=v=>v.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,180);
