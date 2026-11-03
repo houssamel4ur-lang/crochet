@@ -125,6 +125,19 @@ class LiveSiteTests(unittest.TestCase):
                         self.assertTrue(split.path.startswith("/crochet/"), "Link escapes project: " + absolute)
 
 
+    def test_navigation_assets_and_internal_destinations(self):
+        """Check that shared public static links resolve on the live site."""
+        expected = ["favicon.svg", "admin/", "scripts/article_analytics.js",
+                    "posts/manifest.json", "sitemap.xml"]
+        for path in expected:
+            with self.subTest(path=path):
+                body = fetch(path)
+                self.assertGreater(len(body), 0, path + " is unexpectedly empty")
+        # Public navigation links from the built homepage should target the
+        # app's real section IDs or supported hash routes.
+        for link in ("#home", "#articles", "#categories", "#about", "#contact"):
+            self.assertIn('href="' + link + '"', self.home)
+
     def test_analytics_script_available(self):
         script = fetch("scripts/article_analytics.js")
         self.assertIn('article-privacy-opt-out', script)
