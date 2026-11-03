@@ -96,11 +96,20 @@ footer{background:#2a3c30}
 @media(prefers-reduced-motion:reduce){.btn,.card,.card img,.starter-guide{transition:none!important}.btn:hover,.card:hover,.card:hover img{transform:none!important}}
 @media print{.card,.feature img,.hero img{box-shadow:none!important}.hero{background:white!important}}
 
+
+/* Global article search: visible on desktop and mobile, keyboard accessible. */
+.nav-search-trigger{display:inline-flex;align-items:center;justify-content:center;flex:none;width:45px;height:45px;border:1px solid var(--line);border-radius:999px;background:#fffdf9;color:var(--green);box-shadow:0 3px 12px #29342d0a;transition:background .18s ease,color .18s ease,border-color .18s ease}
+.nav-search-trigger:hover{background:var(--green);border-color:var(--green);color:#fff}
+.nav-search-trigger:focus-visible{outline:3px solid #b58a60;outline-offset:3px}
+@media(max-width:650px){.nav-search-trigger{order:2;width:42px;height:42px;margin-left:auto}.mobile-menu{order:3}.nav{gap:8px}}
+@media print{.nav-search-trigger{display:none!important}}
+@media(prefers-reduced-motion:reduce){.nav-search-trigger{transition:none}}
+
 </style>
 </head>
 <body>
 <a class="skip-link" href="#app">Skip to content</a>
-<header><nav class="nav" aria-label="Main navigation"><a class="brand" href="#home">CozyLoops ♡</a><div class="links"><a href="#home">Home</a><a href="#articles">Articles</a><a href="#categories">Categories</a><a href="#about">About</a><a href="#contact">Contact</a></div><details class="mobile-menu"><summary aria-label="Open navigation menu">Menu</summary><div class="mobile-links"><a href="#home">Home</a><a href="#articles">Articles</a><a href="#categories">Categories</a><a href="#about">About</a><a href="#contact">Contact</a></div></details></nav></header>
+<header><nav class="nav" aria-label="Main navigation"><a class="brand" href="#home">CozyLoops ♡</a><div class="links"><a href="#home">Home</a><a href="#articles">Articles</a><a href="#categories">Categories</a><a href="#about">About</a><a href="#contact">Contact</a></div><a class="nav-search-trigger" href="#search-articles" aria-label="Search crochet articles" title="Search articles"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></a><details class="mobile-menu"><summary aria-label="Open navigation menu">Menu</summary><div class="mobile-links"><a href="#home">Home</a><a href="#articles">Articles</a><a href="#categories">Categories</a><a href="#about">About</a><a href="#contact">Contact</a></div></details></nav></header>
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-label="Article reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><span></span></div>
 <button type="button" id="back-to-top" class="back-to-top" aria-label="Back to top" hidden>↑ Top</button>
 <main id="app" tabindex="-1"><div class="container" role="status" aria-live="polite"><p class="empty">Loading CozyLoops…</p></div></main><noscript><p class="container">JavaScript is required to browse the homepage. You can still open our published crochet articles directly from the <a href="sitemap.xml">article sitemap</a>.</p></noscript><aside id="privacy-choice" class="privacy-choice" aria-label="Optional anonymous visitor analytics" hidden><strong>Help us improve CozyLoops?</strong><p>With your permission, we count a visit to each page once per browser per day. No names, emails or IP addresses are saved in our analytics table. You can decline and use the site normally.</p><div class="actions"><button type="button" id="privacy-decline">No thanks</button><button type="button" class="accept" id="privacy-accept">Allow analytics</button></div></aside>
@@ -471,6 +480,11 @@ function route(preserveScroll=false){
   requestAnimationFrame(()=>window.scrollTo({top:oldY,behavior:'instant'}));
  }else if(homeAnchor.includes(path)){
   requestAnimationFrame(()=>document.getElementById(path)?.scrollIntoView({block:'start',behavior:'instant'}));
+ }else if(path==='search-articles'){
+  requestAnimationFrame(()=>{
+   const input=document.getElementById('search');
+   if(input){input.scrollIntoView({block:'center',behavior:'instant'});input.focus({preventScroll:true});}
+  });
  }else window.scrollTo(0,0);
  scheduleReadingProgress();
  recordCurrentView();

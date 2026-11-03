@@ -160,6 +160,16 @@ class SiteQualityTests(unittest.TestCase):
             self.assertGreaterEqual(article["content"].count("![") + 1, 3)
             self.assertIn("## Frequently Asked Questions", article["content"])
 
+    def test_global_search_navigation_available(self):
+        self.assertIn('class="nav-search-trigger"', self.home)
+        self.assertIn('href="#search-articles"', self.home)
+        self.assertIn("path==='search-articles'", self.home)
+        self.assertIn("input.focus({preventScroll:true})", self.home)
+        for slug in self.manifest:
+            content = (ROOT / "posts" / slug / "index.html").read_text(encoding="utf-8")
+            self.assertIn('class="nav-search-trigger"', content)
+            self.assertIn(PUBLIC_BASE + "#search-articles", content)
+
     def test_sitemap_contains_only_valid_public_urls(self):
         from xml.etree import ElementTree as ET
         root = ET.fromstring(self.sitemap)
