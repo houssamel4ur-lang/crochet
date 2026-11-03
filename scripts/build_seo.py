@@ -130,6 +130,7 @@ def render_page(article, css):
 <h2>Keep Creating</h2>
 <p>Explore more crochet articles and patterns at CozyLoops.</p>
 <a class="btn" href="{BASE}#articles">Browse all articles</a>
+<section class="article-privacy" aria-label="Analytics preferences"><h2>Analytics preferences</h2><p id="article-consent-status" role="status">You can disable optional analytics for this browser at any time.</p><button type="button" id="article-privacy-opt-out" class="btn">Disable optional analytics</button></section>
 </article></main>
 <aside id="privacy-choice" class="privacy-choice" aria-label="Optional article analytics" hidden><strong>Help us improve CozyLoops?</strong><p>With your permission, we count this article view once per browser per day. We store no names, emails or IP addresses in our analytics table. You can decline and keep reading.</p><div class="actions"><button type="button" id="privacy-decline">No thanks</button><button type="button" class="accept" id="privacy-accept">Allow analytics</button></div></aside>
 <footer><div class="footer-inner"><div><a class="brand" href="{BASE}">CozyLoops ♡</a><p>Slow down, pick up your yarn, and create something lovely.</p></div><div><a href="{BASE}#about">About</a><a href="{BASE}#contact">Contact</a><a href="{BASE}#privacy">Privacy</a></div></div></footer>
