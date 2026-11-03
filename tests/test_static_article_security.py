@@ -55,8 +55,7 @@ class StaticArticleSecurityTests(unittest.TestCase):
         }
         result=render_page(article,'body{color:black}')
         self.assertNotIn('<script>alert(1)</script>',result)
-        self.assertNotIn('onload=',result)
-        self.assertNotIn('onerror=',result)
+        # Event-handler words in escaped article text are harmless; check parsed attributes instead.
         scan=DangerousAttributes()
         scan.feed(result)
         self.assertEqual(scan.events,[])
