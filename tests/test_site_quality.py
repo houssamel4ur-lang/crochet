@@ -74,6 +74,13 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn("file.size>5*1024*1024", self.admin)
         self.assertIn("Math.min(3,Math.max(2,match[1].length))", self.admin)
 
+    def test_owner_release_guidance_is_available_without_false_claims(self):
+        self.assertIn("Owner launch verification", self.admin)
+        self.assertIn("supabase/rls_audit_readonly.sql", self.admin)
+        self.assertIn("search.google.com/search-console", self.admin)
+        self.assertIn("Automated checks do not mark them completed.", self.admin)
+        self.assertIn("Real Admin test:", self.admin)
+
     def test_admin_has_operational_seo_health_panel(self):
         self.assertIn('id="panel-settings"', self.admin)
         self.assertIn('id="check-seo-health"', self.admin)
