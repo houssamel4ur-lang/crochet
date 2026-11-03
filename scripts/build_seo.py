@@ -171,6 +171,7 @@ def render_page(article, css, articles=None):
 .related-posts{{margin:32px 0;padding:22px;border:1px solid var(--line,#e5e7df);border-radius:16px;background:var(--white,#fff)}}
 .article-toc{{padding:20px 24px;border:1px solid var(--line,#e5e7df);border-radius:16px;background:var(--white,#fff);margin:24px 0}}.article-toc ol{{margin:8px 0 0;padding-left:24px}}.article-toc li{{margin:5px 0}}.article-toc a{{text-decoration:underline;text-underline-offset:3px}}.article h2[id],.article h3[id],.article h4[id]{{scroll-margin-top:24px}}
 .related-posts ul{{margin:12px 0 0;padding-left:22px}}.related-posts li{{margin:8px 0}}.related-posts a{{text-decoration:underline;text-underline-offset:3px}}
+.article-share{{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0 24px}}.article-share-button{{border:1px solid var(--green,#4f694c);background:transparent;color:var(--green,#4f694c);border-radius:25px;padding:8px 16px;font:600 14px/1.4 system-ui,sans-serif;cursor:pointer}}.article-share-button:hover,.article-share-button:focus-visible{{background:var(--green,#4f694c);color:white}}#article-share-status{{font-size:14px;color:var(--muted,#68736a)}}
 </style>
 </head>
 <body>
@@ -181,6 +182,7 @@ def render_page(article, css, articles=None):
 <div class="tag">{esc(category)}</div>
 <h1>{esc(title)}</h1>
 <p class="meta">{esc(published[:10])} · CozyLoops</p>
+<div class="article-share"><button type="button" id="article-share-button" class="article-share-button">Share this article</button><span id="article-share-status" role="status" aria-live="polite"></span></div>
 <p>{esc(description)}</p>
 {image_html}
 {toc_html}
