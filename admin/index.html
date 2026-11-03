@@ -36,7 +36,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <label for="post-category">Section / Category</label><select id="post-category"><option>Beginner Tutorials</option><option>Free Patterns</option><option>Amigurumi</option><option>Crochet Tips</option></select><button type="button" class="secondary" id="add-post-section">+ Section</button><p class="muted">Create a new section here, then publish a post in it. The section appears automatically on the homepage.</p>
 <label for="post-excerpt">Excerpt</label><textarea id="post-excerpt" rows="3" maxlength="500" required></textarea>
 <label for="post-image">Image URL (HTTPS)</label><input id="post-image" type="url" placeholder="https://...">
-<label for="post-content">Article content</label><p class="muted">Write in Markdown: ## Heading, **bold**, - list item. Separate paragraphs with a blank line.</p><div class="post-actions"><button type="button" class="secondary" id="post-insert-heading">+ Heading</button><button type="button" class="secondary" id="post-insert-list">+ List</button><button type="button" class="secondary" id="post-insert-bold">Bold</button></div><textarea id="post-content" required></textarea>
+<label for="post-content">Article content</label><p class="muted">Write in Markdown: ## Heading, **bold**, - list item. Separate paragraphs with a blank line.</p><div class="post-actions"><button type="button" class="secondary" id="post-insert-heading">+ Heading</button><button type="button" class="secondary" id="post-insert-list">+ List</button><button type="button" class="secondary" id="post-insert-bold">Bold</button><button type="button" class="secondary" id="post-insert-image">+ Image</button><button type="button" class="secondary" id="post-preview-toggle">Preview</button></div><textarea id="post-content" required></textarea><div id="post-preview" class="hide" style="border:1px solid #dce5d9;border-radius:12px;padding:18px;margin-top:12px;overflow-wrap:anywhere"></div>
 <label for="post-status">Status</label><select id="post-status"><option value="draft">Draft</option><option value="published">Published</option></select>
 <div class="post-actions"><button id="save-post" type="submit">Save Post</button><button type="button" id="cancel-post" class="secondary">Cancel</button></div>
 <p id="post-form-message" role="status"></p>
@@ -101,6 +101,40 @@ if(url&&publishableKey){
   $('post-insert-heading').addEventListener('click',()=>insertPostText('## '));
   $('post-insert-list').addEventListener('click',()=>insertPostText('- '));
   $('post-insert-bold').addEventListener('click',()=>insertPostText('**','**'));
+  $('post-insert-image').addEventListener('click',()=>{
+    const url=prompt('Paste image HTTPS URL:');if(url===null)return;
+    try{const u=new URL(url.trim());if(u.protocol!=='https:')throw Error('Use HTTPS.');
+      const alt=prompt('Image description (alt text):')||'Crochet project';
+      insertPostText('![',']('+u.href+')');
+      const area=postField('content'),selected=area.value.slice(area.selectionStart,area.selectionEnd);
+      area.setRangeText(alt,area.selectionStart,area.selectionEnd,'end');
+    }catch(err){$('post-form-message').textContent='Invalid image URL: '+err.message;$('post-form-message').className='error';}
+  });
+  const previewInline=value=>{
+    const escapeText=str=>String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const pieces=String(value).split(/(!\\[[^\\]]*\\]\\(https:\\/\\/[^\\s)]+\\))/g);
+    return pieces.map(part=>{
+      const image=part.match(/^!\\[([^\\]]*)\\]\\((https:\\/\\/[^\\s)]+)\\)$/);
+      if(image)return '<img loading="lazy" style="max-width:100%;border-radius:12px;margin:12px 0" src="'+escapeText(image[2])+'" alt="'+escapeText(image[1])+'">';
+      return escapeText(part).replace(/\\*\\*(.+?)\\*\\*/g,'<strong>$1</strong>');
+    }).join('');
+  };
+  const renderPreview=source=>String(source).split(/\\n\\s*\\n/).map(block=>{
+    const lines=block.split(/\\n/);
+    if(lines.every(line=>/^[-*] /.test(line.trim())))return '<ul>'+lines.map(line=>'<li>'+previewInline(line.trim().slice(2))+'</li>').join('')+'</ul>';
+    return lines.map(line=>{
+      const match=line.match(/^(#{1,3})\\s+(.+)$/);
+      if(match){const level=Math.min(3,match[1].length+1);return '<h'+level+'>'+previewInline(match[2])+'</h'+level+'>';}
+      return '<p>'+previewInline(line)+'</p>';
+    }).join('');
+  }).join('');
+  $('post-preview-toggle').addEventListener('click',()=>{
+    const preview=$('post-preview');preview.classList.toggle('hide');
+    if(!preview.classList.contains('hide'))preview.innerHTML=renderPreview(postField('content').value);
+  });
+  postField('content').addEventListener('input',()=>{
+    if(!$('post-preview').classList.contains('hide'))$('post-preview').innerHTML=renderPreview(postField('content').value);
+  });
   const defaultSections=['Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips'];
   const updatePostSections=()=>{
     const select=postField('category'),current=select.value;
@@ -122,7 +156,7 @@ if(url&&publishableKey){
   });
   const openPost=(post=null)=>{
     editingPost=post?.id||null;
-    postForm.reset();updatePostSections();postField('slug').dataset.auto='true';postForm.classList.remove('hide');postList.classList.add('hide');
+    postForm.reset();$('post-preview').classList.add('hide');updatePostSections();postField('slug').dataset.auto='true';postForm.classList.remove('hide');postList.classList.add('hide');
     $('post-form-heading').textContent=post?'Edit Post':'New Post';
     for(const key of ['title','slug','category','excerpt','content','status'])if(post&&post[key]!=null)postField(key).value=post[key];
     postField('image').value=post?.image_url||'';
