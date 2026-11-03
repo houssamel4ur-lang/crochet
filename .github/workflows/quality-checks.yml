@@ -33,5 +33,7 @@ jobs:
           if (!moduleScript) throw new Error('Admin script missing');
           const js = moduleScript[1].replace(/^import .*?;\s*$/gm,'');
           new vm.Script('(async()=>{' + js + '})', {filename:'admin/index.html'});
-          console.log('Public and admin JavaScript syntax valid');
+          const article = fs.readFileSync('scripts/article_analytics.js', 'utf8');
+          new vm.Script(article, {filename:'scripts/article_analytics.js'});
+          console.log('Public, admin and article JavaScript syntax valid');
           NODE
