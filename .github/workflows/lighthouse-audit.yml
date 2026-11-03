@@ -1,0 +1,67 @@
+name: Lighthouse Performance Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/lighthouse-audit.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '23 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Lighthouse
+        run: npm install --no-save lighthouse@12
+      - name: Audit published homepage and article (mobile)
+        run: |
+          mkdir -p lighthouse-reports
+          CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser)
+          if [ -z "$CHROME" ]; then echo "Chrome not available" >&2; exit 1; fi
+          export CHROME_PATH="$CHROME"
+          node_modules/.bin/lighthouse 'https://houssamel4ur-lang.github.io/crochet/' \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' \
+            --output=json --output-path=lighthouse-reports/home-mobile.json --quiet
+          node_modules/.bin/lighthouse 'https://houssamel4ur-lang.github.io/crochet/posts/crochet-for-absolute-beginners/' \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' \
+            --output=json --output-path=lighthouse-reports/article-mobile.json --quiet
+      - name: Summarize real Lighthouse results
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          reports = sorted(Path('lighthouse-reports').glob('*.json'))
+          for report in reports:
+              data = json.loads(report.read_text())
+              print("\n" + report.name)
+              for name in ('performance','accessibility','best-practices','seo'):
+                  score = data.get('categories',{}).get(name,{}).get('score')
+                  print(f"  {name}: {round(score*100) if score is not None else 'N/A'} / 100")
+              audits = data.get('audits',{})
+              for name in ('largest-contentful-paint','cumulative-layout-shift','total-blocking-time','first-contentful-paint'):
+                  print(f"  {name}: {audits.get(name,{}).get('displayValue','N/A')}")
+          if not reports:
+              print('No Lighthouse report generated. Check job logs.')
+          PY
+      - name: Upload report JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cozyloops-lighthouse-report
+          path: lighthouse-reports/*.json
+          if-no-files-found: ignore
