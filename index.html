@@ -106,18 +106,18 @@ function categoryPage(category){
 }
 function renderArticleMarkdown(source){
  const inline=value=>{
-  const parts=String(value).split(/(!\\[[^\\]]*\\]\\(https:\\/\\/[^\\s)]+\\))/g);
+  const parts=String(value).split(/(!\[[^\]]*\]\(https:\/\/[^\s)]+\))/g);
   return parts.map(part=>{
-   const match=part.match(/^!\\[([^\\]]*)\\]\\((https:\\/\\/[^\\s)]+)\\)$/);
+   const match=part.match(/^!\[([^\]]*)\]\((https:\/\/[^\s)]+)\)$/);
    if(match){const url=safeHttps(match[2]);if(url)return '<img loading="lazy" style="width:100%;height:auto;border-radius:14px;margin:16px 0" src="'+esc(url)+'" alt="'+esc(match[1])+'">';}
-   return esc(part).replace(/\\*\\*(.+?)\\*\\*/g,'<strong>$1</strong>');
+   return esc(part).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   }).join('');
  };
- return String(source).split(/\\n\\s*\\n/).map(block=>{
-  const lines=block.split(/\\n/);
+ return String(source).split(/\n\s*\n/).map(block=>{
+  const lines=block.split(/\n/);
   if(lines.every(line=>/^[-*] /.test(line.trim())))return '<ul>'+lines.map(line=>'<li>'+inline(line.trim().slice(2))+'</li>').join('')+'</ul>';
   return lines.map(line=>{
-   const match=line.match(/^(#{1,3})\\s+(.+)$/);
+   const match=line.match(/^(#{1,3})\s+(.+)$/);
    if(match){const level=Math.min(3,match[1].length+1);return '<h'+level+'>'+inline(match[2])+'</h'+level+'>';}
    return '<p>'+inline(line)+'</p>';
   }).join('');
