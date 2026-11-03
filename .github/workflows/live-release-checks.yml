@@ -1,0 +1,28 @@
+name: Live Production Release Checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/live_site_smoke.py'
+      - '.github/workflows/live-release-checks.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '43 8 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  production:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - name: Check out test scripts
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate public production pages, SEO sitemap and privacy
+        run: python tests/live_site_smoke.py
