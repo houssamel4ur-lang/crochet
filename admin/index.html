@@ -7,7 +7,7 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;padding:16px}
 main{width:min(100%,920px);background:white;border:1px solid #e3e7df;border-radius:18px;padding:28px;box-shadow:0 12px 35px #1c3b2212}
 h1{margin:0 0 5px;color:#50765a}p{color:#647267;line-height:1.5}label{display:block;margin:18px 0 6px;font-weight:600}
 input{width:100%;border:1px solid #bdcbbf;border-radius:10px;padding:13px;font:inherit}button{width:100%;background:#50765a;color:white;border:0;border-radius:10px;padding:13px;font:inherit;font-weight:700;margin-top:20px;cursor:pointer}
-button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6ef;border-radius:10px;font-size:14px}.error{color:#a42828}.hide{display:none}.social-item{padding:14px 0;border-bottom:1px solid #e6ebe5}.social-item label{margin:0 0 8px}.social-item input[type=checkbox]{width:auto;margin:0 8px 0 0}.visibility{display:flex;align-items:center;margin-top:10px;font-size:14px;color:#4c6552}.muted{font-size:13px;color:#718075}.success{color:#256a40}a{color:#50765a}.admin-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;margin-top:20px}.admin-nav{display:flex;flex-direction:column;gap:6px}.admin-nav button{margin:0;text-align:left;background:#f2f6ef;color:#35513d;padding:12px;font-size:14px}.admin-nav button.active{background:#50765a;color:white}.admin-content{min-width:0}.admin-panel{display:none}.admin-panel.active{display:block}.admin-panel h2{margin-top:0}.admin-panel .notice{margin-top:14px}.post-actions{display:flex;gap:8px;flex-wrap:wrap}.post-actions button{width:auto;margin-top:8px;padding:9px 13px}.post-row{border-bottom:1px solid #e5e7df;padding:13px 0}.post-row strong{display:block}.post-row small{color:#718075}.post-form textarea,.post-form select{width:100%;border:1px solid #bdcbbf;border-radius:10px;padding:12px;font:inherit}.post-form textarea{min-height:210px;resize:vertical}.post-form .secondary,.post-actions .secondary{background:#edf3eb;color:#35513d}.post-actions .danger{background:#a42828}.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.theme-grid label{font-size:14px}.theme-grid input[type=color]{height:48px;padding:5px}.theme-grid input[type=number]{max-width:180px}@media(max-width:650px){.theme-grid{grid-template-columns:1fr}}@media(max-width:650px){main{padding:18px}.admin-layout{display:block}.admin-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:24px}.admin-nav button{font-size:13px;padding:11px 8px}}
+button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6ef;border-radius:10px;font-size:14px}.error{color:#a42828}.hide{display:none}.social-item{padding:14px 0;border-bottom:1px solid #e6ebe5}.social-item label{margin:0 0 8px}.social-item input[type=checkbox]{width:auto;margin:0 8px 0 0}.visibility{display:flex;align-items:center;margin-top:10px;font-size:14px;color:#4c6552}.muted{font-size:13px;color:#718075}.success{color:#256a40}a{color:#50765a}.admin-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;margin-top:20px}.admin-nav{display:flex;flex-direction:column;gap:6px}.admin-nav button{margin:0;text-align:left;background:#f2f6ef;color:#35513d;padding:12px;font-size:14px}.admin-nav button.active{background:#50765a;color:white}.admin-content{min-width:0}.admin-panel{display:none}.admin-panel.active{display:block}.admin-panel h2{margin-top:0}.admin-panel .notice{margin-top:14px}.stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.stat-box{background:#f2f6ef;border:1px solid #e1e9df;border-radius:13px;padding:17px}.stat-box strong{display:block;font-size:28px;line-height:1.2;color:#355c40}.stat-box span{font-size:13px;color:#667868}.summary-list{padding-left:20px;line-height:1.8}@media(max-width:460px){.stats-grid{grid-template-columns:1fr}}.post-actions{display:flex;gap:8px;flex-wrap:wrap}.post-actions button{width:auto;margin-top:8px;padding:9px 13px}.post-row{border-bottom:1px solid #e5e7df;padding:13px 0}.post-row strong{display:block}.post-row small{color:#718075}.post-form textarea,.post-form select{width:100%;border:1px solid #bdcbbf;border-radius:10px;padding:12px;font:inherit}.post-form textarea{min-height:210px;resize:vertical}.post-form .secondary,.post-actions .secondary{background:#edf3eb;color:#35513d}.post-actions .danger{background:#a42828}.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.theme-grid label{font-size:14px}.theme-grid input[type=color]{height:48px;padding:5px}.theme-grid input[type=number]{max-width:180px}@media(max-width:650px){.theme-grid{grid-template-columns:1fr}}@media(max-width:650px){main{padding:18px}.admin-layout{display:block}.admin-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:24px}.admin-nav button{font-size:13px;padding:11px 8px}}
 </style></head><body><main>
 <h1>CozyLoops Admin</h1><p>Secure content management</p>
 <div id="setup" class="notice">Supabase connection has not been configured yet. The owner must complete the setup before login is available.</div>
@@ -25,7 +25,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <button type="button" data-panel="settings">⚙ Settings</button>
 <button type="button" data-panel="account">♙ Admin Account</button>
 </nav><div class="admin-content">
-<section id="panel-overview" class="admin-panel active"><h2>Dashboard</h2><p class="notice">Your Super Admin account is verified.</p><p>Welcome to your CozyLoops control panel. Choose a section from the menu.</p></section>
+<section id="panel-overview" class="admin-panel active"><h2>Dashboard</h2><p class="muted">A live overview of articles stored in Supabase.</p><div id="dashboard-stats" class="stats-grid" aria-live="polite"><p>Loading...</p></div><h3>Recently added posts</h3><div id="dashboard-recent"></div><p class="muted">These numbers cover database articles only. The six original built-in articles are not included.</p></section>
 <section id="panel-posts" class="admin-panel"><h2>Posts</h2><p class="muted">Create, edit, publish and manage your articles. The six original static posts remain unchanged.</p>
 <div class="post-actions"><button type="button" id="new-post">+ New Post</button><button type="button" class="secondary" id="refresh-posts">Refresh</button></div>
 <p id="posts-message" role="status"></p><div id="posts-list"></div>
@@ -58,7 +58,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <p class="muted">These settings are stored in Supabase. Applying them to the public site is a separate step.</p></section>
 <section id="panel-social" class="admin-panel"><h2>Social Media</h2><p class="muted">Manage your public social links.</p><div id="social-fields"></div><button id="save-social" type="button">Save Changes</button><p id="social-message" role="status"></p></section>
 <section id="panel-contact" class="admin-panel"><h2>Contact</h2><p class="muted">Set the contact details visitors can use to reach CozyLoops.</p><label for="contact-email">Contact email</label><input id="contact-email" type="email" placeholder="hello@example.com"><label class="visibility"><input id="contact-email-visible" type="checkbox">Show email on website</label><label for="contact-whatsapp">WhatsApp link</label><input id="contact-whatsapp" type="url" placeholder="https://wa.me/123456789"><label class="visibility"><input id="contact-whatsapp-visible" type="checkbox">Show WhatsApp on website</label><button id="save-contact" type="button">Save Contact</button><p id="contact-message" role="status"></p></section>
-<section id="panel-analytics" class="admin-panel"><h2>Analytics</h2><p class="notice">Analytics are not connected yet. No visitor counts are displayed until tracking is configured.</p></section>
+<section id="panel-analytics" class="admin-panel"><h2>Analytics</h2><p class="muted">Content statistics from Supabase — updated when articles load.</p><div id="analytics-stats" class="stats-grid" aria-live="polite"><p>Loading...</p></div><h3>Articles by section</h3><div id="analytics-categories"></div><h3>Visitor analytics</h3><p class="notice">Google Analytics is not connected yet. Visitor counts, page views, traffic sources and countries cannot be displayed until tracking is set up.</p><p><a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer">Set up Google Analytics ↗</a></p></section>
 <section id="panel-settings" class="admin-panel"><h2>Settings</h2><p class="notice">Site information and SEO settings will be added here.</p></section>
 <section id="panel-account" class="admin-panel"><h2>Admin Account</h2><p class="notice">Super Admin access verified.</p><button id="logout">Sign out</button></section>
 </div></div></div>
@@ -77,11 +77,41 @@ if(url&&publishableKey){
   let postRows=[],editingPost=null;
   const slugify=v=>v.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,180);
   const postField=k=>$('post-'+k);
+  const renderStats=()=>{
+    const total=postRows.length;
+    const published=postRows.filter(p=>p.status==='published').length;
+    const drafts=postRows.filter(p=>p.status==='draft').length;
+    const groups=[...new Set(postRows.map(p=>p.category).filter(Boolean))].length;
+    const values=[['Database posts',total],['Published',published],['Drafts',drafts],['Active sections',groups]];
+    for(const id of ['dashboard-stats','analytics-stats']){
+      const root=$(id);root.replaceChildren();
+      for(const [name,value] of values){
+        const box=document.createElement('div');box.className='stat-box';
+        const number=document.createElement('strong');number.textContent=String(value);
+        const label=document.createElement('span');label.textContent=name;
+        box.append(number,label);root.append(box);
+      }
+    }
+    const recent=$('dashboard-recent');recent.replaceChildren();
+    for(const p of postRows.slice(0,5)){
+      const line=document.createElement('p');line.textContent=p.title+' · '+(p.status||'unknown');recent.append(line);
+    }
+    if(!postRows.length){const p=document.createElement('p');p.className='notice';p.textContent='No database posts yet.';recent.append(p);}
+    const byCategory=new Map();
+    for(const p of postRows){const name=p.category||'Uncategorized';byCategory.set(name,(byCategory.get(name)||0)+1);}
+    const categoriesRoot=$('analytics-categories');categoriesRoot.replaceChildren();
+    if(!byCategory.size){const p=document.createElement('p');p.textContent='No article categories yet.';categoriesRoot.append(p);}
+    else{
+      const list=document.createElement('ul');list.className='summary-list';
+      for(const [name,count] of [...byCategory].sort((a,b)=>b[1]-a[1])){const item=document.createElement('li');item.textContent=name+': '+count+' post(s)';list.append(item);}
+      categoriesRoot.append(list);
+    }
+  };
   const loadPosts=async()=>{
     postMsg.textContent='Loading posts...';postMsg.className='';
     const {data,error}=await supabase.from('articles').select('id,title,slug,category,status,excerpt,content,image_url,created_at').order('created_at',{ascending:false});
     if(error){postMsg.textContent='Could not load posts: '+error.message;postMsg.className='error';return;}
-    postRows=data||[];updatePostSections();postMsg.textContent=postRows.length+' database post(s).';
+    postRows=data||[];updatePostSections();renderStats();postMsg.textContent=postRows.length+' database post(s).';
     postList.replaceChildren();
     if(!postRows.length){const p=document.createElement('p');p.className='notice';p.textContent='No database articles yet. Click New Post to create one.';postList.append(p);}
     for(const post of postRows){
