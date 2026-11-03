@@ -55,6 +55,16 @@ jobs:
               audits = data.get('audits',{})
               for name in ('largest-contentful-paint','cumulative-layout-shift','total-blocking-time','first-contentful-paint'):
                   print(f"  {name}: {audits.get(name,{}).get('displayValue','N/A')}")
+              print("  Actionable audit findings:")
+              issues = []
+              for audit_id, audit in audits.items():
+                  score = audit.get('score')
+                  if score is not None and score < 0.9 and audit.get('scoreDisplayMode') in ('numeric','binary'):
+                      weight = audit.get('numericValue',0) or 0
+                      issues.append((score, str(audit.get('title','')), audit_id, str(audit.get('displayValue',''))))
+              for score,title,audit_id,value in sorted(issues)[:12]:
+                  print(f"    {round(score*100)} / 100 | {title} ({audit_id}) {value}")
+
           if not reports:
               print('No Lighthouse report generated. Check job logs.')
           PY
