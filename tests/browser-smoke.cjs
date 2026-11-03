@@ -76,6 +76,31 @@ const failures = [];
     assert.equal(await page.locator('#dashboard').isVisible(), false, 'admin is not exposed to signed-out browser');
     await page.close();
     console.log('OK admin logged-out UI');
+    // Simulate an authenticated but unauthorized account without using real credentials.
+    const denied = await browser.newPage();
+    denied.on('pageerror', error => failures.push('denied admin: ' + error.message));
+    await denied.route('https://esm.sh/@supabase/supabase-js@2', route => route.fulfill({
+      status: 200, contentType: 'application/javascript',
+      headers: {'access-control-allow-origin': '*'},
+      body: [
+        'let active=true;',
+        'export function createClient(){return {',
+        ' auth:{getUser:async()=>({data:{user:active?{id:"test-user",email:"test@example.invalid"}:null},error:null}),',
+        ' signOut:async()=>{active=false;return {error:null};},',
+        ' signInWithPassword:async()=>({error:null})},',
+        ' rpc:async()=>({data:false,error:null})',
+        '};}'
+      ].join('\\n')
+    }));
+    await denied.goto(base + '/admin/', { waitUntil: 'domcontentloaded' });
+    await denied.locator('#denied-logout').waitFor({ state:'visible', timeout: 12000 });
+    assert.equal(await denied.locator('#dashboard').isVisible(), false, 'denied user must not see dashboard');
+    assert.match(await denied.locator('#message').innerText(), /does not have Super Admin access/);
+    await denied.locator('#denied-logout').click();
+    await denied.locator('#login').waitFor({state:'visible',timeout:5000});
+    assert.equal(await denied.locator('#dashboard').isVisible(), false);
+    await denied.close();
+    console.log('OK denied Admin sign-out and recovery (mocked auth)');
     assert.deepEqual(failures, [], 'no browser JavaScript errors');
     console.log('All Chromium smoke checks passed');
   } finally {
