@@ -132,6 +132,23 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn('rel="icon"', self.home)
 
 
+    def test_custom_404_has_accessible_navigation_and_noindex(self):
+        page = (ROOT / "404.html").read_text(encoding="utf-8")
+        self.assertIn('<meta name="robots" content="noindex,follow">', page)
+        self.assertIn('href="/crochet/"', page)
+        self.assertIn("<h1>", page)
+        self.assertIn("Page Not Found | CozyLoops", page)
+
+    def test_static_article_scroll_controls(self):
+        script = (ROOT / "scripts/article_analytics.js").read_text(encoding="utf-8")
+        self.assertIn('getElementById("back-to-top")', script)
+        self.assertIn("updateBackToTop();", script)
+        self.assertIn("requestAnimationFrame(update)", script)
+        for slug in self.manifest:
+            page = (ROOT / "posts" / slug / "index.html").read_text(encoding="utf-8")
+            self.assertEqual(page.count('id="reading-progress"'), 1)
+            self.assertEqual(page.count('id="back-to-top"'), 1)
+
     def test_sitemap_contains_only_valid_public_urls(self):
         from xml.etree import ElementTree as ET
         root = ET.fromstring(self.sitemap)
