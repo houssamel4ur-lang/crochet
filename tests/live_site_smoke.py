@@ -7,7 +7,7 @@ deployment propagation.
 """
 from html.parser import HTMLParser
 from urllib.request import Request, urlopen
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urljoin
 from xml.etree import ElementTree as ET
 import json
 import time
@@ -42,6 +42,11 @@ class Tags(HTMLParser):
         self.h1 = 0
         self.canonical = []
         self.meta_robots = []
+        self.descriptions = []
+        self.social = {}
+        self.images = []
+        self.links = []
+        self.skip_link = False
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
         if tag == "h1": self.h1 += 1
@@ -49,6 +54,16 @@ class Tags(HTMLParser):
             self.canonical.append(a.get("href"))
         if tag == "meta" and a.get("name") == "robots":
             self.meta_robots.append(a.get("content"))
+        if tag == "meta" and a.get("name") == "description":
+            self.descriptions.append(a.get("content", ""))
+        if tag == "meta" and a.get("property", "").startswith("og:"):
+            self.social[a["property"]] = a.get("content", "")
+        if tag == "img":
+            self.images.append(a)
+        if tag == "a":
+            self.links.append(a.get("href", ""))
+            if a.get("class") == "skip-link":
+                self.skip_link = True
 
 class LiveSiteTests(unittest.TestCase):
     @classmethod
@@ -89,6 +104,26 @@ class LiveSiteTests(unittest.TestCase):
                 self.assertIn('id="article-privacy-opt-out"', html)
                 self.assertIn('scripts/article_analytics.js', html)
                 self.assertIn('"@type": "BlogPosting"', html)
+                self.assertEqual(len(tags.descriptions), 1)
+                self.assertGreater(len(tags.descriptions[0]), 30)
+                self.assertEqual(tags.social.get("og:url"), BASE + "posts/" + slug + "/")
+                self.assertTrue(tags.social.get("og:title"))
+                self.assertTrue(tags.skip_link, "Missing skip-to-content link")
+                self.assertGreater(len(tags.images), 0, "Article needs at least a cover image")
+                for image in tags.images:
+                    self.assertTrue(image.get("alt"), "Missing image alt text")
+                    self.assertTrue(image.get("width"), "Missing image width")
+                    self.assertTrue(image.get("height"), "Missing image height")
+                    self.assertEqual(urlsplit(image.get("src", "")).scheme, "https")
+                for link in tags.links:
+                    if not link or link.startswith(("#", "mailto:", "tel:")):
+                        continue
+                    absolute = urljoin(BASE + "posts/" + slug + "/", link)
+                    split = urlsplit(absolute)
+                    self.assertIn(split.scheme, ("https",), "Insecure article link: " + absolute)
+                    if split.hostname == EXPECTED_HOST:
+                        self.assertTrue(split.path.startswith("/crochet/"), "Link escapes project: " + absolute)
+
 
     def test_analytics_script_available(self):
         script = fetch("scripts/article_analytics.js")
