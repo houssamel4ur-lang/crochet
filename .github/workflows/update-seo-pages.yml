@@ -1,6 +1,11 @@
 name: Update SEO article pages
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build_seo.py'
+      - '.github/workflows/update-seo-pages.yml'
   workflow_dispatch:
   schedule:
     - cron: '17 * * * *'
