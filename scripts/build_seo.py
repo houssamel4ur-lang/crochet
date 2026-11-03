@@ -172,6 +172,8 @@ def render_page(article, css, articles=None):
 .article-toc{{padding:20px 24px;border:1px solid var(--line,#e5e7df);border-radius:16px;background:var(--white,#fff);margin:24px 0}}.article-toc ol{{margin:8px 0 0;padding-left:24px}}.article-toc li{{margin:5px 0}}.article-toc a{{text-decoration:underline;text-underline-offset:3px}}.article h2[id],.article h3[id],.article h4[id]{{scroll-margin-top:24px}}
 .related-posts ul{{margin:12px 0 0;padding-left:22px}}.related-posts li{{margin:8px 0}}.related-posts a{{text-decoration:underline;text-underline-offset:3px}}
 .article-share{{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0 24px}}.article-share-button{{border:1px solid var(--green,#4f694c);background:transparent;color:var(--green,#4f694c);border-radius:25px;padding:8px 16px;font:600 14px/1.4 system-ui,sans-serif;cursor:pointer}}.article-share-button:hover,.article-share-button:focus-visible{{background:var(--green,#4f694c);color:white}}#article-share-status{{font-size:14px;color:var(--muted,#68736a)}}
+.article-print-button{{border:1px solid var(--line,#e5e7df);background:var(--white,#fff);color:var(--ink,#29342d);border-radius:25px;padding:8px 16px;font:600 14px/1.4 system-ui,sans-serif;cursor:pointer}}.article-print-button:hover,.article-print-button:focus-visible{{border-color:var(--green,#4f694c);color:var(--green,#4f694c)}}
+@media print{{@page{{margin:16mm}}html,body{{background:white!important;color:#111!important;font:11pt/1.45 Georgia,serif!important}}header,footer,.back,.article-share,.article-toc,.related-posts,.article-privacy,.privacy-choice,.skip-link{{display:none!important}}main#content{{display:block!important;padding:0!important;margin:0!important}}.article{{max-width:none!important;width:100%!important;margin:0!important;padding:0!important;box-shadow:none!important;border:0!important;background:white!important}}.article-cover{{display:none!important}}.article h1{{font-size:24pt!important;margin:0 0 12pt!important}}.article h2{{font-size:16pt!important}}.article h3{{font-size:13pt!important}}.article h2,.article h3,.article h4{{break-after:avoid}}.article p,.article li{{orphans:3;widows:3}}.article figure img{{max-width:100%!important;height:auto!important;break-inside:avoid}}.article a{{color:#111!important;text-decoration:none!important}}.article>.btn{{display:none!important}}}}
 </style>
 </head>
 <body>
@@ -182,7 +184,7 @@ def render_page(article, css, articles=None):
 <div class="tag">{esc(category)}</div>
 <h1>{esc(title)}</h1>
 <p class="meta">{esc(published[:10])} · CozyLoops</p>
-<div class="article-share"><button type="button" id="article-share-button" class="article-share-button">Share this article</button><span id="article-share-status" role="status" aria-live="polite"></span></div>
+<div class="article-share"><button type="button" id="article-share-button" class="article-share-button">Share this article</button><button type="button" class="article-print-button" onclick="window.print()">Print / Save PDF</button><span id="article-share-status" role="status" aria-live="polite"></span></div>
 <p>{esc(description)}</p>
 {image_html}
 {toc_html}
