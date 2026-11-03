@@ -17,7 +17,7 @@ Admin dashboard: https://houssamel4ur-lang.github.io/crochet/admin/
 | Browser UI Smoke Tests | Chromium desktop/mobile search, navigation, articles, privacy opt-out, denied-account recovery and mock Super Admin create/edit/publish/delete; does not use live credentials or alter production data |
 | Public Supabase Security Checks | **Live read-only** anonymous access to published/draft posts, hidden social links, public theme, page-view rows, privileged RPCs |
 | Lighthouse Performance Audit | Scheduled lab measurements of homepage and sample article; results vary between runs |
-| Live Production Release Checks | Read-only checks of the deployed homepage, admin noindex, all published static articles, sitemap consistency and privacy controls |
+| Live Production Release Checks | Read-only checks of the deployed homepage, admin noindex, all published static articles, sitemap consistency, privacy controls, cover image alt/dimensions, share metadata and project-safe links |
 
 Each workflow is available in the repository's **Actions** tab. A green run only verifies the listed checks; it does not guarantee the complete site or database is secure.
 
