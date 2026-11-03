@@ -101,6 +101,7 @@ def render_page(article, css):
 <meta name="description" content="{esc(description)}">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="{esc(canonical)}">
+<link rel="icon" type="image/svg+xml" href="{BASE}favicon.svg">
 <meta property="og:type" content="article">
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(description)}">
