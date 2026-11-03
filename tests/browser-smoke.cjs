@@ -36,6 +36,13 @@ const failures = [];
       assert.equal(await page.locator('#postGrid .card').count(), 1, 'published mock post visible');
       assert.equal(await page.locator('main h1').count(), 1, 'home has one h1');
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
+      if (overflow) {
+        const offenders = await page.evaluate(() => [...document.querySelectorAll('body *')].map(el => {
+          const box = el.getBoundingClientRect();
+          return { tag: el.tagName, className: String(el.className).slice(0,80), right: Math.round(box.right), left: Math.round(box.left), width: Math.round(box.width) };
+        }).filter(el => el.right > innerWidth + 2 || el.left < -2).slice(0,18));
+        console.error('Horizontal overflow offenders:', JSON.stringify(offenders));
+      }
       assert.equal(overflow, false, viewport.width + 'px: no horizontal page overflow');
       await page.locator('#search').fill('no-match-example');
       assert.match(await page.locator('#postGrid').innerText(), /No published articles found/);
