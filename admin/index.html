@@ -36,7 +36,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <label for="post-category">Section / Category</label><select id="post-category"><option>Beginner Tutorials</option><option>Free Patterns</option><option>Amigurumi</option><option>Crochet Tips</option></select><button type="button" class="secondary" id="add-post-section">+ Section</button><p class="muted">Create a new section here, then publish a post in it. The section appears automatically on the homepage.</p>
 <label for="post-excerpt">Excerpt</label><textarea id="post-excerpt" rows="3" maxlength="500" required></textarea>
 <label for="post-image">Image URL (HTTPS)</label><input id="post-image" type="url" placeholder="https://...">
-<label for="post-content">Article content (plain text, paragraphs separated by blank lines)</label><textarea id="post-content" required></textarea>
+<label for="post-content">Article content</label><p class="muted">Write in Markdown: ## Heading, **bold**, - list item. Separate paragraphs with a blank line.</p><div class="post-actions"><button type="button" class="secondary" id="post-insert-heading">+ Heading</button><button type="button" class="secondary" id="post-insert-list">+ List</button><button type="button" class="secondary" id="post-insert-bold">Bold</button></div><textarea id="post-content" required></textarea>
 <label for="post-status">Status</label><select id="post-status"><option value="draft">Draft</option><option value="published">Published</option></select>
 <div class="post-actions"><button id="save-post" type="submit">Save Post</button><button type="button" id="cancel-post" class="secondary">Cancel</button></div>
 <p id="post-form-message" role="status"></p>
@@ -94,6 +94,13 @@ if(url&&publishableKey){
       actions.append(edit,del);row.append(name,info,actions);postList.append(row);
     }
   };
+  const insertPostText=(before,after='')=>{
+    const area=postField('content'),start=area.selectionStart,end=area.selectionEnd,selected=area.value.slice(start,end);
+    area.setRangeText(before+(selected||'Your text')+after,start,end,'select');area.focus();
+  };
+  $('post-insert-heading').addEventListener('click',()=>insertPostText('## '));
+  $('post-insert-list').addEventListener('click',()=>insertPostText('- '));
+  $('post-insert-bold').addEventListener('click',()=>insertPostText('**','**'));
   const defaultSections=['Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips'];
   const updatePostSections=()=>{
     const select=postField('category'),current=select.value;
