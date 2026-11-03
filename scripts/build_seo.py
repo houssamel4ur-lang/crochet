@@ -80,13 +80,35 @@ def load_articles():
         raise RuntimeError("Expected a JSON list from Supabase")
     return [p for p in items if isinstance(p.get("slug"), str) and SLUG.fullmatch(p["slug"]) and p.get("title")]
 
-def render_page(article, css):
+def related_articles(article, articles, limit=3):
+    """Select other posts, prioritizing the same category."""
+    others = [item for item in articles
+              if item.get("slug") != article.get("slug")
+              and isinstance(item.get("slug"), str) and SLUG.fullmatch(item["slug"])
+              and isinstance(item.get("title"), str) and item["title"].strip()]
+    others.sort(key=lambda item: item.get("category") != article.get("category"))
+    return others[:limit]
+
+
+def render_related(article, articles):
+    suggestions = related_articles(article, articles)
+    if not suggestions:
+        return ""
+    links = "".join(
+        f'<li><a href="{BASE}posts/{quote(item["slug"])}/">{esc(item["title"])}</a></li>'
+        for item in suggestions
+    )
+    return f'<section class="related-posts" aria-label="Related crochet articles"><h2>Read Next</h2><ul>{links}</ul></section>'
+
+
+def render_page(article, css, articles=None):
     slug = article["slug"]
     title = str(article["title"])
     description = str(article.get("excerpt") or "")[:280]
     canonical = BASE + "posts/" + quote(slug) + "/"
     cover = safe_image(article.get("image_url"))
     category = str(article.get("category") or "Crochet Patterns")
+    related_html = render_related(article, articles or [])
     published = str(article.get("created_at") or "")
     modified = str(article.get("updated_at") or published)
     structured = {
@@ -127,6 +149,8 @@ def render_page(article, css):
 .article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:18px}}
 .article figure{{margin:22px 0}}.article figure img{{width:100%;height:auto;border-radius:15px}}
 .article ul{{padding-left:26px}}.article strong{{font-weight:700}}
+.related-posts{{margin:32px 0;padding:22px;border:1px solid var(--line,#e5e7df);border-radius:16px;background:var(--white,#fff)}}
+.related-posts ul{{margin:12px 0 0;padding-left:22px}}.related-posts li{{margin:8px 0}}.related-posts a{{text-decoration:underline;text-underline-offset:3px}}
 </style>
 </head>
 <body>
@@ -140,6 +164,7 @@ def render_page(article, css):
 <p>{esc(description)}</p>
 {image_html}
 {markdown(str(article.get("content") or ""))}
+{related_html}
 <h2>Keep Creating</h2>
 <p>Explore more crochet articles and patterns at CozyLoops.</p>
 <a class="btn" href="{BASE}#articles">Browse all articles</a>
@@ -175,7 +200,7 @@ def main():
         current.append(slug)
         page_dir = output_root / slug
         page_dir.mkdir(parents=True, exist_ok=True)
-        (page_dir / "index.html").write_text(render_page(item, css), encoding="utf-8")
+        (page_dir / "index.html").write_text(render_page(item, css, articles), encoding="utf-8")
         sitemap.append(BASE + "posts/" + slug + "/")
     for slug in previous:
         if isinstance(slug, str) and SLUG.fullmatch(slug) and slug not in current:
