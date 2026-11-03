@@ -16,7 +16,8 @@ def get(table, params):
         with urlopen(req, timeout=20) as response:
             return json.load(response)
     except HTTPError as exc:
-        raise AssertionError(f"{table}: HTTP {exc.code}; investigate schema, project, and RLS") from exc
+        details = exc.read(1024).decode("utf-8", errors="replace")
+        raise AssertionError(f"{table}: HTTP {exc.code}: {details}; investigate schema, project, and RLS") from exc
     except URLError as exc:
         raise AssertionError(f"{table}: unreachable ({exc.reason})") from exc
 
