@@ -31,11 +31,16 @@
 .mobile-menu{display:none}.mobile-menu summary{list-style:none;cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:9px 15px;font-weight:700;color:var(--green)}.mobile-menu summary::-webkit-details-marker{display:none}.mobile-links{display:flex;flex-direction:column;position:absolute;right:14px;top:calc(100% - 2px);min-width:200px;padding:10px;border:1px solid var(--line);border-radius:14px;background:white;box-shadow:0 10px 30px #2222}.mobile-links a{display:block;padding:11px;border-radius:8px}.mobile-links a:hover{background:#edf3eb}
 @media(max-width:650px){.nav{flex-wrap:nowrap;position:relative}.nav>.links{display:none}.mobile-menu{display:block}.brand{font-size:25px}.hero-inner{gap:25px}.hero{padding:35px 0}.card img{height:215px}.section-head{align-items:start}.section-head>span{font-size:13px}.privacy-choice{left:8px;right:8px;bottom:8px;padding:15px;max-height:70vh;overflow:auto}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.skip-link{position:fixed;top:-100px;left:12px;z-index:1000;background:#fff;color:#29342d;padding:12px 18px;border:2px solid #50765a;border-radius:8px;font-weight:700}.skip-link:focus{top:12px}
+.article img{height:auto;aspect-ratio:16/10;object-fit:cover}
+.card img{aspect-ratio:640/450}
+@media(max-width:560px){.mobile-links a{min-height:44px;display:flex;align-items:center}.chip{min-height:44px}.nav{gap:8px}}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#app">Skip to content</a>
 <header><nav class="nav" aria-label="Main navigation"><a class="brand" href="#home">CozyLoops ♡</a><div class="links"><a href="#home">Home</a><a href="#articles">Articles</a><a href="#categories">Categories</a><a href="#about">About</a><a href="#contact">Contact</a></div><details class="mobile-menu"><summary aria-label="Open navigation menu">Menu</summary><div class="mobile-links"><a href="#home">Home</a><a href="#articles">Articles</a><a href="#categories">Categories</a><a href="#about">About</a><a href="#contact">Contact</a></div></details></nav></header>
-<main id="app"></main><aside id="privacy-choice" class="privacy-choice" aria-label="Optional anonymous visitor analytics" hidden><strong>Help us improve CozyLoops?</strong><p>With your permission, we count a visit to each page once per browser per day. No names, emails or IP addresses are saved in our analytics table. You can decline and use the site normally.</p><div class="actions"><button type="button" id="privacy-decline">No thanks</button><button type="button" class="accept" id="privacy-accept">Allow analytics</button></div></aside>
+<main id="app" tabindex="-1"><div class="container" role="status" aria-live="polite"><p class="empty">Loading CozyLoops…</p></div></main><noscript><p class="container">JavaScript is required to browse the homepage. You can still open our published crochet articles directly from the <a href="sitemap.xml">article sitemap</a>.</p></noscript><aside id="privacy-choice" class="privacy-choice" aria-label="Optional anonymous visitor analytics" hidden><strong>Help us improve CozyLoops?</strong><p>With your permission, we count a visit to each page once per browser per day. No names, emails or IP addresses are saved in our analytics table. You can decline and use the site normally.</p><div class="actions"><button type="button" id="privacy-decline">No thanks</button><button type="button" class="accept" id="privacy-accept">Allow analytics</button></div></aside>
 <footer><div class="footer-inner"><div><a class="brand" href="#home">CozyLoops ♡</a><p>Slow down, pick up your yarn, and create something lovely.</p></div><div><a href="#about">About</a><a href="#contact">Contact</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a></div></div></footer>
 <script>
 const siteTheme={site_name:'CozyLoops',site_description:'Discover free crochet patterns, beginner tutorials, amigurumi ideas and crochet tips at CozyLoops.'};
@@ -61,7 +66,7 @@ function applyTheme(t){
   const favicon=safeHttps(t.favicon_url);
   if(favicon){let link=document.querySelector('link[rel="icon"]');if(!link){link=document.createElement('link');link.rel='icon';document.head.append(link)}link.href=favicon}
   document.querySelector('meta[name="theme-color"]').content=validColor(t.primary_color)?t.primary_color:'#75866f';
-  route();
+  route(true);
 }
 async function loadTheme(){
   try{
@@ -90,11 +95,11 @@ async function loadPublishedPosts(){
       posts.push({slug:p.slug,title:p.title,category:p.category||'Crochet Tips',date:p.created_at?new Date(p.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'',minutes:Math.max(1,Math.ceil(body.trim().split(/\s+/).length/200)),image:safeHttps(p.image_url)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000',excerpt:p.excerpt||'',markdown:body});
       if(p.category&&!categories.includes(p.category))categories.push(p.category);
     }
-    articlesLoadError=false;route();
+    articlesLoadError=false;route(true);
   }catch(err){
     articlesLoadError=true;
     console.warn('Unable to load articles from Supabase:',err.message);
-    route();
+    route(true);
   }
 }
 let filter="All",query="";
@@ -144,7 +149,7 @@ function renderArticleMarkdown(source){
   const parts=String(value).split(/(!\[[^\]]*\]\(https:\/\/[^\s)]+\))/g);
   return parts.map(part=>{
    const match=part.match(/^!\[([^\]]*)\]\((https:\/\/[^\s)]+)\)$/);
-   if(match){const url=safeHttps(match[2]);if(url)return '<img loading="lazy" style="width:100%;height:auto;border-radius:14px;margin:16px 0" src="'+esc(url)+'" alt="'+esc(match[1])+'">';}
+   if(match){const url=safeHttps(match[2]);if(url)return '<img loading="lazy" style="width:100%;height:auto;border-radius:14px;margin:16px 0" src="'+esc(url)+'" alt="'+esc(match[1])+'" width="1000" height="625" decoding="async">';}
    return esc(part).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   }).join('');
  };
@@ -158,7 +163,7 @@ function renderArticleMarkdown(source){
   }).join('');
  }).join('');
 }
-function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.date} · ${p.minutes} min read</p><p>${esc(p.excerpt)}</p><img src="${p.image}" alt="${esc(p.title)}"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div>${p.markdown?renderArticleMarkdown(p.markdown):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`}
+function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.date} · ${p.minutes} min read</p><p>${esc(p.excerpt)}</p><img src="${p.image}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div>${p.markdown?renderArticleMarkdown(p.markdown):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`}
 function simplePage(title,content){document.title=title+" | "+siteTheme.site_name;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#home">← Home</a><h1>${title}</h1>${content}</article>`}
 function notFound(){simplePage("Page not found","<p>We couldn't find that page. Browse our crochet articles instead.</p>")}
 let publicContact=[];
@@ -169,7 +174,7 @@ async function loadPublicContact(){
   if(!response.ok)throw Error('Contact request failed');
   const rows=await response.json();
   publicContact=Array.isArray(rows)?rows:[];
-  if(location.hash==='#contact')route();
+  if(location.hash==='#contact')route(true);
  }catch(error){console.warn('Contact unavailable:',error.message);}
 }
 function contactPage(){
@@ -227,7 +232,8 @@ function initAnalyticsConsent(){
   panel.hidden=true;
  });
 }
-function route(){
+function route(preserveScroll=false){
+ const oldY=window.scrollY;
  document.querySelectorAll(".mobile-menu").forEach(menu=>{menu.open=false;});
  let path='';
  try{path=decodeURIComponent(location.hash.slice(1));}catch{path='';}
@@ -238,7 +244,9 @@ function route(){
  else if(path==='terms')simplePage('Terms of Use','<p>Articles are provided for general educational purposes. Results vary by materials, experience and tension. Please use appropriate safety precautions with tools and handmade items.</p><p>Original article text is provided for reading and personal learning. Contact details and site-specific legal information should be finalized before public launch.</p>');
  else if(path==='contact')contactPage();
  else home();
- if(homeAnchor.includes(path)){
+ if(preserveScroll){
+  requestAnimationFrame(()=>window.scrollTo({top:oldY,behavior:'instant'}));
+ }else if(homeAnchor.includes(path)){
   requestAnimationFrame(()=>document.getElementById(path)?.scrollIntoView({block:'start',behavior:'instant'}));
  }else window.scrollTo(0,0);
  recordCurrentView();
