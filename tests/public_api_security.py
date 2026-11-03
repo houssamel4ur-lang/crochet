@@ -48,6 +48,17 @@ class AnonymousPermissions(unittest.TestCase):
         if code == 200:
             self.assertEqual(data, [], "DRAFT CONTENT EXPOSED TO ANONYMOUS USERS")
 
+    def test_hidden_social_links_are_not_exposed(self):
+        code, data = request("social_links", {"select": "platform,is_visible", "is_visible": "eq.false", "limit": "10"})
+        self.assertIn(code, (200, 401, 403, 404))
+        if code == 200:
+            self.assertEqual(len(data), 0, "Anonymous query exposed hidden contact/social links")
+
+    def test_public_theme_is_readable(self):
+        code, data = request("site_settings", {"select": "site_name,site_description", "id": "eq.1", "limit": "1"})
+        self.assertEqual(code, 200, "Public homepage needs to read site title and description")
+        self.assertIsInstance(data, list)
+
     def test_private_view_rows_are_not_exposed(self):
         code, data = request("page_views", {"select": "visitor_hash,page_key", "limit": "1"})
         self.assertTrue(code in (401, 403, 404) or (code == 200 and data == []),
