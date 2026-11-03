@@ -1,7 +1,7 @@
 (() => {
   "use strict";
   const base = "https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/rpc/record_cozyloop_view";
-  const apikey = "sb_publishable_HqkcpvBz8P8KJTZFgefrWQ_rFxKPMNh";
+  const apikey = "sb_publishable_BpOaWu4aKoE5saOhdjaT-g_c9vTG3o8";
   const match = location.pathname.match(/\/posts\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/);
   if (!match) return;
   const page = "post/" + match[1];
