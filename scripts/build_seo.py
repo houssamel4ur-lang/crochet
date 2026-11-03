@@ -52,7 +52,7 @@ def markdown(source):
         for line in lines:
             heading = re.match(r"^(#{1,3})\s+(.+)$", line)
             if heading:
-                level = min(3, len(heading.group(1)) + 1)
+                level = min(4, max(2, len(heading.group(1))))
                 rendered.append(f"<h{level}>{inline(heading.group(2))}</h{level}>")
             else:
                 rendered.append(f"<p>{inline(line)}</p>")
@@ -108,6 +108,7 @@ def render_page(article, css):
 {social_image}
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{structured_json}</script>
+<script defer src="{BASE}scripts/article_analytics.js"></script>
 <style>{css}
 .article-cover{{max-height:520px;width:100%;object-fit:cover;border-radius:18px}}
 .article figure{{margin:22px 0}}.article figure img{{width:100%;height:auto;border-radius:15px}}
@@ -128,6 +129,7 @@ def render_page(article, css):
 <p>Explore more crochet articles and patterns at CozyLoops.</p>
 <a class="btn" href="{BASE}#articles">Browse all articles</a>
 </article></main>
+<aside id="privacy-choice" class="privacy-choice" aria-label="Optional article analytics" hidden><strong>Help us improve CozyLoops?</strong><p>With your permission, we count this article view once per browser per day. We store no names, emails or IP addresses in our analytics table. You can decline and keep reading.</p><div class="actions"><button type="button" id="privacy-decline">No thanks</button><button type="button" class="accept" id="privacy-accept">Allow analytics</button></div></aside>
 <footer><div class="footer-inner"><div><a class="brand" href="{BASE}">CozyLoops ♡</a><p>Slow down, pick up your yarn, and create something lovely.</p></div><div><a href="{BASE}#about">About</a><a href="{BASE}#contact">Contact</a><a href="{BASE}#privacy">Privacy</a></div></div></footer>
 </body></html>
 '''
