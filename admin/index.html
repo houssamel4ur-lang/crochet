@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>CozyLoops Admin</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#29372d;background:#f7f5ef}*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px}
+main{width:min(100%,440px);background:white;border:1px solid #e3e7df;border-radius:18px;padding:28px;box-shadow:0 12px 35px #1c3b2212}
+h1{margin:0 0 5px;color:#50765a}p{color:#647267;line-height:1.5}label{display:block;margin:18px 0 6px;font-weight:600}
+input{width:100%;border:1px solid #bdcbbf;border-radius:10px;padding:13px;font:inherit}button{width:100%;background:#50765a;color:white;border:0;border-radius:10px;padding:13px;font:inherit;font-weight:700;margin-top:20px;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6ef;border-radius:10px;font-size:14px}.error{color:#a42828}.hide{display:none}a{color:#50765a}
+</style></head><body><main>
+<h1>CozyLoops Admin</h1><p>Secure content management</p>
+<div id="setup" class="notice">Supabase connection has not been configured yet. The owner must complete the setup before login is available.</div>
+<form id="login" class="hide"><label for="email">Email</label><input id="email" type="email" autocomplete="username" required>
+<label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
+<button type="submit">Sign in</button></form>
+<div id="dashboard" class="hide"><p id="welcome"></p><p class="notice">Your Super Admin account is verified. Article editing, theme controls, and analytics will be added in the next development steps.</p><button id="logout">Sign out</button></div>
+<p id="message" role="status"></p><p><a href="../">← Back to CozyLoops</a></p>
+</main>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const url=''; // Supabase Project URL (public)
+const publishableKey=''; // sb_publishable_... (public, never secret/service_role)
+const $=id=>document.getElementById(id);
+if(url&&publishableKey){
+  $('setup').classList.add('hide');
+  const supabase=createClient(url,publishableKey);
+  const show=async()=>{
+    const {data:{user}}=await supabase.auth.getUser();
+    let allowed=false;
+    if(user){
+      const {data,error}=await supabase.rpc('is_super_admin');
+      allowed=!error&&data===true;
+    }
+    $('login').classList.toggle('hide',!!user);
+    $('dashboard').classList.toggle('hide',!allowed);
+    if(allowed)$('welcome').textContent='Signed in as '+user.email;
+    if(user&&!allowed){$('message').textContent='This account does not have Super Admin access.';$('message').className='error';$('login').classList.add('hide');}
+  };
+  $('login').addEventListener('submit',async e=>{
+    e.preventDefault();$('message').textContent='';
+    const button=$('login').querySelector('button');button.disabled=true;
+    try{
+      const {error}=await supabase.auth.signInWithPassword({email:$('email').value,password:$('password').value});
+      if(error)throw error;
+      $('password').value='';await show();
+    }catch(err){$('message').textContent=err.message;$('message').className='error';}
+    finally{button.disabled=false;}
+  });
+  $('logout').addEventListener('click',async()=>{await supabase.auth.signOut();$('message').textContent='';await show();});
+  await show();
+}
+</script></body></html>
