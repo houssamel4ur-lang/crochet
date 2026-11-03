@@ -5,6 +5,15 @@
   const match = location.pathname.match(/\/posts\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/);
   if (!match) return;
   const page = "post/" + match[1];
+  const backToTop = document.getElementById("back-to-top");
+  const updateBackToTop = () => {
+    if (backToTop) backToTop.hidden = window.scrollY < 450;
+  };
+  if (backToTop) {
+    backToTop.addEventListener("click", () => window.scrollTo({
+      top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"
+    }));
+  }
   // Update once per frame and avoid blocking scrolling on long patterns.
   const progress = document.getElementById("reading-progress");
   const article = document.querySelector("main article.article");
@@ -17,6 +26,7 @@
       const percentage = Math.max(0, Math.min(100, Math.round(scrolled / total * 100)));
       progress.firstElementChild.style.width = percentage + "%";
       progress.setAttribute("aria-valuenow", String(percentage));
+      updateBackToTop();
     };
     const schedule = () => {
       if (queued) return;
@@ -28,19 +38,6 @@
     schedule();
   }
 
-  const progressBar = document.querySelector(".reading-progress span");
-  const article = document.querySelector("main .article");
-  if (progressBar && article) {
-    const updateProgress = () => {
-      const rect = article.getBoundingClientRect();
-      const distance = Math.max(1, rect.height - window.innerHeight);
-      const amount = Math.max(0, Math.min(1, -rect.top / distance));
-      progressBar.style.transform = "scaleX(" + amount + ")";
-    };
-    window.addEventListener("scroll", updateProgress, {passive:true});
-    window.addEventListener("resize", updateProgress);
-    requestAnimationFrame(updateProgress);
-  }
   const printButton = document.getElementById("article-print-button");
   if (printButton) printButton.addEventListener("click", () => window.print());
   const shareButton = document.getElementById("article-share-button");
