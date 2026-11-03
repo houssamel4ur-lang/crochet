@@ -121,7 +121,7 @@ class SiteQualityTests(unittest.TestCase):
     def test_site_has_consent_and_accessibility(self):
         self.assertIn('id="privacy-choice"', self.home)
         self.assertIn("analyticsConsent()", self.home)
-        self.assertIn('class="mobile-menu"', self.home)
+        self.assertIn('class="site-drawer"', self.home)
         self.assertIn(':focus-visible', self.home)
         self.assertIn('class="skip-link"', self.home)
         self.assertIn('srcset="${imageBase}photo-', self.home)
@@ -159,6 +159,16 @@ class SiteQualityTests(unittest.TestCase):
             self.assertTrue(article["image_url"].startswith("https://"))
             self.assertGreaterEqual(article["content"].count("![") + 1, 3)
             self.assertIn("## Frequently Asked Questions", article["content"])
+
+    def test_restored_saved_design_and_sidebar(self):
+        self.assertNotIn("CozyLoops Theme B", self.home)
+        self.assertIn("photos/4792079/pexels-photo-4792079.jpeg", self.home)
+        self.assertIn('class="nav-menu-toggle"', self.home)
+        self.assertIn('id="site-drawer"', self.home)
+        self.assertIn("scripts/site_navigation.js", self.home)
+        self.assertIn('const posts=[featuredEditorial];', self.home)
+        self.assertIn('crochet-patterns-for-beginners-guide', self.home)
+        self.assertTrue((ROOT / "scripts/site_navigation.js").is_file())
 
     def test_global_search_navigation_available(self):
         self.assertIn('class="nav-search-trigger"', self.home)

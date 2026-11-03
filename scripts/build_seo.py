@@ -175,7 +175,33 @@ def render_page(article, css, articles=None):
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{structured_json}</script>
 <script defer src="{BASE}scripts/article_analytics.js"></script>
+<script defer src="{BASE}scripts/site_navigation.js"></script>
 <style>{css}
+
+/* CozyLoops saved-original appearance preserved; responsive sliding side navigation. */
+.nav{flex-wrap:nowrap;gap:12px}
+.nav>.links,.nav>.mobile-menu{display:none!important}
+.nav-search-trigger,.nav-menu-toggle{width:43px;height:43px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:#fff;border:1px solid var(--line);border-radius:999px;color:var(--green);cursor:pointer;transition:background .18s,color .18s}
+.nav-search-trigger{margin-left:auto}
+.nav-search-trigger:hover,.nav-menu-toggle:hover{background:var(--green);color:white}
+.nav-search-trigger:focus-visible,.nav-menu-toggle:focus-visible,.drawer-close:focus-visible,.drawer-links a:focus-visible{outline:3px solid #bd946e;outline-offset:3px}
+.site-drawer{position:fixed;inset:0;overflow:visible;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:transparent}
+.site-drawer::backdrop{background:rgba(20,29,23,.55)}
+.site-drawer:not([open]){display:none}
+.site-drawer .drawer-panel{position:absolute;right:0;top:0;bottom:0;display:flex;flex-direction:column;width:min(390px,88vw);max-height:100dvh;overflow-y:auto;overscroll-behavior:contain;background:#fcf8f2;color:var(--ink);box-shadow:-20px 0 50px #1c2f2533;padding:25px clamp(20px,4vw,34px);animation:drawer-slide-in .28s cubic-bezier(.2,.8,.2,1) both}
+@keyframes drawer-slide-in{from{transform:translateX(105%)}to{transform:translateX(0)}}
+.drawer-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.drawer-heading span{font:700 27px Georgia,serif;color:var(--green)}
+.drawer-close{width:42px;height:42px;border:1px solid var(--line);border-radius:100%;background:white;color:var(--ink);font-size:28px;line-height:1}
+.drawer-links{display:flex;flex-direction:column;gap:5px;margin-top:24px}
+.drawer-links a{display:block;padding:15px 16px;border-radius:12px;font-weight:700;font-size:18px;line-height:1.4;color:var(--ink);transition:background .16s,transform .16s}
+.drawer-links a:hover{background:#e5eee1;color:var(--green);transform:translateX(-3px)}
+.drawer-links .drawer-search-link{margin-top:12px;background:#eaf0e6;color:var(--green)}
+.drawer-foot{margin-top:auto;padding-top:28px;color:var(--muted);font-size:14px}
+@media(max-width:560px){.nav{gap:8px;padding:12px 18px}.brand{font-size:25px}.nav-search-trigger,.nav-menu-toggle{width:40px;height:40px}}
+@media(prefers-reduced-motion:reduce){.site-drawer .drawer-panel{animation:none!important}.drawer-links a,.nav-search-trigger,.nav-menu-toggle{transition:none!important}}
+@media print{.nav-search-trigger,.nav-menu-toggle,.site-drawer{display:none!important}}
+
 .article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:18px}}
 .article figure{{margin:22px 0}}.article figure img{{width:100%;height:auto;border-radius:15px}}
 .article ul{{padding-left:26px}}.article strong{{font-weight:700}}
@@ -191,7 +217,7 @@ def render_page(article, css, articles=None):
 </head>
 <body>
 <a class="skip-link" href="#content">Skip to content</a>
-<header><nav class="nav"><a class="brand" href="{BASE}">CozyLoops ♡</a><div class="links"><a href="{BASE}">Home</a><a href="{BASE}#articles">Articles</a><a href="{BASE}#categories">Categories</a></div><a class="nav-search-trigger" href="{BASE}#search-articles" aria-label="Search crochet articles" title="Search articles"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></a></nav></header>
+<header><nav class="nav"><a class="brand" href="{BASE}">CozyLoops ♡</a><a class="nav-search-trigger" href="{BASE}#search-articles" aria-label="Search crochet articles" title="Search articles"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></a><button class="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-haspopup="dialog" aria-controls="site-drawer" aria-expanded="false"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></nav></header><dialog class="site-drawer" id="site-drawer" aria-label="Site navigation"><div class="drawer-panel"><div class="drawer-heading"><span>CozyLoops ♡</span><button type="button" class="drawer-close" aria-label="Close navigation menu">×</button></div><nav class="drawer-links" aria-label="Site pages"><a href="{BASE}#home">Home</a><a href="{BASE}#articles">Articles</a><a href="{BASE}#categories">Categories</a><a href="{BASE}#about">About</a><a href="{BASE}#contact">Contact</a><a href="{BASE}#search-articles" class="drawer-search-link">⌕ Search articles</a></nav><p class="drawer-foot">Free patterns, gentle inspiration & handmade joy.</p></div></dialog>
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-label="Article reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
 <button type="button" id="back-to-top" class="back-to-top" aria-label="Back to top" hidden>↑ Top</button>
 <main id="content"><article class="article">
