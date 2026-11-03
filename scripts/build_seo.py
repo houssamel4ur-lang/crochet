@@ -9,7 +9,7 @@ import json
 import os
 from pathlib import Path
 import re
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 from urllib.request import Request, urlopen
 from datetime import datetime, timezone
 
@@ -25,7 +25,20 @@ def esc(value):
     return html.escape(str(value or ""), quote=True)
 
 def safe_image(url):
-    return url if isinstance(url, str) and url.startswith("https://") and not any(c in url for c in '<>"\r\n') else ""
+    """Allow absolute HTTPS images with a valid host and without unsafe controls."""
+    if not isinstance(url, str) or not url or any(ord(c) < 33 or ord(c) == 127 for c in url):
+        return ""
+    if any(c in url for c in '<>"\\'):
+        return ""
+    try:
+        parts = urlsplit(url)
+        if parts.scheme != "https" or not parts.hostname or parts.username or parts.password:
+            return ""
+        if parts.port is not None and parts.port != 443:
+            return ""
+        return url
+    except ValueError:
+        return ""
 
 def inline(value):
     output = []
