@@ -54,7 +54,7 @@ const failures = [];
         assert.equal(await page.locator('.mobile-menu').evaluate(el => el.open), true);
         await page.locator('.mobile-links a[href="#about"]').click();
         await page.waitForURL('**/#about');
-        assert.equal(await page.locator('.mobile-menu').evaluate(el => el.open), false, 'mobile menu closes on navigation');
+        await page.waitForFunction(() => document.querySelector('.mobile-menu')?.open === false, { timeout: 5000 });
       }
       await page.goto(base + '/#post/' + post.slug);
       await page.locator('main article h1').waitFor({ timeout: 12000 });
