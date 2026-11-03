@@ -100,6 +100,9 @@ class SiteQualityTests(unittest.TestCase):
                 self.assertGreater(len(scan.descriptions[0]), 30)
                 self.assertEqual(scan.canonicals, [PUBLIC_BASE + "posts/" + slug + "/"])
                 self.assertIn('"@type": "BlogPosting"', content)
+                self.assertIn('id="article-privacy-opt-out"', content)
+                self.assertIn('id="article-consent-status"', content)
+                self.assertIn('scripts/article_analytics.js', content)
                 for image in scan.images:
                     self.assertTrue(image.get("alt"), "image is missing meaningful alt text")
                 self.assertIn(PUBLIC_BASE + "posts/" + slug + "/", self.sitemap)
