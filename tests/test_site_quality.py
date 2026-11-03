@@ -99,6 +99,9 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn('srcset="${imageBase}photo-', self.home)
         self.assertIn('sizes="(max-width:800px)', self.home)
         self.assertIn('function route(preserveScroll=false)', self.home)
+        self.assertIn('function readablePrimary(', self.home)
+        self.assertTrue((ROOT / "favicon.svg").is_file())
+        self.assertIn('rel="icon"', self.home)
 
 
     def test_sitemap_contains_only_valid_public_urls(self):
