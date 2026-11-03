@@ -18,6 +18,9 @@ Admin dashboard: https://houssamel4ur-lang.github.io/crochet/admin/
 | Public Supabase Security Checks | **Live read-only** anonymous access to published/draft posts, hidden social links, public theme, page-view rows, privileged RPCs |
 | Lighthouse Performance Audit | Scheduled lab measurements of homepage and sample article; results vary between runs |
 | Live Production Release Checks | Read-only checks of the deployed homepage, admin noindex, all published static articles, sitemap consistency, privacy controls, cover image alt/dimensions, share metadata and project-safe links |
+| Published Image Availability Audit | Weekly read-only HTTP HEAD checks of unique article cover/inline image URLs; clear broken links fail the audit, transient provider errors are warnings |
+
+Live production checks also confirm important site assets and navigation links are accessible. Image links may be reused across multiple articles.
 
 Each workflow is available in the repository's **Actions** tab. A green run only verifies the listed checks; it does not guarantee the complete site or database is secure.
 
