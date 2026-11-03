@@ -138,6 +138,21 @@ class LiveSiteTests(unittest.TestCase):
         for link in ("#home", "#articles", "#categories", "#about", "#contact"):
             self.assertIn('href="' + link + '"', self.home)
 
+    def test_custom_404_page_and_robots(self):
+        html = fetch("404.html")
+        self.assertIn("Page Not Found | CozyLoops", html)
+        self.assertIn('<meta name="robots" content="noindex,follow">', html)
+        self.assertIn('href="/crochet/"', html)
+        robots = fetch("robots.txt")
+        self.assertIn("Sitemap: " + BASE + "sitemap.xml", robots)
+
+    def test_article_reading_controls_available(self):
+        for slug in self.manifest:
+            with self.subTest(slug=slug):
+                html = fetch("posts/" + slug + "/")
+                self.assertEqual(html.count('id="reading-progress"'), 1)
+                self.assertEqual(html.count('id="back-to-top"'), 1)
+
     def test_analytics_script_available(self):
         script = fetch("scripts/article_analytics.js")
         self.assertIn('article-privacy-opt-out', script)
