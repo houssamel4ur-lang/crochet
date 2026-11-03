@@ -79,7 +79,11 @@ async function loadPublishedPosts(){
     if(!Array.isArray(rows))return;
     const existing=new Set(posts.map(p=>p.slug));
     for(const p of rows){
-      if(!p.slug||!p.title||existing.has(p.slug))continue;
+      if(!p.slug||!p.title)continue;
+      if(existing.has(p.slug)){
+        const index=posts.findIndex(article=>article.slug===p.slug);
+        if(index!==-1)posts.splice(index,1);
+      }
       existing.add(p.slug);
       const body=String(p.content||'');
       const paragraphs=body.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
