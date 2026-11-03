@@ -58,7 +58,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <p class="muted">These settings are stored in Supabase. Applying them to the public site is a separate step.</p></section>
 <section id="panel-social" class="admin-panel"><h2>Social Media</h2><p class="muted">Manage your public social links.</p><div id="social-fields"></div><button id="save-social" type="button">Save Changes</button><p id="social-message" role="status"></p></section>
 <section id="panel-contact" class="admin-panel"><h2>Contact</h2><p class="muted">Set the contact details visitors can use to reach CozyLoops.</p><label for="contact-email">Contact email</label><input id="contact-email" type="email" placeholder="hello@example.com"><label class="visibility"><input id="contact-email-visible" type="checkbox">Show email on website</label><label for="contact-whatsapp">WhatsApp link</label><input id="contact-whatsapp" type="url" placeholder="https://wa.me/123456789"><label class="visibility"><input id="contact-whatsapp-visible" type="checkbox">Show WhatsApp on website</label><button id="save-contact" type="button">Save Contact</button><p id="contact-message" role="status"></p></section>
-<section id="panel-analytics" class="admin-panel"><h2>Analytics</h2><p class="muted">Content statistics from Supabase — updated when articles load.</p><div id="analytics-stats" class="stats-grid" aria-live="polite"><p>Loading...</p></div><h3>Articles by section</h3><div id="analytics-categories"></div><h3>Visitor analytics</h3><p class="notice">Google Analytics is not connected yet. Visitor counts, page views, traffic sources and countries cannot be displayed until tracking is set up.</p><p><a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer">Set up Google Analytics ↗</a></p></section>
+<section id="panel-analytics" class="admin-panel"><h2>Analytics</h2><p class="muted">Content statistics from Supabase — updated when articles load.</p><div id="analytics-stats" class="stats-grid" aria-live="polite"><p>Loading...</p></div><h3>Articles by section</h3><div id="analytics-categories"></div><h3>Visitor analytics</h3><p class="muted">Counts consenting browser visits once per page per day. Not exact unique people.</p><div id="visitor-stats" class="stats-grid"><p>Loading visitor counts...</p></div><h3>Top 10 articles by views</h3><div id="top-viewed-posts"></div><p id="visitor-analytics-message" class="muted"></p><p class="notice">Countries, traffic sources and detailed user analytics need a separate privacy-reviewed Google Analytics integration.</p><p><a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer">Set up Google Analytics ↗</a></p></section>
 <section id="panel-settings" class="admin-panel"><h2>Settings</h2><p class="notice">Site information and SEO settings will be added here.</p></section>
 <section id="panel-account" class="admin-panel"><h2>Admin Account</h2><p class="notice">Super Admin access verified.</p><button id="logout">Sign out</button></section>
 </div></div></div>
@@ -77,6 +77,32 @@ if(url&&publishableKey){
   let postRows=[],editingPost=null;
   const slugify=v=>v.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,180);
   const postField=k=>$('post-'+k);
+  const loadVisitorAnalytics=async()=>{
+    const msg=$('visitor-analytics-message'),root=$('visitor-stats'),top=$('top-viewed-posts');
+    msg.textContent='';root.replaceChildren();top.replaceChildren();
+    const {data,error}=await supabase.rpc('cozyloop_analytics');
+    if(error){
+      msg.textContent='Visitor counts are not configured yet. Run supabase/page_view_analytics.sql in Supabase SQL Editor. ('+error.message+')';
+      msg.className='muted';return;
+    }
+    const metrics=[['Page views',data.total_page_views],['Home views',data.home_views],['Article views',data.article_views],['Today (UTC)',data.today_page_views]];
+    for(const [name,value] of metrics){
+      const box=document.createElement('div');box.className='stat-box';
+      const num=document.createElement('strong');num.textContent=String(value??0);
+      const label=document.createElement('span');label.textContent=name;
+      box.append(num,label);root.append(box);
+    }
+    const values=Array.isArray(data.top_articles)?data.top_articles:[];
+    if(!values.length){const p=document.createElement('p');p.textContent='No tracked article views yet.';top.append(p);}
+    else{
+      const list=document.createElement('ol');list.className='summary-list';
+      for(const item of values){
+        const article=postRows.find(p=>p.slug===item.slug);
+        const row=document.createElement('li');row.textContent=(article?.title||item.slug)+' — '+item.views+' views';list.append(row);
+      }
+      top.append(list);
+    }
+  };
   const renderStats=()=>{
     const total=postRows.length;
     const published=postRows.filter(p=>p.status==='published').length;
@@ -137,7 +163,7 @@ if(url&&publishableKey){
     postMsg.textContent='Loading posts...';postMsg.className='';
     const {data,error}=await supabase.from('articles').select('id,title,slug,category,status,excerpt,content,image_url,created_at').order('created_at',{ascending:false});
     if(error){postMsg.textContent='Could not load posts: '+error.message;postMsg.className='error';return;}
-    postRows=data||[];updatePostSections();renderStats();postMsg.textContent=postRows.length+' database post(s).';
+    postRows=data||[];updatePostSections();renderStats();loadVisitorAnalytics();postMsg.textContent=postRows.length+' database post(s).';
     postList.replaceChildren();
     if(!postRows.length){const p=document.createElement('p');p.className='notice';p.textContent='No database articles yet. Click New Post to create one.';postList.append(p);}
     for(const post of postRows){
