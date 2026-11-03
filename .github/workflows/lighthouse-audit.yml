@@ -31,11 +31,11 @@ jobs:
           CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser)
           if [ -z "$CHROME" ]; then echo "Chrome not available" >&2; exit 1; fi
           export CHROME_PATH="$CHROME"
-          node_modules/.bin/lighthouse 'https://houssamel4ur-lang.github.io/crochet/' \
+          node_modules/.bin/lighthouse 'https://cozyloops.site/' \
             --only-categories=performance,accessibility,best-practices,seo \
             --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' \
             --output=json --output-path=lighthouse-reports/home-mobile.json --quiet
-          node_modules/.bin/lighthouse 'https://houssamel4ur-lang.github.io/crochet/posts/crochet-for-absolute-beginners/' \
+          node_modules/.bin/lighthouse 'https://cozyloops.site/posts/crochet-for-absolute-beginners/' \
             --only-categories=performance,accessibility,best-practices,seo \
             --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' \
             --output=json --output-path=lighthouse-reports/article-mobile.json --quiet
