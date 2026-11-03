@@ -66,7 +66,19 @@ function applyTheme(t){
   const favicon=safeHttps(t.favicon_url);
   if(favicon){let link=document.querySelector('link[rel="icon"]');if(!link){link=document.createElement('link');link.rel='icon';document.head.append(link)}link.href=favicon}
   document.querySelector('meta[name="theme-color"]').content=validColor(t.primary_color)?t.primary_color:'#75866f';
-  route(true);
+  const view=location.hash.slice(1);
+  const meta=document.querySelector('meta[name="description"]');
+  if(view.startsWith('post/')){
+    const post=posts.find(p=>p.slug===view.slice(5));
+    if(post)document.title=post.title+' | '+siteTheme.site_name;
+  }else if(view.startsWith('category/')){
+    document.title=decodeURIComponent(view.slice(9))+' | '+siteTheme.site_name;
+  }else if(['privacy','terms','contact'].includes(view)){
+    document.title=(view.charAt(0).toUpperCase()+view.slice(1))+' | '+siteTheme.site_name;
+  }else{
+    document.title=siteTheme.site_name+' | Free Crochet Patterns, Tutorials & Ideas';
+    meta.content=siteTheme.site_description;
+  }
 }
 async function loadTheme(){
   try{
@@ -95,11 +107,11 @@ async function loadPublishedPosts(){
       posts.push({slug:p.slug,title:p.title,category:p.category||'Crochet Tips',date:p.created_at?new Date(p.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'',minutes:Math.max(1,Math.ceil(body.trim().split(/\s+/).length/200)),image:safeHttps(p.image_url)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000',excerpt:p.excerpt||'',markdown:body});
       if(p.category&&!categories.includes(p.category))categories.push(p.category);
     }
-    articlesLoadError=false;route(true);
+    articlesLoadError=false;refreshPostResults();
   }catch(err){
     articlesLoadError=true;
     console.warn('Unable to load articles from Supabase:',err.message);
-    route(true);
+    refreshPostResults();
   }
 }
 let filter="All",query="";
@@ -130,6 +142,19 @@ function home(){document.title=siteTheme.site_name+" | Free Crochet Patterns, Tu
 <div id="categorySections"></div><section class="section feature" id="about"><div class="container feature-inner"><img loading="lazy" src="${imageBase}photo-1494438639946-1ebd1d20bf85?w=700&auto=format&q=78" srcset="${imageBase}photo-1494438639946-1ebd1d20bf85?w=420&auto=format&q=78 420w, ${imageBase}photo-1494438639946-1ebd1d20bf85?w=700&auto=format&q=78 700w, ${imageBase}photo-1494438639946-1ebd1d20bf85?w=1000&auto=format&q=78 1000w" sizes="(max-width:800px) 100vw, 45vw" alt="Cozy creative workspace" width="1000" height="700" decoding="async"><div><span class="eyebrow">Hello, maker!</span><h2>A Little About CozyLoops</h2><p>CozyLoops is a crochet inspiration blog dedicated to approachable techniques, project ideas and the pleasure of making things by hand. Whether you are learning your first chain or exploring amigurumi, there is always something new to try.</p><a class="btn" href="#articles">Start Exploring</a></div></div></section>
 <section class="newsletter"><div class="container"><span class="eyebrow">Stay inspired</span><h2>Keep Your Creativity Growing</h2><p>Discover more free crochet ideas and explore our latest tutorials and patterns.</p><a class="btn" href="#articles">Browse the Articles</a></div></section>`;document.getElementById("search").addEventListener("input",e=>{query=e.target.value;drawCards()});document.querySelectorAll("[data-category]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.category;document.querySelectorAll("[data-category]").forEach(x=>x.classList.toggle("active",x===b));drawCards()}));drawCards();drawCategorySections()}
 function drawCards(){const list=posts.filter(p=>(filter==="All"||p.category===filter)&&(p.title+" "+p.excerpt+" "+p.category).toLowerCase().includes(query.toLowerCase()));document.getElementById("postGrid").innerHTML=articlesLoadError?'<p class="empty">Articles are temporarily unavailable. Please refresh this page.</p>':list.length?list.map(card).join(""):'<p class="empty">No published articles found.</p>'}
+function refreshPostResults(){
+  const grid=document.getElementById('postGrid');
+  const chipArea=document.querySelector('.chips');
+  if(!grid||!chipArea){route(true);return;}
+  chipArea.innerHTML=categories.map(c=>`<button class="chip ${filter===c?"active":""}" data-category="${esc(c)}">${esc(c)}</button>`).join('');
+  chipArea.querySelectorAll('[data-category]').forEach(button=>button.addEventListener('click',()=>{
+    filter=button.dataset.category;
+    chipArea.querySelectorAll('[data-category]').forEach(x=>x.classList.toggle('active',x===button));
+    drawCards();
+  }));
+  drawCards();
+  drawCategorySections();
+}
 function drawCategorySections(){
   const root=document.getElementById('categorySections');if(!root)return;
   root.innerHTML=categories.filter(c=>c!=='All').map(c=>{
