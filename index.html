@@ -61,37 +61,30 @@ async function loadTheme(){
   }catch(err){console.warn('Using default theme:',err.message)}
 }
 const imageBase="https://images.unsplash.com/";
-const posts=[
-{slug:"crochet-for-absolute-beginners",title:"Crochet for Absolute Beginners: Your First Steps",category:"Beginner Tutorials",date:"November 3, 2026",minutes:7,image:imageBase+"photo-1606761568499-6d2451b23c66?w=1000",excerpt:"Learn what you need to start crocheting, from yarn and hooks to your first simple stitches.",sections:[["What You Need","Start with medium-weight yarn, a comfortable hook that matches your yarn label, scissors, and a yarn needle. Light-colored yarn makes stitches easier to see."],["Make a Slip Knot","Form a loop with your yarn, pull a strand through it, and gently tighten the knot around your hook. Keep it loose enough to slide."],["Practice Chain Stitches","Wrap the working yarn over your hook and pull it through the loop. Repeat to make a chain. Try making 20 chains with an even tension."],["Try Single Crochet","Insert the hook into the second chain from your hook, yarn over and pull up a loop. Yarn over again and pull through both loops. Repeat along the row."],["Your Next Project","Make a small square or washcloth to practice. Count your stitches at the end of each row and take your time."]]},
-{slug:"how-to-read-crochet-patterns",title:"How to Read a Crochet Pattern Without Stress",category:"Crochet Tips",date:"November 3, 2026",minutes:6,image:imageBase+"photo-1494438639946-1ebd1d20bf85?w=1000",excerpt:"Understand common abbreviations, repeats and pattern notes before your next project.",sections:[["Start With the Notes","Check the recommended yarn, hook size, gauge, finished measurements and terminology. US and UK crochet stitch names can differ."],["Common US Abbreviations","ch means chain, sc means single crochet, dc means double crochet, st means stitch, sl st means slip stitch, and rep means repeat."],["Understanding Repeats","Instructions in parentheses or brackets often indicate a group of stitches to repeat. Always check the stitch count at the end of each row or round."],["Read One Row at a Time","Mark completed rows, use a stitch marker, and write down any changes you make to yarn or hook size."]]},
-{slug:"easy-crochet-scarf-guide",title:"Easy Crochet Scarf: A Simple Project Plan",category:"Free Patterns",date:"November 3, 2026",minutes:8,image:imageBase+"photo-1606761568499-6d2451b23c66?w=1000",excerpt:"Plan a beginner-friendly scarf using a simple repeat and learn how to adjust the size.",sections:[["Materials","Choose approximately 300–450 yards of medium-weight yarn for a basic adult scarf, depending on desired dimensions and stitch tension. Use the hook size recommended on the yarn label."],["Make Your Foundation","Chain until the foundation is approximately as wide as you want the scarf. Make one extra chain for turning."],["Work the Rows","Single crochet in the second chain from your hook and in each chain across. Chain one, turn, and single crochet across each row. Repeat until the scarf reaches your preferred length."],["Finish Your Scarf","Fasten off, weave in the ends securely, and gently block according to your yarn's care instructions."]]},
-{slug:"amigurumi-basics",title:"Amigurumi Basics: Make Your First Crochet Toy",category:"Amigurumi",date:"November 3, 2026",minutes:7,image:imageBase+"photo-1559454403-b8fb88521f11?w=1000",excerpt:"Discover the essential techniques behind cute crocheted toys and stuffed animals.",sections:[["Choose Your Supplies","Use smooth yarn, a hook slightly smaller than the yarn label recommends, stitch markers, stuffing and a yarn needle."],["Learn the Magic Ring","A magic ring lets you begin working in the round with a small center opening. You can also start with a short chain ring."],["Increase and Decrease","An increase places two stitches into one stitch. An invisible decrease joins two stitches into one to shape your toy."],["Keep Track of Rounds","Move your stitch marker at the beginning of every round and count stitches regularly."],["Toy Safety","For toys intended for babies or young children, avoid detachable decorations and plastic safety eyes; securely embroidered features are generally preferable."]]},
-{slug:"choosing-crochet-yarn",title:"How to Choose the Right Yarn for Crochet",category:"Crochet Tips",date:"November 3, 2026",minutes:5,image:imageBase+"photo-1606761568499-6d2451b23c66?w=1000",excerpt:"Compare yarn weight, fiber, texture and care instructions for your crochet projects.",sections:[["Understand Yarn Weight","Yarn weight describes thickness, not the weight of the whole skein. Check the label for recommended hook sizes and gauge."],["Compare Fibers","Cotton is popular for washcloths and summer projects. Wool is warm and elastic. Acrylic is often affordable and easy to care for."],["Match Yarn to the Project","Choose soft, washable yarn for everyday items and consider drape, durability and care before starting."],["Make a Swatch","A small test square helps you check stitch definition, fabric feel and finished size."]]},
-{slug:"crochet-stitch-counting",title:"5 Easy Ways to Keep Your Crochet Stitches Even",category:"Beginner Tutorials",date:"November 3, 2026",minutes:5,image:imageBase+"photo-1494438639946-1ebd1d20bf85?w=1000",excerpt:"Simple habits to help avoid uneven edges, lost stitches and frustrating do-overs.",sections:[["Count Every Row","Count stitches at the end of each row, especially when learning a new pattern."],["Use Stitch Markers","Mark the first and last stitch to help keep edges straight."],["Watch Your Tension","Hold yarn comfortably and try to keep your loops consistent without pulling too tightly."],["Check Turning Chains","Read whether the pattern counts the turning chain as a stitch."],["Practice Slowly","Accuracy comes before speed. Small swatches are an excellent way to build muscle memory."]]}
-];
+const posts=[];
 const categories=["All","Beginner Tutorials","Free Patterns","Amigurumi","Crochet Tips"];
+let articlesLoadError=false;
 async function loadPublishedPosts(){
   try{
     const endpoint='https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/articles?status=eq.published&select=title,slug,content,excerpt,image_url,category,created_at&order=created_at.desc';
     const res=await fetch(endpoint,{headers:{apikey:themeKey}});
-    if(!res.ok)throw Error('Articles request failed');
+    if(!res.ok)throw Error('Article request returned '+res.status);
     const rows=await res.json();
-    if(!Array.isArray(rows))return;
-    const existing=new Set(posts.map(p=>p.slug));
+    if(!Array.isArray(rows))throw Error('Unexpected article response');
+    posts.length=0;
+    categories.splice(1,categories.length-1,'Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips');
     for(const p of rows){
       if(!p.slug||!p.title)continue;
-      if(existing.has(p.slug)){
-        const index=posts.findIndex(article=>article.slug===p.slug);
-        if(index!==-1)posts.splice(index,1);
-      }
-      existing.add(p.slug);
       const body=String(p.content||'');
-      const paragraphs=body.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
-      posts.unshift({slug:p.slug,title:p.title,category:p.category||'Crochet Tips',date:p.created_at?new Date(p.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'',minutes:Math.max(1,Math.ceil(body.split(/\s+/).length/200)),image:safeHttps(p.image_url)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000',excerpt:p.excerpt||'',sections:paragraphs.map(text=>['',text]),markdown:body});
-      if(!categories.includes(p.category)&&p.category)categories.push(p.category);
+      posts.push({slug:p.slug,title:p.title,category:p.category||'Crochet Tips',date:p.created_at?new Date(p.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'',minutes:Math.max(1,Math.ceil(body.trim().split(/\s+/).length/200)),image:safeHttps(p.image_url)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000',excerpt:p.excerpt||'',markdown:body});
+      if(p.category&&!categories.includes(p.category))categories.push(p.category);
     }
+    articlesLoadError=false;route();
+  }catch(err){
+    articlesLoadError=true;
+    console.warn('Unable to load articles from Supabase:',err.message);
     route();
-  }catch(err){console.warn('Using built-in articles:',err.message)}
+  }
 }
 let filter="All",query="";
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -101,7 +94,7 @@ function home(){document.title=siteTheme.site_name+" | Free Crochet Patterns, Tu
 <section class="section" id="articles"><div class="container"><div class="section-head"><div><span class="eyebrow">Fresh inspiration</span><h2>Latest Crochet Articles</h2></div><span>Learn one stitch at a time ♡</span></div><div class="controls" id="categories"><input class="search" id="search" aria-label="Search articles" placeholder="Search articles..." value="${esc(query)}"><div class="chips">${categories.map(c=>`<button class="chip ${filter===c?"active":""}" data-category="${esc(c)}">${esc(c)}</button>`).join("")}</div></div><div class="grid" id="postGrid"></div></div></section>
 <div id="categorySections"></div><section class="section feature" id="about"><div class="container feature-inner"><img loading="lazy" src="${imageBase}photo-1494438639946-1ebd1d20bf85?w=1000" alt="Cozy creative workspace"><div><span class="eyebrow">Hello, maker!</span><h2>A Little About CozyLoops</h2><p>CozyLoops is a crochet inspiration blog dedicated to approachable techniques, project ideas and the pleasure of making things by hand. Whether you are learning your first chain or exploring amigurumi, there is always something new to try.</p><a class="btn" href="#articles">Start Exploring</a></div></div></section>
 <section class="newsletter"><div class="container"><span class="eyebrow">Stay inspired</span><h2>Join Our Cozy Community</h2><p>Newsletter registration is coming soon. For now, bookmark CozyLoops for new articles.</p><form id="newsletterForm"><input type="email" required placeholder="Your email address" aria-label="Email address"><button class="btn" type="submit">Join the List</button></form><p class="notice" id="newsletterMessage">No emails are collected yet.</p></div></section>`;document.getElementById("search").addEventListener("input",e=>{query=e.target.value;drawCards()});document.querySelectorAll("[data-category]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.category;document.querySelectorAll("[data-category]").forEach(x=>x.classList.toggle("active",x===b));drawCards()}));document.getElementById("newsletterForm").addEventListener("submit",e=>{e.preventDefault();document.getElementById("newsletterMessage").textContent="Newsletter signup is not enabled yet. Please check back later."});drawCards();drawCategorySections()}
-function drawCards(){const list=posts.filter(p=>(filter==="All"||p.category===filter)&&(p.title+" "+p.excerpt+" "+p.category).toLowerCase().includes(query.toLowerCase()));document.getElementById("postGrid").innerHTML=list.length?list.map(card).join(""):'<p class="empty">No articles found. Try another search.</p>'}
+function drawCards(){const list=posts.filter(p=>(filter==="All"||p.category===filter)&&(p.title+" "+p.excerpt+" "+p.category).toLowerCase().includes(query.toLowerCase()));document.getElementById("postGrid").innerHTML=articlesLoadError?'<p class="empty">Articles are temporarily unavailable. Please refresh this page.</p>':list.length?list.map(card).join(""):'<p class="empty">No published articles found.</p>'}
 function drawCategorySections(){
   const root=document.getElementById('categorySections');if(!root)return;
   root.innerHTML=categories.filter(c=>c!=='All').map(c=>{
