@@ -7,7 +7,7 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;padding:16px}
 main{width:min(100%,920px);background:white;border:1px solid #e3e7df;border-radius:18px;padding:28px;box-shadow:0 12px 35px #1c3b2212}
 h1{margin:0 0 5px;color:#50765a}p{color:#647267;line-height:1.5}label{display:block;margin:18px 0 6px;font-weight:600}
 input{width:100%;border:1px solid #bdcbbf;border-radius:10px;padding:13px;font:inherit}button{width:100%;background:#50765a;color:white;border:0;border-radius:10px;padding:13px;font:inherit;font-weight:700;margin-top:20px;cursor:pointer}
-button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6ef;border-radius:10px;font-size:14px}.error{color:#a42828}.hide{display:none}.social-item{padding:14px 0;border-bottom:1px solid #e6ebe5}.social-item label{margin:0 0 8px}.social-item input[type=checkbox]{width:auto;margin:0 8px 0 0}.visibility{display:flex;align-items:center;margin-top:10px;font-size:14px;color:#4c6552}.muted{font-size:13px;color:#718075}.success{color:#256a40}a{color:#50765a}.admin-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;margin-top:20px}.admin-nav{display:flex;flex-direction:column;gap:6px}.admin-nav button{margin:0;text-align:left;background:#f2f6ef;color:#35513d;padding:12px;font-size:14px}.admin-nav button.active{background:#50765a;color:white}.admin-content{min-width:0}.admin-panel{display:none}.admin-panel.active{display:block}.admin-panel h2{margin-top:0}.admin-panel .notice{margin-top:14px}.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.theme-grid label{font-size:14px}.theme-grid input[type=color]{height:48px;padding:5px}.theme-grid input[type=number]{max-width:180px}@media(max-width:650px){.theme-grid{grid-template-columns:1fr}}@media(max-width:650px){main{padding:18px}.admin-layout{display:block}.admin-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:24px}.admin-nav button{font-size:13px;padding:11px 8px}}
+button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6ef;border-radius:10px;font-size:14px}.error{color:#a42828}.hide{display:none}.social-item{padding:14px 0;border-bottom:1px solid #e6ebe5}.social-item label{margin:0 0 8px}.social-item input[type=checkbox]{width:auto;margin:0 8px 0 0}.visibility{display:flex;align-items:center;margin-top:10px;font-size:14px;color:#4c6552}.muted{font-size:13px;color:#718075}.success{color:#256a40}a{color:#50765a}.admin-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;margin-top:20px}.admin-nav{display:flex;flex-direction:column;gap:6px}.admin-nav button{margin:0;text-align:left;background:#f2f6ef;color:#35513d;padding:12px;font-size:14px}.admin-nav button.active{background:#50765a;color:white}.admin-content{min-width:0}.admin-panel{display:none}.admin-panel.active{display:block}.admin-panel h2{margin-top:0}.admin-panel .notice{margin-top:14px}.post-actions{display:flex;gap:8px;flex-wrap:wrap}.post-actions button{width:auto;margin-top:8px;padding:9px 13px}.post-row{border-bottom:1px solid #e5e7df;padding:13px 0}.post-row strong{display:block}.post-row small{color:#718075}.post-form textarea,.post-form select{width:100%;border:1px solid #bdcbbf;border-radius:10px;padding:12px;font:inherit}.post-form textarea{min-height:210px;resize:vertical}.post-form .secondary,.post-actions .secondary{background:#edf3eb;color:#35513d}.post-actions .danger{background:#a42828}.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.theme-grid label{font-size:14px}.theme-grid input[type=color]{height:48px;padding:5px}.theme-grid input[type=number]{max-width:180px}@media(max-width:650px){.theme-grid{grid-template-columns:1fr}}@media(max-width:650px){main{padding:18px}.admin-layout{display:block}.admin-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:24px}.admin-nav button{font-size:13px;padding:11px 8px}}
 </style></head><body><main>
 <h1>CozyLoops Admin</h1><p>Secure content management</p>
 <div id="setup" class="notice">Supabase connection has not been configured yet. The owner must complete the setup before login is available.</div>
@@ -26,7 +26,21 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <button type="button" data-panel="account">♙ Admin Account</button>
 </nav><div class="admin-content">
 <section id="panel-overview" class="admin-panel active"><h2>Dashboard</h2><p class="notice">Your Super Admin account is verified.</p><p>Welcome to your CozyLoops control panel. Choose a section from the menu.</p></section>
-<section id="panel-posts" class="admin-panel"><h2>Posts</h2><p class="notice">Post management is coming in the next development step. Existing articles are unchanged.</p></section>
+<section id="panel-posts" class="admin-panel"><h2>Posts</h2><p class="muted">Create, edit, publish and manage your articles. The six original static posts remain unchanged.</p>
+<div class="post-actions"><button type="button" id="new-post">+ New Post</button><button type="button" class="secondary" id="refresh-posts">Refresh</button></div>
+<p id="posts-message" role="status"></p><div id="posts-list"></div>
+<form id="post-form" class="post-form hide">
+<h3 id="post-form-heading">New Post</h3>
+<label for="post-title">Title</label><input id="post-title" required maxlength="180">
+<label for="post-slug">Slug (URL)</label><input id="post-slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxlength="180">
+<label for="post-category">Category</label><select id="post-category"><option>Beginner Tutorials</option><option>Free Patterns</option><option>Amigurumi</option><option>Crochet Tips</option></select>
+<label for="post-excerpt">Excerpt</label><textarea id="post-excerpt" rows="3" maxlength="500" required></textarea>
+<label for="post-image">Image URL (HTTPS)</label><input id="post-image" type="url" placeholder="https://...">
+<label for="post-content">Article content (plain text, paragraphs separated by blank lines)</label><textarea id="post-content" required></textarea>
+<label for="post-status">Status</label><select id="post-status"><option value="draft">Draft</option><option value="published">Published</option></select>
+<div class="post-actions"><button id="save-post" type="submit">Save Post</button><button type="button" id="cancel-post" class="secondary">Cancel</button></div>
+<p id="post-form-message" role="status"></p>
+</form></section>
 <section id="panel-theme" class="admin-panel"><h2>Theme</h2><p class="muted">Customize CozyLoops branding, colors, fonts, and corners.</p>
 <div class="theme-grid">
 <div><label for="theme-site_name">Site name</label><input id="theme-site_name" maxlength="120"></div>
@@ -59,6 +73,67 @@ if(url&&publishableKey){
   $('setup').classList.add('hide');
   const supabase=createClient(url,publishableKey);
   document.querySelectorAll('.admin-nav button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.admin-nav button').forEach(b=>b.classList.toggle('active',b===button));document.querySelectorAll('.admin-panel').forEach(panel=>panel.classList.toggle('active',panel.id==='panel-'+button.dataset.panel));}));
+  const postForm=$('post-form'),postList=$('posts-list'),postMsg=$('posts-message');
+  let postRows=[],editingPost=null;
+  const slugify=v=>v.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,180);
+  const postField=k=>$('post-'+k);
+  const loadPosts=async()=>{
+    postMsg.textContent='Loading posts...';postMsg.className='';
+    const {data,error}=await supabase.from('articles').select('id,title,slug,category,status,excerpt,content,image_url,created_at').order('created_at',{ascending:false});
+    if(error){postMsg.textContent='Could not load posts: '+error.message;postMsg.className='error';return;}
+    postRows=data||[];postMsg.textContent=postRows.length+' database post(s).';
+    postList.replaceChildren();
+    if(!postRows.length){const p=document.createElement('p');p.className='notice';p.textContent='No database articles yet. Click New Post to create one.';postList.append(p);}
+    for(const post of postRows){
+      const row=document.createElement('div');row.className='post-row';
+      const name=document.createElement('strong');name.textContent=post.title;
+      const info=document.createElement('small');info.textContent=(post.category||'Uncategorized')+' · '+(post.status||'draft')+' · '+post.slug;
+      const actions=document.createElement('div');actions.className='post-actions';
+      const edit=document.createElement('button');edit.type='button';edit.className='secondary';edit.textContent='Edit';edit.addEventListener('click',()=>openPost(post));
+      const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='Delete';del.addEventListener('click',()=>deletePost(post));
+      actions.append(edit,del);row.append(name,info,actions);postList.append(row);
+    }
+  };
+  const openPost=(post=null)=>{
+    editingPost=post?.id||null;
+    postForm.reset();postForm.classList.remove('hide');postList.classList.add('hide');
+    $('post-form-heading').textContent=post?'Edit Post':'New Post';
+    for(const key of ['title','slug','category','excerpt','content','status'])if(post&&post[key]!=null)postField(key).value=post[key];
+    postField('image').value=post?.image_url||'';
+    $('post-form-message').textContent='';postField('title').focus();
+  };
+  $('new-post').addEventListener('click',()=>openPost());
+  $('refresh-posts').addEventListener('click',loadPosts);
+  $('cancel-post').addEventListener('click',()=>{postForm.classList.add('hide');postList.classList.remove('hide');});
+  postField('title').addEventListener('input',()=>{
+    if(!editingPost&&(!postField('slug').value||postField('slug').dataset.auto==='true')){
+      postField('slug').value=slugify(postField('title').value);postField('slug').dataset.auto='true';
+    }
+  });
+  postField('slug').addEventListener('input',()=>{postField('slug').dataset.auto='false';});
+  postForm.addEventListener('submit',async e=>{
+    e.preventDefault();const btn=$('save-post'),msg=$('post-form-message');btn.disabled=true;msg.textContent='Saving...';msg.className='';
+    try{
+      const title=postField('title').value.trim(),slug=postField('slug').value.trim().toLowerCase();
+      const image=postField('image').value.trim();
+      if(!title||!slug||!postField('content').value.trim())throw Error('Title, slug and content are required.');
+      if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))throw Error('Slug must use lowercase letters, numbers and hyphens.');
+      if(image){const u=new URL(image);if(u.protocol!=='https:')throw Error('Image URL must use HTTPS.');}
+      const payload={title,slug,category:postField('category').value,excerpt:postField('excerpt').value.trim(),content:postField('content').value.trim(),image_url:image||null,status:postField('status').value};
+      const result=editingPost?await supabase.from('articles').update(payload).eq('id',editingPost).select('id'):await supabase.from('articles').insert(payload).select('id');
+      if(result.error)throw result.error;
+      if(!result.data?.length)throw Error('No article was saved.');
+      postForm.classList.add('hide');postList.classList.remove('hide');await loadPosts();
+      postMsg.textContent='Post saved successfully.';postMsg.className='success';
+    }catch(err){msg.textContent=err.message;msg.className='error';}
+    finally{btn.disabled=false;}
+  });
+  const deletePost=async post=>{
+    if(!confirm('Permanently delete "'+post.title+'"?'))return;
+    const {data,error}=await supabase.from('articles').delete().eq('id',post.id).select('id');
+    if(error||!data?.length){postMsg.textContent='Delete failed: '+(error?.message||'Permission denied');postMsg.className='error';return;}
+    await loadPosts();postMsg.textContent='Post deleted.';postMsg.className='success';
+  };
   const themeFields=['site_name','site_description','logo_url','favicon_url','primary_color','secondary_color','background_color','text_color','heading_font','body_font','border_radius'];
   const themeDefaults={primary_color:'#63846d',secondary_color:'#c77d87',background_color:'#fff9f0',text_color:'#29372d'};
   const loadTheme=async()=>{
@@ -167,7 +242,7 @@ if(url&&publishableKey){
     }
     $('login').classList.toggle('hide',!!user);
     $('dashboard').classList.toggle('hide',!allowed);
-    if(allowed){$('welcome').textContent='Signed in as '+user.email;await Promise.all([loadSocial(),loadTheme()]);syncContact();}
+    if(allowed){$('welcome').textContent='Signed in as '+user.email;await Promise.all([loadSocial(),loadTheme(),loadPosts()]);syncContact();}
     if(user&&!allowed){$('message').textContent='This account does not have Super Admin access.';$('message').className='error';$('login').classList.add('hide');}
   };
   $('login').addEventListener('submit',async e=>{
