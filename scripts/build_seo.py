@@ -56,13 +56,13 @@ def table_of_contents(source):
     """Build accessible jump links for Markdown headings without external parsers."""
     headings = []
     for line in (source or "").splitlines():
-        match = re.match(r"^#{1,3}\\s+(.+)$", line.strip())
+        match = re.match(r"^#{1,3}\s+(.+)$", line.strip())
         if match:
             headings.append(match.group(1))
     if len(headings) < 2:
         return ""
     links = "".join(
-        f'<li><a href="#section-{i}">{esc(BOLD.sub(r"\\1", title))}</a></li>'
+        f'<li><a href="#section-{i}">{esc(title.replace('**', ''))}</a></li>'
         for i, title in enumerate(headings, 1)
     )
     return f'<nav class="article-toc" aria-label="On this page"><strong>On this page</strong><ol>{links}</ol></nav>'
