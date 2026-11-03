@@ -14,7 +14,7 @@ import ssl
 import sys
 import time
 
-BASE = "https://houssamel4ur-lang.github.io/crochet/"
+BASE = "https://cozyloops.site/"
 class ImageParser(HTMLParser):
     def __init__(self):
         super().__init__()
