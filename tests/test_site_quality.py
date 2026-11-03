@@ -95,6 +95,11 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn("analyticsConsent()", self.home)
         self.assertIn('class="mobile-menu"', self.home)
         self.assertIn(':focus-visible', self.home)
+        self.assertIn('class="skip-link"', self.home)
+        self.assertIn('srcset="${imageBase}photo-', self.home)
+        self.assertIn('sizes="(max-width:800px)', self.home)
+        self.assertIn('function route(preserveScroll=false)', self.home)
+
 
     def test_sitemap_contains_only_valid_public_urls(self):
         from xml.etree import ElementTree as ET
