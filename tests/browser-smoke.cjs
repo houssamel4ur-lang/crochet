@@ -69,6 +69,27 @@ const failures = [];
       await page.close();
       console.log('OK public browser smoke:', viewport.width + 'px');
     }
+    // Regression: untrusted article image URLs must not become HTML attributes.
+    const hostile = await browser.newPage();
+    hostile.on('pageerror', error => failures.push('hostile article: ' + error.message));
+    const injected = {...post,
+      slug:'untrusted-image-safety',
+      title:'Safety test',
+      image_url:'https://example.invalid/photo.jpg" onerror="document.body.dataset.injected=1',
+      content:'## Safe heading\\n\\n![Alt](https://example.invalid/photo.jpg" onload="document.body.dataset.injected=1)'
+    };
+    await hostile.route('https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/**', async route => {
+      const response=route.request().url().includes('/articles?')?[injected]:[];
+      await route.fulfill({status:200,contentType:'application/json',
+        headers:{'access-control-allow-origin':'*'},body:JSON.stringify(response)});
+    });
+    await hostile.goto(base+'/#post/'+injected.slug,{waitUntil:'domcontentloaded'});
+    await hostile.locator('main article h1').waitFor({timeout:12000});
+    assert.equal(await hostile.locator('main article img').first().getAttribute('onerror'),null);
+    assert.equal(await hostile.locator('main article img').first().getAttribute('onload'),null);
+    assert.equal(await hostile.evaluate(()=>document.body.dataset.injected),undefined);
+    await hostile.close();
+    console.log('OK unsafe image attribute injection is blocked');
     const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
     page.on('pageerror', error => failures.push('admin: ' + error.message));
     await page.goto(base + '/admin/', { waitUntil: 'domcontentloaded' });
