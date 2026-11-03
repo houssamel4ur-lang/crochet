@@ -5,6 +5,8 @@
   const match = location.pathname.match(/\/posts\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/);
   if (!match) return;
   const page = "post/" + match[1];
+  const printButton = document.getElementById("article-print-button");
+  if (printButton) printButton.addEventListener("click", () => window.print());
   const shareButton = document.getElementById("article-share-button");
   if (shareButton) shareButton.addEventListener("click", async () => {
     const status = document.getElementById("article-share-status");
