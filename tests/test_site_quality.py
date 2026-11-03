@@ -68,6 +68,14 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn("sb_publishable_", self.admin)
         self.assertNotIn("sb_secret_", self.admin)
 
+    def test_admin_has_operational_seo_health_panel(self):
+        self.assertIn('id="panel-settings"', self.admin)
+        self.assertIn('id="check-seo-health"', self.admin)
+        self.assertIn("posts/manifest.json", self.admin)
+        self.assertIn("sitemap.xml", self.admin)
+        self.assertIn("search.google.com/search-console", self.admin)
+        self.assertIn("Sitemap and published SEO article list do not match.", self.admin)
+
     def test_all_generated_posts_have_good_metadata(self):
         self.assertEqual(len(self.manifest), len(set(self.manifest)))
         self.assertGreater(len(self.manifest), 0)
