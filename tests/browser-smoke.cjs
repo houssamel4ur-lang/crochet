@@ -76,6 +76,24 @@ const failures = [];
     assert.equal(await page.locator('#dashboard').isVisible(), false, 'admin is not exposed to signed-out browser');
     await page.close();
     console.log('OK admin logged-out UI');
+    // Exercise consent withdrawal from a generated SEO article as well.
+    const staticPost = await browser.newPage();
+    staticPost.on('pageerror', error => failures.push('static article: ' + error.message));
+    const fsForStatic = require('node:fs');
+    await staticPost.route('https://houssamel4ur-lang.github.io/crochet/scripts/article_analytics.js', route =>
+      route.fulfill({
+        status:200,contentType:'application/javascript',
+        body:fsForStatic.readFileSync('scripts/article_analytics.js','utf8')
+      })
+    );
+    await staticPost.goto(base + '/posts/crochet-for-absolute-beginners/', { waitUntil: 'domcontentloaded' });
+    await staticPost.locator('#article-privacy-opt-out').waitFor({timeout:12000});
+    await staticPost.locator('#article-privacy-opt-out').click();
+    assert.equal(await staticPost.evaluate(() => localStorage.getItem('cozyloops_analytics_consent')), 'no');
+    assert.match(await staticPost.locator('#article-consent-status').innerText(), /disabled/);
+    await staticPost.close();
+    console.log('OK static article privacy opt-out');
+
     // Simulate an authenticated but unauthorized account without using real credentials.
     const denied = await browser.newPage();
     denied.on('pageerror', error => failures.push('denied admin: ' + error.message));
