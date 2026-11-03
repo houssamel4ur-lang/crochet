@@ -201,7 +201,7 @@ function renderArticleMarkdown(source){
   if(lines.every(line=>/^[-*] /.test(line.trim())))return '<ul>'+lines.map(line=>'<li>'+inline(line.trim().slice(2))+'</li>').join('')+'</ul>';
   return lines.map(line=>{
    const match=line.match(/^(#{1,3})\s+(.+)$/);
-   if(match){const level=Math.min(3,match[1].length+1);return '<h'+level+'>'+inline(match[2])+'</h'+level+'>';}
+   if(match){const level=Math.min(3,Math.max(2,match[1].length));return '<h'+level+'>'+inline(match[2])+'</h'+level+'>';}
    return '<p>'+inline(line)+'</p>';
   }).join('');
  }).join('');
