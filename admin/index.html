@@ -33,7 +33,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <h3 id="post-form-heading">New Post</h3>
 <label for="post-title">Title</label><input id="post-title" required maxlength="180">
 <label for="post-slug">Slug (URL)</label><input id="post-slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxlength="180">
-<label for="post-category">Category</label><select id="post-category"><option>Beginner Tutorials</option><option>Free Patterns</option><option>Amigurumi</option><option>Crochet Tips</option></select>
+<label for="post-category">Section / Category</label><select id="post-category"><option>Beginner Tutorials</option><option>Free Patterns</option><option>Amigurumi</option><option>Crochet Tips</option></select><button type="button" class="secondary" id="add-post-section">+ Section</button><p class="muted">Create a new section here, then publish a post in it. The section appears automatically on the homepage.</p>
 <label for="post-excerpt">Excerpt</label><textarea id="post-excerpt" rows="3" maxlength="500" required></textarea>
 <label for="post-image">Image URL (HTTPS)</label><input id="post-image" type="url" placeholder="https://...">
 <label for="post-content">Article content (plain text, paragraphs separated by blank lines)</label><textarea id="post-content" required></textarea>
@@ -81,7 +81,7 @@ if(url&&publishableKey){
     postMsg.textContent='Loading posts...';postMsg.className='';
     const {data,error}=await supabase.from('articles').select('id,title,slug,category,status,excerpt,content,image_url,created_at').order('created_at',{ascending:false});
     if(error){postMsg.textContent='Could not load posts: '+error.message;postMsg.className='error';return;}
-    postRows=data||[];postMsg.textContent=postRows.length+' database post(s).';
+    postRows=data||[];updatePostSections();postMsg.textContent=postRows.length+' database post(s).';
     postList.replaceChildren();
     if(!postRows.length){const p=document.createElement('p');p.className='notice';p.textContent='No database articles yet. Click New Post to create one.';postList.append(p);}
     for(const post of postRows){
@@ -94,9 +94,28 @@ if(url&&publishableKey){
       actions.append(edit,del);row.append(name,info,actions);postList.append(row);
     }
   };
+  const defaultSections=['Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips'];
+  const updatePostSections=()=>{
+    const select=postField('category'),current=select.value;
+    const sections=[...new Set([...defaultSections,...postRows.map(p=>p.category).filter(Boolean)])];
+    select.replaceChildren();
+    for(const name of sections){const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);}
+    if(sections.includes(current))select.value=current;
+  };
+  $('add-post-section').addEventListener('click',()=>{
+    const raw=prompt('New section name (e.g. Crochet Bags):');
+    if(raw===null)return;
+    const name=raw.trim().replace(/\\s+/g,' ');
+    if(!name||name.length>70){$('post-form-message').textContent='Section name must be 1–70 characters.';$('post-form-message').className='error';return;}
+    const select=postField('category');
+    const existing=[...select.options].find(o=>o.value.toLowerCase()===name.toLowerCase());
+    if(existing){select.value=existing.value;return;}
+    const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);select.value=name;
+    $('post-form-message').textContent='Section added to this post. Save the post to keep it.';$('post-form-message').className='success';
+  });
   const openPost=(post=null)=>{
     editingPost=post?.id||null;
-    postForm.reset();postForm.classList.remove('hide');postList.classList.add('hide');
+    postForm.reset();updatePostSections();postField('slug').dataset.auto='true';postForm.classList.remove('hide');postList.classList.add('hide');
     $('post-form-heading').textContent=post?'Edit Post':'New Post';
     for(const key of ['title','slug','category','excerpt','content','status'])if(post&&post[key]!=null)postField(key).value=post[key];
     postField('image').value=post?.image_url||'';
