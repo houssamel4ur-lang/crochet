@@ -52,9 +52,26 @@ def inline(value):
     output.append(BOLD.sub(r"<strong>\1</strong>", esc(value[pos:])))
     return "".join(output)
 
+def table_of_contents(source):
+    """Build accessible jump links for Markdown headings without external parsers."""
+    headings = []
+    for line in (source or "").splitlines():
+        match = re.match(r"^#{1,3}\\s+(.+)$", line.strip())
+        if match:
+            headings.append(match.group(1))
+    if len(headings) < 2:
+        return ""
+    links = "".join(
+        f'<li><a href="#section-{i}">{esc(BOLD.sub(r"\\1", title))}</a></li>'
+        for i, title in enumerate(headings, 1)
+    )
+    return f'<nav class="article-toc" aria-label="On this page"><strong>On this page</strong><ol>{links}</ol></nav>'
+
+
 def markdown(source):
     blocks = re.split(r"\n\s*\n", (source or "").strip())
     rendered = []
+    heading_index = 0
     for block in blocks:
         lines = [line.strip() for line in block.splitlines() if line.strip()]
         if not lines:
@@ -66,7 +83,8 @@ def markdown(source):
             heading = re.match(r"^(#{1,3})\s+(.+)$", line)
             if heading:
                 level = min(4, max(2, len(heading.group(1))))
-                rendered.append(f"<h{level}>{inline(heading.group(2))}</h{level}>")
+                heading_index += 1
+                rendered.append(f'<h{level} id="section-{heading_index}">{inline(heading.group(2))}</h{level}>')
             else:
                 rendered.append(f"<p>{inline(line)}</p>")
     return "\n".join(rendered)
@@ -109,6 +127,7 @@ def render_page(article, css, articles=None):
     cover = safe_image(article.get("image_url"))
     category = str(article.get("category") or "Crochet Patterns")
     related_html = render_related(article, articles or [])
+    toc_html = table_of_contents(str(article.get("content") or ""))
     published = str(article.get("created_at") or "")
     modified = str(article.get("updated_at") or published)
     structured = {
@@ -150,6 +169,7 @@ def render_page(article, css, articles=None):
 .article figure{{margin:22px 0}}.article figure img{{width:100%;height:auto;border-radius:15px}}
 .article ul{{padding-left:26px}}.article strong{{font-weight:700}}
 .related-posts{{margin:32px 0;padding:22px;border:1px solid var(--line,#e5e7df);border-radius:16px;background:var(--white,#fff)}}
+.article-toc{{padding:20px 24px;border:1px solid var(--line,#e5e7df);border-radius:16px;background:var(--white,#fff);margin:24px 0}}.article-toc ol{{margin:8px 0 0;padding-left:24px}}.article-toc li{{margin:5px 0}}.article-toc a{{text-decoration:underline;text-underline-offset:3px}}.article h2[id],.article h3[id],.article h4[id]{{scroll-margin-top:24px}}
 .related-posts ul{{margin:12px 0 0;padding-left:22px}}.related-posts li{{margin:8px 0}}.related-posts a{{text-decoration:underline;text-underline-offset:3px}}
 </style>
 </head>
@@ -163,6 +183,7 @@ def render_page(article, css, articles=None):
 <p class="meta">{esc(published[:10])} · CozyLoops</p>
 <p>{esc(description)}</p>
 {image_html}
+{toc_html}
 {markdown(str(article.get("content") or ""))}
 {related_html}
 <h2>Keep Creating</h2>
