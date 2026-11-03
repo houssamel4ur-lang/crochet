@@ -1,0 +1,37 @@
+name: CozyLoops Quality Checks
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate SEO, structure and article integrity
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Validate public JavaScript syntax
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const page = fs.readFileSync('index.html', 'utf8');
+          const script = page.match(/<script>([\s\S]*?)<\/script>/);
+          if (!script) throw new Error('Public script missing');
+          new vm.Script(script[1], {filename:'index.html'});
+          const admin = fs.readFileSync('admin/index.html', 'utf8');
+          const moduleScript = admin.match(/<script type="module">([\s\S]*?)<\/script>/);
+          if (!moduleScript) throw new Error('Admin script missing');
+          const js = moduleScript[1].replace(/^import .*?;\s*$/gm,'');
+          new vm.Script('(async()=>{' + js + '})', {filename:'admin/index.html'});
+          console.log('Public and admin JavaScript syntax valid');
+          NODE
