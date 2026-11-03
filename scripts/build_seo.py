@@ -175,7 +175,7 @@ def render_page(article, css, articles=None):
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{structured_json}</script>
 <script defer src="{BASE}scripts/article_analytics.js"></script>
-<script defer src="{BASE}scripts/site_navigation.js"></script>
+<script defer src="../../scripts/site_navigation.js"></script>
 <style>{css}
 
 .article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:18px}}
