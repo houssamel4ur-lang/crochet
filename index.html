@@ -120,10 +120,20 @@ async function loadPublishedPosts(){
     posts.length=0;
     categories.splice(1,categories.length-1,'Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips');
     for(const p of rows){
-      if(!p.slug||!p.title)continue;
-      const body=String(p.content||'');
-      posts.push({slug:p.slug,title:p.title,category:p.category||'Crochet Tips',date:p.created_at?new Date(p.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'',minutes:Math.max(1,Math.ceil(body.trim().split(/\s+/).length/200)),image:safeHttps(p.image_url)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000',excerpt:p.excerpt||'',markdown:body});
-      if(p.category&&!categories.includes(p.category))categories.push(p.category);
+      // A malformed row must not break the entire article listing.
+      if(!p||typeof p.slug!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug)
+         ||typeof p.title!=='string'||!p.title.trim())continue;
+      const body=typeof p.content==='string'?p.content:'';
+      const category=typeof p.category==='string'&&p.category.trim()?p.category.slice(0,100):'Crochet Tips';
+      const excerpt=typeof p.excerpt==='string'?p.excerpt:'';
+      const created=p.created_at?new Date(p.created_at):null;
+      const date=created&&!Number.isNaN(created.getTime())
+        ?created.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'';
+      posts.push({slug:p.slug,title:p.title,category,date,
+        minutes:Math.max(1,Math.ceil(body.trim().split(/\s+/).length/200)),
+        image:safeHttps(p.image_url)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000',
+        excerpt,markdown:body});
+      if(!categories.includes(category))categories.push(category);
     }
     articlesLoadError=false;refreshPostResults();
   }catch(err){
