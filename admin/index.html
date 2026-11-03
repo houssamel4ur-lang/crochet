@@ -62,7 +62,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <section id="panel-settings" class="admin-panel"><h2>SEO &amp; Site Health</h2><p class="muted">Check the public SEO files without changing your published articles.</p><div class="stats-grid"><div class="stat-box"><strong id="seo-page-count">—</strong><span>Generated SEO pages</span></div><div class="stat-box"><strong id="seo-sitemap-count">—</strong><span>URLs in sitemap</span></div></div><p id="seo-health-message" class="notice" role="status">Select "Check SEO health" to verify the published files.</p><button id="check-seo-health" type="button">Check SEO health</button><h3>Google Search Console</h3><p class="muted">To monitor Google indexing, add a URL-prefix property for the exact public address below and verify ownership in your Google account. Google verification must be completed by the site owner.</p><p><strong>Website:</strong> <a href="https://houssamel4ur-lang.github.io/crochet/" target="_blank" rel="noopener noreferrer">https://houssamel4ur-lang.github.io/crochet/</a></p><p><strong>Sitemap:</strong> <a href="../sitemap.xml" target="_blank" rel="noopener noreferrer">Open sitemap.xml ↗</a></p><p><a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer">Open Google Search Console ↗</a></p><p><a href="https://github.com/houssamel4ur-lang/crochet/actions/workflows/update-seo-pages.yml" target="_blank" rel="noopener noreferrer">SEO generation workflow ↗</a></p><p class="notice">SEO pages are updated by GitHub Actions on an hourly schedule, not immediately after you publish. A valid sitemap does not guarantee Google indexing. Project-level robots.txt is not the host-root robots.txt.</p></section>
 <section id="panel-account" class="admin-panel"><h2>Admin Account</h2><p class="notice">Super Admin access verified.</p><button id="logout">Sign out</button></section>
 </div></div></div>
-<p id="message" role="status"></p><p><a href="../">← Back to CozyLoops</a></p>
+<p id="message" role="status"></p><button type="button" id="denied-logout" class="hide">Sign out and use another account</button><p><a href="../">← Back to CozyLoops</a></p>
 </main>
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -445,17 +445,39 @@ if(url&&publishableKey){
     finally{button.disabled=false;}
   });
   const show=async()=>{
-    const {data:{user}}=await supabase.auth.getUser();
+    const {data,error:authError}=await supabase.auth.getUser();
+    const user=authError?null:data?.user;
     let allowed=false;
     if(user){
-      const {data,error}=await supabase.rpc('is_super_admin');
-      allowed=!error&&data===true;
+      const {data:role,error}=await supabase.rpc('is_super_admin');
+      allowed=!error&&role===true;
     }
     $('login').classList.toggle('hide',!!user);
     $('dashboard').classList.toggle('hide',!allowed);
-    if(allowed){$('welcome').textContent='Signed in as '+user.email;await Promise.all([loadSocial(),loadTheme(),loadPosts()]);syncContact();}
-    if(user&&!allowed){$('message').textContent='This account does not have Super Admin access.';$('message').className='error';$('login').classList.add('hide');}
+    $('denied-logout').classList.toggle('hide',!user||allowed);
+    if(allowed){
+      $('message').textContent='';
+      $('welcome').textContent='Signed in as '+user.email;
+      await Promise.all([loadSocial(),loadTheme(),loadPosts()]);
+      syncContact();
+    }else if(user){
+      $('message').textContent='This account does not have Super Admin access.';
+      $('message').className='error';
+    }else if(authError){
+      $('message').textContent='Session could not be verified. Please sign in again.';
+      $('message').className='error';
+    }
   };
+  $('denied-logout').addEventListener('click',async()=>{
+    const btn=$('denied-logout');btn.disabled=true;
+    try{
+      const {error}=await supabase.auth.signOut();
+      if(error)throw error;
+      $('message').textContent='';
+      await show();
+    }catch(error){$('message').textContent=error.message;$('message').className='error';}
+    finally{btn.disabled=false;}
+  });
   $('login').addEventListener('submit',async e=>{
     e.preventDefault();$('message').textContent='';
     const button=$('login').querySelector('button');button.disabled=true;
