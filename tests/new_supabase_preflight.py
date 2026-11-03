@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only preflight before migrating CozyLoops to a different Supabase project."""
+"""Read-only public connectivity preflight for the existing CozyLoops production project."""
 import json
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
@@ -25,7 +25,7 @@ def main():
     published = get("articles", {"status": "eq.published", "select": "slug,title,status", "limit": "1000"})
     assert isinstance(published, list), "articles query did not return a list"
     slugs = [row["slug"] for row in published if isinstance(row, dict) and row.get("slug")]
-    assert slugs, "No publicly visible published articles; refusing production migration"
+    assert slugs, "No publicly visible published articles; public production verification requires published content"
     settings = get("site_settings", {"id": "eq.1", "select": "site_name", "limit": "1"})
     assert isinstance(settings, list) and settings and settings[0].get("site_name"), "Missing public site settings"
     social = get("social_links", {"is_visible": "eq.true", "select": "platform", "limit": "20"})
