@@ -14,6 +14,7 @@
       top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"
     }));
   }
+  updateBackToTop();
   // Update once per frame and avoid blocking scrolling on long patterns.
   const progress = document.getElementById("reading-progress");
   const article = document.querySelector("main article.article");
@@ -24,7 +25,7 @@
       const total = Math.max(1, article.offsetHeight - window.innerHeight);
       const scrolled = Math.max(0, -article.getBoundingClientRect().top);
       const percentage = Math.max(0, Math.min(100, Math.round(scrolled / total * 100)));
-      progress.firstElementChild.style.width = percentage + "%";
+      if (progress.firstElementChild) progress.firstElementChild.style.width = percentage + "%";
       progress.setAttribute("aria-valuenow", String(percentage));
       updateBackToTop();
     };
@@ -36,6 +37,8 @@
     addEventListener("scroll", schedule, {passive:true});
     addEventListener("resize", schedule, {passive:true});
     schedule();
+  } else if (backToTop) {
+    addEventListener("scroll", updateBackToTop, {passive:true});
   }
 
   const printButton = document.getElementById("article-print-button");
