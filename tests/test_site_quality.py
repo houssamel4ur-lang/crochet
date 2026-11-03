@@ -65,7 +65,8 @@ class SiteQualityTests(unittest.TestCase):
     def test_admin_not_indexable(self):
         self.assertRegex(self.admin, r'<meta name="robots" content="noindex,nofollow">')
         self.assertIn("is_super_admin", self.admin)
-        self.assertNotIn("service_role", self.admin.lower())
+        self.assertIn("sb_publishable_", self.admin)
+        self.assertNotIn("sb_secret_", self.admin)
 
     def test_all_generated_posts_have_good_metadata(self):
         self.assertEqual(len(self.manifest), len(set(self.manifest)))
