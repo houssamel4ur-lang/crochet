@@ -6,7 +6,6 @@ on:
     paths:
       - 'scripts/build_seo.py'
       - 'content/github_articles.json'
-      - 'content/original_articles.json'
       - '.github/workflows/update-seo-pages.yml'
   workflow_dispatch:
   schedule:

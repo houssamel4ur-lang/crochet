@@ -160,12 +160,16 @@ class SiteQualityTests(unittest.TestCase):
             self.assertGreaterEqual(article["content"].count("![") + 1, 3)
             self.assertIn("## Frequently Asked Questions", article["content"])
 
-    def test_six_original_posts_are_preserved(self):
-        archive=json.loads((ROOT / "content/original_articles.json").read_text(encoding="utf-8"))
-        self.assertEqual(len(archive),6)
-        self.assertEqual(len({p["slug"] for p in archive}),6)
-        self.assertTrue(all(p["status"]=="published" and p["content"] for p in archive))
-        self.assertIn("content/original_articles.json",self.home)
+    def test_removed_seed_posts_never_reappear(self):
+        retired = {"crochet-for-absolute-beginners", "how-to-read-crochet-patterns",
+            "easy-crochet-scarf-guide", "amigurumi-basics", "choosing-crochet-yarn", "crochet-stitch-counting"}
+        self.assertFalse((ROOT / "content/original_articles.json").exists())
+        self.assertTrue(retired.isdisjoint(self.manifest))
+        for slug in retired:
+            self.assertFalse((ROOT / "posts" / slug / "index.html").exists())
+        self.assertNotIn("Import 6 Original Posts", self.admin)
+        self.assertIn("removedStarterSlugs", self.home)
+        self.assertIn("REMOVED_STARTER_SLUGS", (ROOT / "scripts/build_seo.py").read_text(encoding="utf-8"))
 
     def test_restored_saved_design_and_sidebar(self):
         self.assertNotIn("CozyLoops Theme B", self.home)

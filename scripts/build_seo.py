@@ -89,12 +89,13 @@ def markdown(source):
                 rendered.append(f"<p>{inline(line)}</p>")
     return "\n".join(rendered)
 
+REMOVED_STARTER_SLUGS = {'crochet-for-absolute-beginners','how-to-read-crochet-patterns','easy-crochet-scarf-guide','amigurumi-basics','choosing-crochet-yarn','crochet-stitch-counting'}
+
 def load_articles():
-    """Use original GitHub archive as fallback, plus Supabase edits and GitHub editorials."""
-    archive = json.loads((ROOT / "content" / "original_articles.json").read_text(encoding="utf-8"))
+    """Published Supabase articles and intentional GitHub editorials only."""
     editorials = json.loads((ROOT / "content" / "github_articles.json").read_text(encoding="utf-8"))
-    if not isinstance(archive, list) or not isinstance(editorials, list):
-        raise RuntimeError("Expected arrays in GitHub article catalogs")
+    if not isinstance(editorials, list):
+        raise RuntimeError("Expected GitHub editorial catalog array")
     url = API + "?status=eq.published&select=title,slug,content,excerpt,image_url,category,created_at,updated_at&order=created_at.desc&limit=1000"
     req = Request(url, headers={"apikey": KEY, "Accept": "application/json", "User-Agent": "CozyLoopsStaticBuilder/1.0"})
     try:
@@ -103,11 +104,13 @@ def load_articles():
         if not isinstance(remote, list):
             raise RuntimeError("Expected JSON list from Supabase")
     except (OSError, ValueError) as error:
-        print(f"Supabase article source unavailable; retaining published GitHub archive: {error}")
+        print(f"Supabase unavailable; using GitHub editorial catalog: {error}")
         remote = []
     articles = {}
-    for item in archive + remote + [p for p in editorials if isinstance(p, dict) and p.get("status") == "published"]:
+    # Supabase wins over GitHub editorial, so edits saved in Posts propagate.
+    for item in editorials + remote:
         if (isinstance(item, dict) and isinstance(item.get("slug"), str)
+                and item["slug"] not in REMOVED_STARTER_SLUGS
                 and SLUG.fullmatch(item["slug"]) and isinstance(item.get("title"), str)
                 and item["title"].strip() and item.get("status", "published") == "published"):
             articles[item["slug"]] = item

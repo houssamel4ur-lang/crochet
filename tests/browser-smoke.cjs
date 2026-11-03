@@ -32,8 +32,8 @@ const failures = [];
       });
       await page.route('https://images.unsplash.com/**', route => route.abort());
       await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
-      await page.waitForFunction(() => document.querySelectorAll('#postGrid .card').length === 8, {timeout:12000});
-      assert.equal(await page.locator('#postGrid .card').count(), 8, 'six saved original posts, editorial, and mock Admin post');
+      await page.waitForFunction(() => document.querySelectorAll('#postGrid .card').length === 2, {timeout:12000});
+      assert.equal(await page.locator('#postGrid .card').count(), 2, 'GitHub editorial and mock Admin post, without retired starter posts');
       assert.equal(await page.locator('main h1').count(), 1, 'home has one h1');
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
       if (overflow) {
