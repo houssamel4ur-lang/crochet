@@ -62,6 +62,10 @@ class SiteQualityTests(unittest.TestCase):
         self.assertEqual(len(scan.titles), 1)
         self.assertIn("CozyLoops", scan.titles[0])
 
+    def test_dynamic_article_image_attribute_is_escaped(self):
+        self.assertIn("esc(safeHttps(p.image)", self.home)
+        self.assertNotIn('src="${p.image}"', self.home)
+
     def test_admin_not_indexable(self):
         self.assertRegex(self.admin, r'<meta name="robots" content="noindex,nofollow">')
         self.assertIn("is_super_admin", self.admin)
