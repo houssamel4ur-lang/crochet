@@ -208,6 +208,7 @@ const failures = [];
     owner.once('dialog',dialog=>dialog.accept());
     await owner.locator('#posts-list .post-row .danger').first().click();
     await owner.waitForFunction(()=>window.__mockAdminRows.length===0);
+    await owner.waitForFunction(() => document.querySelectorAll('#posts-list .post-row').length === 1, {timeout:5000});
     assert.equal(await owner.locator('#posts-list .post-row').count(),1,'GitHub editorial remains available for editing');
     await owner.locator('#posts-list .post-row .editorial-import').click();
     assert.equal(await owner.locator('#post-slug').inputValue(),'crochet-patterns-for-beginners-guide');
