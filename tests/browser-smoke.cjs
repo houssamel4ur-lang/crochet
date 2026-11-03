@@ -26,7 +26,7 @@ const failures = [];
       await page.route('https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/**', async route => {
         const url = route.request().url();
         let body = [];
-        if (url.includes('/articles?')) body = [post];
+        if (url.includes('/articles?')) body = [null, {slug:'bad slug',title:'Invalid Slug'}, {slug:'invalid-title',title:{unsafe:true}}, post];
         if (url.includes('/site_settings?')) body = [{ site_name: 'CozyLoops' }];
         await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body), headers: {'access-control-allow-origin': '*'} });
       });
