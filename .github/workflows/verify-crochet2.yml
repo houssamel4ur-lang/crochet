@@ -1,4 +1,4 @@
-name: Verify Crochet2 Supabase Before Migration
+name: Verify Live CozyLoops Supabase Public Access
 
 on:
   push:
