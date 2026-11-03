@@ -100,7 +100,7 @@ const generatedSeoSlugs=new Set();
 const postHref=slug=>generatedSeoSlugs.has(slug)?'posts/'+encodeURIComponent(slug)+'/':'#post/'+encodeURIComponent(slug);
 async function loadGeneratedSeoLinks(){
   try{
-    const response=await fetch('posts/.generated_slugs.json',{cache:'no-store'});
+    const response=await fetch('posts/manifest.json',{cache:'no-store'});
     if(!response.ok)return;
     const slugs=await response.json();
     if(!Array.isArray(slugs))return;
