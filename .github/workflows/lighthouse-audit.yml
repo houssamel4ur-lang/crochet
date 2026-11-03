@@ -64,6 +64,15 @@ jobs:
                       issues.append((score, str(audit.get('title','')), audit_id, str(audit.get('displayValue',''))))
               for score,title,audit_id,value in sorted(issues)[:12]:
                   print(f"    {round(score*100)} / 100 | {title} ({audit_id}) {value}")
+              for audit_id in ('color-contrast', 'errors-in-console', 'forced-reflow-insight'):
+                  audit = audits.get(audit_id,{})
+                  details = audit.get('details',{})
+                  items = details.get('items',[]) if isinstance(details,dict) else []
+                  if items:
+                      print(f"  {audit_id} details:")
+                      for item in items[:8]:
+                          print("    " + json.dumps(item,ensure_ascii=False)[:900])
+
 
           if not reports:
               print('No Lighthouse report generated. Check job logs.')
