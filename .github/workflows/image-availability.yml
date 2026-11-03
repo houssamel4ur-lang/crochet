@@ -1,0 +1,26 @@
+name: Published Image Availability Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/live_image_audit.py'
+      - '.github/workflows/image-availability.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '54 8 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  images:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify public article image links
+        run: python tests/live_image_audit.py
