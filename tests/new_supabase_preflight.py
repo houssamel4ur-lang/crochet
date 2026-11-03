@@ -5,8 +5,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-BASE = "https://akccbwshrohyyfvcdrwi.supabase.co/rest/v1/"
-KEY = "sb_publishable_qfRsnHQitPTMXw4C5xcezQ_DmC1D3Xq"
+BASE = "https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/"
+KEY = "sb_publishable_BpOaWu4aKoE5saOhdjaT-g_c9vTG3o8"
 
 def get(table, params):
     url = BASE + table + "?" + urlencode(params)
