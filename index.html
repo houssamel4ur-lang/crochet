@@ -38,6 +38,7 @@
 .card img{aspect-ratio:640/450}
 @media(max-width:560px){.mobile-links a{min-height:44px;display:flex;align-items:center}.chip{min-height:44px}.nav{gap:8px}}
 footer .brand{color:#f2f6ec}
+.related-posts{margin:32px 0;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--white)}.related-posts ul{padding-left:22px;margin:12px 0 0}.related-posts li{margin:8px 0}.related-posts a{text-decoration:underline;text-underline-offset:3px}
 </style>
 </head>
 <body>
@@ -216,7 +217,16 @@ function renderArticleMarkdown(source){
   }).join('');
  }).join('');
 }
-function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.date} · ${p.minutes} min read</p><p>${esc(p.excerpt)}</p><img src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div>${p.markdown?renderArticleMarkdown(p.markdown):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`}
+function relatedArticleLinks(p){
+ const related=posts.filter(item=>item.slug!==p.slug)
+   .sort((a,b)=>Number(b.category===p.category)-Number(a.category===p.category))
+   .slice(0,3);
+ if(!related.length)return '';
+ return '<section class="related-posts" aria-label="Related crochet articles"><h2>Read Next</h2><ul>'+
+   related.map(item=>'<li><a href="'+esc(postHref(item.slug))+'" data-post-slug="'+esc(item.slug)+'">'+esc(item.title)+'</a></li>').join('')+
+   '</ul></section>';
+}
+function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.date} · ${p.minutes} min read</p><p>${esc(p.excerpt)}</p><img src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div>${p.markdown?renderArticleMarkdown(p.markdown):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`}
 function simplePage(title,content){document.title=title+" | "+siteTheme.site_name;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#home">← Home</a><h1>${title}</h1>${content}</article>`}
 function notFound(){simplePage("Page not found","<p>We couldn't find that page. Browse our crochet articles instead.</p>")}
 let publicContact=[];
