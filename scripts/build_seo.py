@@ -143,11 +143,15 @@ def main():
     articles = load_articles()
     output_root = ROOT / "posts"
     output_root.mkdir(exist_ok=True)
-    manifest = output_root / ".generated_slugs.json"
+    manifest = output_root / "manifest.json"
+    legacy_manifest = output_root / ".generated_slugs.json"
     try:
         previous = json.loads(manifest.read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
-        previous = []
+        try:
+            previous = json.loads(legacy_manifest.read_text(encoding="utf-8"))
+        except (FileNotFoundError, json.JSONDecodeError):
+            previous = []
     current = []
     sitemap = [BASE]
     for item in articles:
@@ -165,6 +169,8 @@ def main():
                 try: old.parent.rmdir()
                 except OSError: pass
     manifest.write_text(json.dumps(sorted(current), indent=2) + "\n", encoding="utf-8")
+    if legacy_manifest.exists():
+        legacy_manifest.unlink()
     xml = '<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     xml += "".join("  <url><loc>" + esc(url) + "</loc></url>\n" for url in sitemap)
     xml += "</urlset>\n"
