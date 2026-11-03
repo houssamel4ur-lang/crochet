@@ -34,7 +34,7 @@ def inline(value):
         output.append(BOLD.sub(r"<strong>\1</strong>", esc(value[pos:match.start()])))
         url = safe_image(match.group(2))
         if url:
-            output.append(f'<figure><img loading="lazy" decoding="async" src="{esc(url)}" alt="{esc(match.group(1))}"></figure>')
+            output.append(f'<figure><img loading="lazy" decoding="async" src="{esc(url)}" alt="{esc(match.group(1))}" width="1000" height="625"></figure>')
         pos = match.end()
     output.append(BOLD.sub(r"<strong>\1</strong>", esc(value[pos:])))
     return "".join(output)
@@ -90,7 +90,7 @@ def render_page(article, css):
     }
     if cover:
         structured["image"] = cover
-    image_html = f'<img class="article-cover" src="{esc(cover)}" alt="{esc(title)}" fetchpriority="high">' if cover else ""
+    image_html = f'<img class="article-cover" src="{esc(cover)}" alt="{esc(title)}" width="1000" height="625" fetchpriority="high" decoding="async">' if cover else ""
     structured_json = json.dumps(structured, ensure_ascii=False).replace("<", "\\u003c")
     social_image = f'<meta property="og:image" content="{esc(cover)}">' if cover else ""
     return f'''<!doctype html>
@@ -110,12 +110,13 @@ def render_page(article, css):
 <script type="application/ld+json">{structured_json}</script>
 <script defer src="{BASE}scripts/article_analytics.js"></script>
 <style>{css}
-.article-cover{{max-height:520px;width:100%;object-fit:cover;border-radius:18px}}
+.article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:18px}}
 .article figure{{margin:22px 0}}.article figure img{{width:100%;height:auto;border-radius:15px}}
 .article ul{{padding-left:26px}}.article strong{{font-weight:700}}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#content">Skip to content</a>
 <header><nav class="nav"><a class="brand" href="{BASE}">CozyLoops ♡</a><div class="links"><a href="{BASE}">Home</a><a href="{BASE}#articles">Articles</a><a href="{BASE}#categories">Categories</a></div></nav></header>
 <main id="content"><article class="article">
 <a class="back" href="{BASE}#articles">← Back to all articles</a>
