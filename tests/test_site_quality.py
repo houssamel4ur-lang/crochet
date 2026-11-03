@@ -149,6 +149,17 @@ class SiteQualityTests(unittest.TestCase):
             self.assertEqual(page.count('id="reading-progress"'), 1)
             self.assertEqual(page.count('id="back-to-top"'), 1)
 
+    def test_github_editorial_content_is_published_and_illustrated(self):
+        articles = json.loads((ROOT / "content/github_articles.json").read_text(encoding="utf-8"))
+        self.assertTrue(articles)
+        self.assertIn("content/github_articles.json", self.home)
+        for article in articles:
+            self.assertEqual(article["status"], "published")
+            self.assertRegex(article["slug"], r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+            self.assertTrue(article["image_url"].startswith("https://"))
+            self.assertGreaterEqual(article["content"].count("![") + 1, 3)
+            self.assertIn("## Frequently Asked Questions", article["content"])
+
     def test_sitemap_contains_only_valid_public_urls(self):
         from xml.etree import ElementTree as ET
         root = ET.fromstring(self.sitemap)

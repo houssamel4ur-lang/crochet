@@ -171,36 +171,47 @@ const posts=[];
 const categories=["All","Beginner Tutorials","Free Patterns","Amigurumi","Crochet Tips"];
 let articlesLoadError=false;
 async function loadPublishedPosts(){
+  let remoteRows=[],localRows=[],remoteOk=false,localOk=false;
   try{
     const endpoint='https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/articles?status=eq.published&select=title,slug,content,excerpt,image_url,category,created_at&order=created_at.desc';
     const res=await fetch(endpoint,{headers:{apikey:themeKey}});
     if(!res.ok)throw Error('Article request returned '+res.status);
+    remoteRows=await res.json();
+    if(!Array.isArray(remoteRows))throw Error('Unexpected article response');
+    remoteOk=true;
+  }catch(err){console.warn('Unable to load articles from Supabase:',err.message)}
+  try{
+    const res=await fetch('content/github_articles.json',{cache:'no-store'});
+    if(!res.ok)throw Error('GitHub articles returned '+res.status);
     const rows=await res.json();
-    if(!Array.isArray(rows))throw Error('Unexpected article response');
-    posts.length=0;
-    categories.splice(1,categories.length-1,'Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips');
-    for(const p of rows){
-      // A malformed row must not break the entire article listing.
-      if(!p||typeof p.slug!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug)
-         ||typeof p.title!=='string'||!p.title.trim())continue;
-      const body=typeof p.content==='string'?p.content:'';
-      const category=typeof p.category==='string'&&p.category.trim()?p.category.slice(0,100):'Crochet Tips';
-      const excerpt=typeof p.excerpt==='string'?p.excerpt:'';
-      const created=p.created_at?new Date(p.created_at):null;
-      const date=created&&!Number.isNaN(created.getTime())
-        ?created.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'';
-      posts.push({slug:p.slug,title:p.title,category,date,
-        minutes:Math.max(1,Math.ceil(body.trim().split(/\s+/).length/200)),
-        image:safeHttps(p.image_url)||imageBase+'photo-1693326873444-d7cf33cad3e0?w=1000',
-        excerpt,markdown:body});
-      if(!categories.includes(category))categories.push(category);
-    }
-    articlesLoadError=false;refreshPostResults();
-  }catch(err){
-    articlesLoadError=true;
-    console.warn('Unable to load articles from Supabase:',err.message);
-    refreshPostResults();
+    if(!Array.isArray(rows))throw Error('Invalid GitHub article catalog');
+    localRows=rows.filter(p=>p&&p.status==='published');
+    localOk=true;
+  }catch(err){console.warn('Unable to load GitHub articles:',err.message)}
+  const chosen=new Map();
+  for(const p of remoteRows)if(p&&typeof p.slug==='string')chosen.set(p.slug,p);
+  // Published GitHub articles take precedence if a matching slug also exists in Supabase.
+  for(const p of localRows)if(p&&typeof p.slug==='string')chosen.set(p.slug,p);
+  posts.length=0;
+  categories.splice(1,categories.length-1,'Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips');
+  for(const p of chosen.values()){
+    if(!p||typeof p.slug!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug)
+       ||typeof p.title!=='string'||!p.title.trim())continue;
+    const body=typeof p.content==='string'?p.content:'';
+    const category=typeof p.category==='string'&&p.category.trim()?p.category.slice(0,100):'Crochet Tips';
+    const excerpt=typeof p.excerpt==='string'?p.excerpt:'';
+    const created=p.created_at?new Date(p.created_at):null;
+    const publishedAt=created&&!Number.isNaN(created.getTime())?created.getTime():0;
+    const date=publishedAt?created.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'';
+    posts.push({slug:p.slug,title:p.title,category,date,publishedAt,
+      minutes:Math.max(1,Math.ceil(body.trim().split(/\s+/).length/200)),
+      image:safeHttps(p.image_url)||imageBase+'photo-1693326873444-d7cf33cad3e0?w=1000',
+      excerpt,markdown:body});
+    if(!categories.includes(category))categories.push(category);
   }
+  posts.sort((a,b)=>b.publishedAt-a.publishedAt);
+  articlesLoadError=!(remoteOk||localOk);
+  refreshPostResults();
 }
 let filter="All",query="";
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));

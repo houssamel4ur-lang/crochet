@@ -90,13 +90,24 @@ def markdown(source):
     return "\n".join(rendered)
 
 def load_articles():
+    """Combine Supabase posts and permanent GitHub editorial articles."""
     url = API + "?status=eq.published&select=title,slug,content,excerpt,image_url,category,created_at,updated_at&order=created_at.desc&limit=1000"
     req = Request(url, headers={"apikey": KEY, "Accept": "application/json", "User-Agent": "CozyLoopsStaticBuilder/1.0"})
     with urlopen(req, timeout=25) as response:
-        items = json.load(response)
-    if not isinstance(items, list):
+        remote = json.load(response)
+    if not isinstance(remote, list):
         raise RuntimeError("Expected a JSON list from Supabase")
-    return [p for p in items if isinstance(p.get("slug"), str) and SLUG.fullmatch(p["slug"]) and p.get("title")]
+    catalog = ROOT / "content" / "github_articles.json"
+    local = json.loads(catalog.read_text(encoding="utf-8"))
+    if not isinstance(local, list):
+        raise RuntimeError("Expected a JSON list of GitHub articles")
+    articles = {}
+    for item in remote + [p for p in local if isinstance(p, dict) and p.get("status") == "published"]:
+        if (isinstance(item, dict) and isinstance(item.get("slug"), str)
+                and SLUG.fullmatch(item["slug"]) and isinstance(item.get("title"), str)
+                and item["title"].strip()):
+            articles[item["slug"]] = item
+    return sorted(articles.values(), key=lambda p: p.get("created_at") or "", reverse=True)
 
 def related_articles(article, articles, limit=3):
     """Select other posts, prioritizing the same category."""
@@ -144,7 +155,7 @@ def render_page(article, css, articles=None):
     }
     if cover:
         structured["image"] = cover
-    image_html = f'<img class="article-cover" src="{esc(cover)}" alt="{esc(title)}" width="1000" height="625" fetchpriority="high" decoding="async">' if cover else ""
+    image_html = f'<img class="article-cover" src="{esc(cover)}" alt="{esc(article.get("image_alt") or title)}" width="1000" height="625" fetchpriority="high" decoding="async">' if cover else ""
     structured_json = json.dumps(structured, ensure_ascii=False).replace("<", "\\u003c")
     social_image = f'<meta property="og:image" content="{esc(cover)}">' if cover else ""
     return f'''<!doctype html>
