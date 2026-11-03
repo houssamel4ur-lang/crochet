@@ -15,13 +15,14 @@ Admin dashboard: https://houssamel4ur-lang.github.io/crochet/admin/
 | --- | --- |
 | CozyLoops Quality Checks | Article metadata, generated pages, sitemap, JavaScript syntax |
 | Browser UI Smoke Tests | Chromium desktop/mobile search, navigation, articles, privacy opt-out, denied-account recovery and mock Super Admin create/edit/publish/delete; does not use live credentials or alter production data |
-| Public Supabase Security Checks | **Live read-only** anonymous access to posts, drafts, page-view rows, privileged RPCs |
+| Public Supabase Security Checks | **Live read-only** anonymous access to published/draft posts, hidden social links, public theme, page-view rows, privileged RPCs |
 | Lighthouse Performance Audit | Scheduled lab measurements of homepage and sample article; results vary between runs |
 
 Each workflow is available in the repository's **Actions** tab. A green run only verifies the listed checks; it does not guarantee the complete site or database is secure.
 
 ## Release checklist (owner verification required)
 - [ ] Sign in as the designated Super Admin and verify create/edit/publish/draft/delete using a **temporary test article**; remove it after the test. (The browser workflow already exercises this sequence with an in-memory fake database; **production permissions remain unverified**.)
+- [ ] Run the read-only SQL report `supabase/rls_audit_readonly.sql` in Supabase SQL Editor and inspect its output. It reports policy expressions, grants, roles and bucket configuration; it does not change them.
 - [ ] In Supabase, review RLS and table/Storage policies: public may read only `published` articles and visible public settings; only the Super Admin can write content, settings and Storage; anonymous users cannot directly read `page_views`.
 - [ ] Audit `SECURITY DEFINER` functions, execute grants, and ensure public view-count functions have anti-abuse safeguards. Current automated tests do not try unauthorized writes.
 - [ ] Verify article image uploads (JPG/PNG/WebP/GIF, up to 5 MB) and that published images load on phones and desktop.
