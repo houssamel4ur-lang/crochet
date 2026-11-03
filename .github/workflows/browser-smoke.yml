@@ -7,6 +7,9 @@ on:
       - 'index.html'
       - 'admin/index.html'
       - 'tests/browser-smoke.cjs'
+      - 'scripts/article_analytics.js'
+      - 'scripts/build_seo.py'
+      - 'posts/**'
       - 'tests/mock-admin-supabase.mjs'
       - '.github/workflows/browser-smoke.yml'
   workflow_dispatch:
