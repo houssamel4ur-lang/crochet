@@ -14,7 +14,7 @@ from urllib.request import Request, urlopen
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = "https://houssamel4ur-lang.github.io/crochet/"
+BASE = "https://cozyloops.site/"
 API = "https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/articles"
 KEY = "sb_publishable_HqkcpvBz8P8KJTZFgefrWQ_rFxKPMNh"
 SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")

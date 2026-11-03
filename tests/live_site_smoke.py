@@ -13,8 +13,8 @@ import json
 import time
 import unittest
 
-BASE = "https://houssamel4ur-lang.github.io/crochet/"
-EXPECTED_HOST = "houssamel4ur-lang.github.io"
+BASE = "https://cozyloops.site/"
+EXPECTED_HOST = "cozyloops.site"
 
 def fetch(path, attempts=3):
     url = BASE + path
@@ -142,7 +142,7 @@ class LiveSiteTests(unittest.TestCase):
         html = fetch("404.html")
         self.assertIn("Page Not Found | CozyLoops", html)
         self.assertIn('<meta name="robots" content="noindex,follow">', html)
-        self.assertIn('href="/crochet/"', html)
+        self.assertIn('href="/"', html)
         robots = fetch("robots.txt")
         self.assertIn("Sitemap: " + BASE + "sitemap.xml", robots)
 

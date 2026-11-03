@@ -1,5 +1,5 @@
 User-agent: *
-Allow: /crochet/
-Disallow: /crochet/admin/
+Allow: /
+Disallow: /admin/
 
-Sitemap: https://houssamel4ur-lang.github.io/crochet/sitemap.xml
+Sitemap: https://cozyloops.site/sitemap.xml

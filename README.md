@@ -1,7 +1,7 @@
 # CozyLoops — Free Crochet Patterns & Tutorials
 
-Live website: https://houssamel4ur-lang.github.io/crochet/  
-Admin dashboard: https://houssamel4ur-lang.github.io/crochet/admin/
+Live website: https://cozyloops.site/  
+Admin dashboard: https://cozyloops.site/admin/
 
 ## How this website works
 - GitHub Pages serves the public homepage, admin UI, and static article pages.
@@ -32,7 +32,7 @@ Each workflow is available in the repository's **Actions** tab. A green run only
 - [ ] Verify article image uploads (JPG/PNG/WebP/GIF, up to 5 MB) and that published images load on phones and desktop.
 - [ ] Verify privacy consent and analytics opt-out on homepage and static articles. The Privacy page and each generated article have a local opt-out control that stops future optional analytics in that browser. Previously recorded counts are not deleted.
 - [ ] Complete real operator contact information, Terms, and Privacy Policy before monetization, analytics extensions, or collecting visitor information.
-- [ ] Add the exact URL-prefix property `https://houssamel4ur-lang.github.io/crochet/` to [Google Search Console](https://search.google.com/search-console), **verify ownership in the owner's Google account**, and submit `https://houssamel4ur-lang.github.io/crochet/sitemap.xml`. The static `robots.txt` within this project is *not* a host-root robots.txt.
+- [ ] Add the Domain property `cozyloops.site` (verified via the owner's DNS TXT record) or URL-prefix property `https://cozyloops.site/` to [Google Search Console](https://search.google.com/search-console), **verify ownership in the owner's Google account**, and submit `https://cozyloops.site/sitemap.xml`. The static `robots.txt` within this project is *not* a host-root robots.txt.
 - [ ] Use URL Inspection in Search Console after Google discovers pages; sitemap inclusion does **not** prove Google indexing.
 - [ ] Re-run Lighthouse after deployment and sample real devices; verify navigation, accessibility, and Core Web Vitals. Lab scores fluctuate.
 - [ ] Confirm production recovery: recent Supabase database backup/export, source repository access, and GitHub Pages settings.

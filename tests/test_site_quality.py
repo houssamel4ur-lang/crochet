@@ -7,7 +7,7 @@ import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-PUBLIC_BASE = "https://houssamel4ur-lang.github.io/crochet/"
+PUBLIC_BASE = "https://cozyloops.site/"
 
 class Scan(HTMLParser):
     def __init__(self):
@@ -135,7 +135,7 @@ class SiteQualityTests(unittest.TestCase):
     def test_custom_404_has_accessible_navigation_and_noindex(self):
         page = (ROOT / "404.html").read_text(encoding="utf-8")
         self.assertIn('<meta name="robots" content="noindex,follow">', page)
-        self.assertIn('href="/crochet/"', page)
+        self.assertIn('href="/"', page)
         self.assertIn("<h1>", page)
         self.assertIn("Page Not Found | CozyLoops", page)
 

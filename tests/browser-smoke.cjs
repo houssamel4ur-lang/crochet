@@ -120,7 +120,7 @@ const failures = [];
     const staticPost = await browser.newPage();
     staticPost.on('pageerror', error => failures.push('static article: ' + error.message));
     const fsForStatic = require('node:fs');
-    await staticPost.route('https://houssamel4ur-lang.github.io/crochet/scripts/article_analytics.js', route =>
+    await staticPost.route('https://cozyloops.site/scripts/article_analytics.js', route =>
       route.fulfill({
         status:200,contentType:'application/javascript',
         body:fsForStatic.readFileSync('scripts/article_analytics.js','utf8')
