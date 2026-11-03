@@ -63,6 +63,9 @@ const failures = [];
       await page.goto(base + '/#privacy');
       await page.locator('main h1').waitFor();
       assert.match(await page.locator('main h1').innerText(), /Privacy Policy/);
+      await page.locator('#privacy-opt-out').click();
+      assert.match(await page.locator('#privacy-consent-status').innerText(), /disabled/);
+      assert.equal(await page.evaluate(() => localStorage.getItem('cozyloops_analytics_consent')), 'no');
       await page.close();
       console.log('OK public browser smoke:', viewport.width + 'px');
     }
