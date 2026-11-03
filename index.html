@@ -149,47 +149,62 @@ const posts=[featuredEditorial];
 const categories=["All","Beginner Tutorials","Free Patterns","Amigurumi","Crochet Tips"];
 let articlesLoadError=false;
 async function loadPublishedPosts(){
-  let remoteRows=[],localRows=[],remoteOk=false,localOk=false;
+  let localOk=false;
+  const readLocal=async path=>{
+    try{
+      const response=await fetch(path,{cache:'no-store'});
+      if(!response.ok)throw Error(path+' returned '+response.status);
+      const rows=await response.json();
+      if(!Array.isArray(rows))throw Error('Invalid article catalog: '+path);
+      localOk=true;
+      return rows.filter(p=>p&&p.status==='published');
+    }catch(error){console.warn('GitHub article source unavailable:',error.message);return [];}
+  };
+  const [archive,editorial]=await Promise.all([
+    readLocal('content/original_articles.json'),
+    readLocal('content/github_articles.json')
+  ]);
+  const renderAll=remote=>{
+    const chosen=new Map([[featuredEditorial.slug,{
+      slug:featuredEditorial.slug,title:featuredEditorial.title,category:featuredEditorial.category,
+      excerpt:featuredEditorial.excerpt,image_url:featuredEditorial.image,created_at:'2026-11-03T22:35:00Z',content:''
+    }]]);
+    // Saved originals are fallback only: Admin edits from Supabase override them.
+    for(const p of archive)if(p&&typeof p.slug==='string')chosen.set(p.slug,p);
+    for(const p of remote)if(p&&typeof p.slug==='string')chosen.set(p.slug,p);
+    // Published GitHub editorials are the authoritative copy for their slugs.
+    for(const p of editorial)if(p&&typeof p.slug==='string')chosen.set(p.slug,p);
+    posts.length=0;
+    categories.splice(1,categories.length-1,'Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips');
+    for(const p of chosen.values()){
+      if(!p||typeof p.slug!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug)
+         ||typeof p.title!=='string'||!p.title.trim())continue;
+      const body=typeof p.content==='string'?p.content:'';
+      const category=typeof p.category==='string'&&p.category.trim()?p.category.slice(0,100):'Crochet Tips';
+      const excerpt=typeof p.excerpt==='string'?p.excerpt:'';
+      const created=p.created_at?new Date(p.created_at):null;
+      const publishedAt=created&&!Number.isNaN(created.getTime())?created.getTime():0;
+      const date=publishedAt?created.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'';
+      posts.push({slug:p.slug,title:p.title,category,date,publishedAt,
+        minutes:Math.max(1,Math.ceil(body.trim().split(/\s+/).length/200)),
+        image:safeHttps(p.image_url)||imageBase+'photo-1693326873444-d7cf33cad3e0?w=1000',
+        excerpt,markdown:body});
+      if(!categories.includes(category))categories.push(category);
+    }
+    posts.sort((a,b)=>b.publishedAt-a.publishedAt);
+    articlesLoadError=!(localOk||remote.length);
+    refreshPostResults();
+  };
+  // Render saved posts immediately; do not hold article listing behind Supabase.
+  renderAll([]);
   try{
     const endpoint='https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/articles?status=eq.published&select=title,slug,content,excerpt,image_url,category,created_at&order=created_at.desc';
-    const res=await fetch(endpoint,{headers:{apikey:themeKey}});
-    if(!res.ok)throw Error('Article request returned '+res.status);
-    remoteRows=await res.json();
-    if(!Array.isArray(remoteRows))throw Error('Unexpected article response');
-    remoteOk=true;
-  }catch(err){console.warn('Unable to load articles from Supabase:',err.message)}
-  try{
-    const res=await fetch('content/github_articles.json',{cache:'no-store'});
-    if(!res.ok)throw Error('GitHub articles returned '+res.status);
-    const rows=await res.json();
-    if(!Array.isArray(rows))throw Error('Invalid GitHub article catalog');
-    localRows=rows.filter(p=>p&&p.status==='published');
-    localOk=true;
-  }catch(err){console.warn('Unable to load GitHub articles:',err.message)}
-  const chosen=new Map([[featuredEditorial.slug,{slug:featuredEditorial.slug,title:featuredEditorial.title,category:featuredEditorial.category,excerpt:featuredEditorial.excerpt,image_url:featuredEditorial.image,created_at:'2026-11-03T22:35:00Z',content:''}]]);
-  for(const p of remoteRows)if(p&&typeof p.slug==='string')chosen.set(p.slug,p);
-  // Published GitHub articles take precedence if a matching slug also exists in Supabase.
-  for(const p of localRows)if(p&&typeof p.slug==='string')chosen.set(p.slug,p);
-  posts.length=0;
-  categories.splice(1,categories.length-1,'Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips');
-  for(const p of chosen.values()){
-    if(!p||typeof p.slug!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug)
-       ||typeof p.title!=='string'||!p.title.trim())continue;
-    const body=typeof p.content==='string'?p.content:'';
-    const category=typeof p.category==='string'&&p.category.trim()?p.category.slice(0,100):'Crochet Tips';
-    const excerpt=typeof p.excerpt==='string'?p.excerpt:'';
-    const created=p.created_at?new Date(p.created_at):null;
-    const publishedAt=created&&!Number.isNaN(created.getTime())?created.getTime():0;
-    const date=publishedAt?created.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'';
-    posts.push({slug:p.slug,title:p.title,category,date,publishedAt,
-      minutes:Math.max(1,Math.ceil(body.trim().split(/\s+/).length/200)),
-      image:safeHttps(p.image_url)||imageBase+'photo-1693326873444-d7cf33cad3e0?w=1000',
-      excerpt,markdown:body});
-    if(!categories.includes(category))categories.push(category);
-  }
-  posts.sort((a,b)=>b.publishedAt-a.publishedAt);
-  articlesLoadError=!(remoteOk||localOk);
-  refreshPostResults();
+    const response=await fetch(endpoint,{headers:{apikey:themeKey}});
+    if(!response.ok)throw Error('Article request returned '+response.status);
+    const remote=await response.json();
+    if(!Array.isArray(remote))throw Error('Unexpected Supabase article response');
+    renderAll(remote);
+  }catch(error){console.warn('Using saved GitHub articles:',error.message)}
 }
 let filter="All",query="";
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));

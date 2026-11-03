@@ -90,22 +90,26 @@ def markdown(source):
     return "\n".join(rendered)
 
 def load_articles():
-    """Combine Supabase posts and permanent GitHub editorial articles."""
+    """Use original GitHub archive as fallback, plus Supabase edits and GitHub editorials."""
+    archive = json.loads((ROOT / "content" / "original_articles.json").read_text(encoding="utf-8"))
+    editorials = json.loads((ROOT / "content" / "github_articles.json").read_text(encoding="utf-8"))
+    if not isinstance(archive, list) or not isinstance(editorials, list):
+        raise RuntimeError("Expected arrays in GitHub article catalogs")
     url = API + "?status=eq.published&select=title,slug,content,excerpt,image_url,category,created_at,updated_at&order=created_at.desc&limit=1000"
     req = Request(url, headers={"apikey": KEY, "Accept": "application/json", "User-Agent": "CozyLoopsStaticBuilder/1.0"})
-    with urlopen(req, timeout=25) as response:
-        remote = json.load(response)
-    if not isinstance(remote, list):
-        raise RuntimeError("Expected a JSON list from Supabase")
-    catalog = ROOT / "content" / "github_articles.json"
-    local = json.loads(catalog.read_text(encoding="utf-8"))
-    if not isinstance(local, list):
-        raise RuntimeError("Expected a JSON list of GitHub articles")
+    try:
+        with urlopen(req, timeout=25) as response:
+            remote = json.load(response)
+        if not isinstance(remote, list):
+            raise RuntimeError("Expected JSON list from Supabase")
+    except (OSError, ValueError) as error:
+        print(f"Supabase article source unavailable; retaining published GitHub archive: {error}")
+        remote = []
     articles = {}
-    for item in remote + [p for p in local if isinstance(p, dict) and p.get("status") == "published"]:
+    for item in archive + remote + [p for p in editorials if isinstance(p, dict) and p.get("status") == "published"]:
         if (isinstance(item, dict) and isinstance(item.get("slug"), str)
                 and SLUG.fullmatch(item["slug"]) and isinstance(item.get("title"), str)
-                and item["title"].strip()):
+                and item["title"].strip() and item.get("status", "published") == "published"):
             articles[item["slug"]] = item
     return sorted(articles.values(), key=lambda p: p.get("created_at") or "", reverse=True)
 

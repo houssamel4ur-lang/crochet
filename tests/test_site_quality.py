@@ -160,6 +160,13 @@ class SiteQualityTests(unittest.TestCase):
             self.assertGreaterEqual(article["content"].count("![") + 1, 3)
             self.assertIn("## Frequently Asked Questions", article["content"])
 
+    def test_six_original_posts_are_preserved(self):
+        archive=json.loads((ROOT / "content/original_articles.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(archive),6)
+        self.assertEqual(len({p["slug"] for p in archive}),6)
+        self.assertTrue(all(p["status"]=="published" and p["content"] for p in archive))
+        self.assertIn("content/original_articles.json",self.home)
+
     def test_restored_saved_design_and_sidebar(self):
         self.assertNotIn("CozyLoops Theme B", self.home)
         self.assertIn("photos/4792079/pexels-photo-4792079.jpeg", self.home)
