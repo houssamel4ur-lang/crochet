@@ -68,6 +68,12 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn("sb_publishable_", self.admin)
         self.assertNotIn("sb_secret_", self.admin)
 
+    def test_admin_editor_validates_real_uploads_and_heading_hierarchy(self):
+        self.assertIn("file.slice(0,16).arrayBuffer()", self.admin)
+        self.assertIn("actualType!==file.type", self.admin)
+        self.assertIn("file.size>5*1024*1024", self.admin)
+        self.assertIn("Math.min(3,Math.max(2,match[1].length))", self.admin)
+
     def test_admin_has_operational_seo_health_panel(self):
         self.assertIn('id="panel-settings"', self.admin)
         self.assertIn('id="check-seo-health"', self.admin)
