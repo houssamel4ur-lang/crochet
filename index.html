@@ -40,6 +40,7 @@
 footer .brand{color:#f2f6ec}
 .article-toc{padding:20px 24px;margin:24px 0;border:1px solid var(--line);border-radius:16px;background:var(--white)}.article-toc ol{padding-left:24px;margin:8px 0 0}.article-toc li{margin:5px 0}.toc-jump{appearance:none;background:none;border:0;padding:0;color:var(--green);font:inherit;text-decoration:underline;text-underline-offset:3px;text-align:left;cursor:pointer}.article [id^="article-section-"]{scroll-margin-top:24px}
 .related-posts{margin:32px 0;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--white)}.related-posts ul{padding-left:22px;margin:12px 0 0}.related-posts li{margin:8px 0}.related-posts a{text-decoration:underline;text-underline-offset:3px}
+.starter-section{padding:43px 0 52px;background:#fffaf3;border-bottom:1px solid var(--line)}.starter-intro{max-width:700px;margin:0 0 24px;color:var(--muted)}.starter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.starter-guide{display:block;min-height:150px;padding:22px;border:1px solid var(--line);border-radius:18px;background:#fff;color:var(--ink);transition:transform .2s,box-shadow .2s}.starter-guide:hover{transform:translateY(-3px);box-shadow:0 10px 22px #29342d13}.starter-guide .step{font-size:12px;font-weight:800;color:var(--green);letter-spacing:1.1px}.starter-guide strong{display:block;font:700 20px/1.3 Georgia,serif;margin:12px 0}.starter-guide .hint{color:var(--muted);font-size:14px}@media(max-width:750px){.starter-grid{grid-template-columns:1fr}.starter-guide{min-height:0;padding:18px}}
 </style>
 </head>
 <body>
@@ -168,9 +169,26 @@ function updateCardLinks(){
 const card=p=>`<article class="card"><a href="${postHref(p.slug)}" data-post-slug="${esc(p.slug)}"><img loading="lazy" src="${esc(p.image)}" alt="${esc(p.title)}" width="640" height="450" decoding="async"></a><div class="card-body"><span class="tag">${esc(p.category)}</span><h3><a href="${postHref(p.slug)}" data-post-slug="${esc(p.slug)}">${esc(p.title)}</a></h3><p>${esc(p.excerpt)}</p><a class="text-link" href="${postHref(p.slug)}" data-post-slug="${esc(p.slug)}">Read article →</a><div class="meta">${p.date} · ${p.minutes} min read</div></div></article>`;
 function home(){document.title=siteTheme.site_name+" | Free Crochet Patterns, Tutorials & Ideas";document.querySelector('meta[name="description"]').content=siteTheme.site_description;document.getElementById("app").innerHTML=`
 <section class="hero" id="home"><div class="container hero-inner"><div><span class="eyebrow">Your cozy corner of creativity</span><h1>Made with yarn. Shared with love.</h1><p>Explore beginner-friendly crochet tutorials, helpful tips, free project ideas, and the little joys of handmade living.</p><a class="btn" href="#articles">Explore Articles</a></div><img src="https://images.pexels.com/photos/4792079/pexels-photo-4792079.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" srcset="https://images.pexels.com/photos/4792079/pexels-photo-4792079.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=480 480w, https://images.pexels.com/photos/4792079/pexels-photo-4792079.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800 800w, https://images.pexels.com/photos/4792079/pexels-photo-4792079.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200 1200w" sizes="(max-width:800px) 100vw, 45vw" alt="Crochet yarn and hook beside a handmade project in a cozy home" width="1200" height="800" fetchpriority="high" decoding="async"></div></section>
+<section class="starter-section" id="start-here"><div class="container"><span class="eyebrow">Your first stitches</span><h2>New to crochet? Start here.</h2><p class="starter-intro">Follow three simple beginner guides, from your first stitches to choosing yarn and reading a pattern.</p><div class="starter-grid" id="starterGuides"><a class="starter-guide" href="#articles"><span class="step">01 · BEGIN</span><strong>Browse beginner tutorials</strong><span class="hint">Explore free crochet lessons →</span></a></div></div></section>
 <section class="section" id="articles"><div class="container"><div class="section-head"><div><span class="eyebrow">Fresh inspiration</span><h2>Latest Crochet Articles</h2></div><span>Learn one stitch at a time ♡</span></div><div class="controls" id="categories"><input class="search" id="search" aria-label="Search articles" placeholder="Search articles..." value="${esc(query)}"><div class="chips">${categories.map(c=>`<button class="chip ${filter===c?"active":""}" data-category="${esc(c)}">${esc(c)}</button>`).join("")}</div></div><div class="grid" id="postGrid"></div></div></section>
 <div id="categorySections"></div><section class="section feature" id="about"><div class="container feature-inner"><img loading="lazy" src="${imageBase}photo-1494438639946-1ebd1d20bf85?w=700&auto=format&q=78" srcset="${imageBase}photo-1494438639946-1ebd1d20bf85?w=420&auto=format&q=78 420w, ${imageBase}photo-1494438639946-1ebd1d20bf85?w=700&auto=format&q=78 700w, ${imageBase}photo-1494438639946-1ebd1d20bf85?w=1000&auto=format&q=78 1000w" sizes="(max-width:800px) 100vw, 45vw" alt="Cozy creative workspace" width="1000" height="700" decoding="async"><div><span class="eyebrow">Hello, maker!</span><h2>A Little About CozyLoops</h2><p>CozyLoops is a crochet inspiration blog dedicated to approachable techniques, project ideas and the pleasure of making things by hand. Whether you are learning your first chain or exploring amigurumi, there is always something new to try.</p><a class="btn" href="#articles">Start Exploring</a></div></div></section>
-<section class="newsletter"><div class="container"><span class="eyebrow">Stay inspired</span><h2>Keep Your Creativity Growing</h2><p>Discover more free crochet ideas and explore our latest tutorials and patterns.</p><a class="btn" href="#articles">Browse the Articles</a></div></section>`;document.getElementById("search").addEventListener("input",e=>{query=e.target.value;drawCards()});document.querySelectorAll("[data-category]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.category;document.querySelectorAll("[data-category]").forEach(x=>x.classList.toggle("active",x===b));drawCards()}));drawCards();drawCategorySections()}
+<section class="newsletter"><div class="container"><span class="eyebrow">Stay inspired</span><h2>Keep Your Creativity Growing</h2><p>Discover more free crochet ideas and explore our latest tutorials and patterns.</p><a class="btn" href="#articles">Browse the Articles</a></div></section>`;document.getElementById("search").addEventListener("input",e=>{query=e.target.value;drawCards()});document.querySelectorAll("[data-category]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.category;document.querySelectorAll("[data-category]").forEach(x=>x.classList.toggle("active",x===b));drawCards()}));drawCards();drawCategorySections();drawStarterGuides()}
+function drawStarterGuides(){
+ const root=document.getElementById('starterGuides');if(!root)return;
+ const steps=[
+  {label:'01 · LEARN',title:'Learn your first stitches',match:/absolute beginner|beginner|basics/i},
+  {label:'02 · PREPARE',title:'Choose your yarn',match:/choosing.*yarn|yarn/i},
+  {label:'03 · CREATE',title:'Read a crochet pattern',match:/read.*pattern|pattern/i}
+ ];
+ const used=new Set();
+ const links=steps.map(step=>{
+   const post=posts.find(p=>!used.has(p.slug)&&step.match.test(p.title));
+   if(!post)return '';
+   used.add(post.slug);
+   return '<a class="starter-guide" href="'+esc(postHref(post.slug))+'" data-post-slug="'+esc(post.slug)+'"><span class="step">'+step.label+'</span><strong>'+esc(post.title)+'</strong><span class="hint">Read the guide →</span></a>';
+ }).filter(Boolean);
+ root.innerHTML=links.length?links.join(''):'<a class="starter-guide" href="#articles"><span class="step">GET STARTED</span><strong>Explore beginner tutorials</strong><span class="hint">Browse free crochet lessons →</span></a>';
+}
 function drawCards(){const list=posts.filter(p=>(filter==="All"||p.category===filter)&&(p.title+" "+p.excerpt+" "+p.category).toLowerCase().includes(query.toLowerCase()));document.getElementById("postGrid").innerHTML=articlesLoadError?'<p class="empty">Articles are temporarily unavailable. Please refresh this page.</p>':list.length?list.map(card).join(""):'<p class="empty">No published articles found.</p>'}
 function refreshPostResults(){
   const grid=document.getElementById('postGrid');
@@ -184,6 +202,7 @@ function refreshPostResults(){
   }));
   drawCards();
   drawCategorySections();
+  drawStarterGuides();
 }
 function drawCategorySections(){
   const root=document.getElementById('categorySections');if(!root)return;
