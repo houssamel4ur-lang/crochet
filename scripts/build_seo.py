@@ -20,6 +20,7 @@ KEY = "sb_publishable_HqkcpvBz8P8KJTZFgefrWQ_rFxKPMNh"
 SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 IMAGE = re.compile(r"!\[([^\]]*)\]\((https://[^\s)]+)\)")
 BOLD = re.compile(r"\*\*(.+?)\*\*")
+LINK = re.compile(r"\[([^\]]+)\]\((https://[^\s)]+)\)")
 
 def esc(value):
     return html.escape(str(value or ""), quote=True)
@@ -40,16 +41,32 @@ def safe_image(url):
     except ValueError:
         return ""
 
+def linked_text(value):
+    """Parse editor-authored HTTPS Markdown links without allowing arbitrary HTML."""
+    output = []
+    pos = 0
+    for match in LINK.finditer(value):
+        output.append(BOLD.sub(r"<strong>\1</strong>", esc(value[pos:match.start()])))
+        url = safe_image(match.group(2))
+        if url:
+            output.append(f'<a href="{esc(url)}" rel="noopener noreferrer">{esc(match.group(1))}</a>')
+        else:
+            output.append(esc(match.group(0)))
+        pos = match.end()
+    output.append(BOLD.sub(r"<strong>\1</strong>", esc(value[pos:])))
+    return "".join(output)
+
+
 def inline(value):
     output = []
     pos = 0
     for match in IMAGE.finditer(value):
-        output.append(BOLD.sub(r"<strong>\1</strong>", esc(value[pos:match.start()])))
+        output.append(linked_text(value[pos:match.start()]))
         url = safe_image(match.group(2))
         if url:
             output.append(f'<figure><img loading="lazy" decoding="async" src="{esc(url)}" alt="{esc(match.group(1))}" width="1000" height="625"></figure>')
         pos = match.end()
-    output.append(BOLD.sub(r"<strong>\1</strong>", esc(value[pos:])))
+    output.append(linked_text(value[pos:]))
     return "".join(output)
 
 def table_of_contents(source):
