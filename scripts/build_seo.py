@@ -179,7 +179,10 @@ def render_page(article, css, articles=None):
     }
     if cover:
         structured["image"] = cover
-    image_html = f'<img class="article-cover" src="{esc(cover)}" alt="{esc(article.get("image_alt") or title)}" width="1000" height="625" fetchpriority="high" decoding="async">' if cover else ""
+    is_starfish = article.get("slug") == "starfish-baby-crochet-outfit-guide"
+    cover_width, cover_height = (720, 1257) if is_starfish else (1000, 625)
+    article_class = "article starfish-featured" if is_starfish else "article"
+    image_html = f'<img class="article-cover" src="{esc(cover)}" alt="{esc(article.get("image_alt") or title)}" width="{cover_width}" height="{cover_height}" fetchpriority="high" decoding="async">' if cover else ""
     structured_json = json.dumps(structured, ensure_ascii=False).replace("<", "\\u003c")
     social_image = f'<meta property="og:image" content="{esc(cover)}">' if cover else ""
     return f'''<!doctype html>
@@ -203,6 +206,8 @@ def render_page(article, css, articles=None):
 <style>{css}
 
 .article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:18px}}
+.starfish-featured .article-cover{{width:min(100%,640px);max-height:none;height:auto;aspect-ratio:auto;object-fit:contain;margin:24px auto 34px;box-shadow:0 12px 40px #29342d0d}}
+.starfish-featured figure img{{max-width:670px;margin:16px auto;object-fit:contain}}
 .article figure{{margin:22px 0}}.article figure img{{width:100%;height:auto;border-radius:15px}}
 .article ul{{padding-left:26px}}.article strong{{font-weight:700}}
 .related-posts{{margin:32px 0;padding:22px;border:1px solid var(--line,#e5e7df);border-radius:16px;background:var(--white,#fff)}}
@@ -220,7 +225,7 @@ def render_page(article, css, articles=None):
 <header><nav class="nav"><a class="brand" href="{BASE}">CozyLoops ♡</a><a class="nav-search-trigger" href="{BASE}#search-articles" aria-label="Search crochet articles" title="Search articles"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></a><button class="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-haspopup="dialog" aria-controls="site-drawer" aria-expanded="false"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></nav></header><dialog class="site-drawer" id="site-drawer" aria-label="Site navigation"><div class="drawer-panel"><div class="drawer-heading"><span>CozyLoops ♡</span><button type="button" class="drawer-close" aria-label="Close navigation menu">×</button></div><nav class="drawer-links" aria-label="Site pages"><a href="{BASE}#home">Home</a><a href="{BASE}#articles">Articles</a><a href="{BASE}#categories">Categories</a><a href="{BASE}#about">About</a><a href="{BASE}#contact">Contact</a><a href="{BASE}#search-articles" class="drawer-search-link">⌕ Search articles</a></nav><p class="drawer-foot">Free patterns, gentle inspiration & handmade joy.</p></div></dialog>
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-label="Article reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
 <button type="button" id="back-to-top" class="back-to-top" aria-label="Back to top" hidden>↑ Top</button>
-<main id="content"><article class="article">
+<main id="content"><article class="{article_class}">
 <a class="back" href="{BASE}#articles">← Back to all articles</a>
 <div class="tag">{esc(category)}</div>
 <h1>{esc(title)}</h1>
