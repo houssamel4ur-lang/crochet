@@ -229,7 +229,7 @@ def render_page(article, css, articles=None):
 <a class="back" href="{BASE}#articles">← Back to all articles</a>
 <div class="tag">{esc(category)}</div>
 <h1>{esc(title)}</h1>
-<p class="meta">{esc(published[:10])} · CozyLoops</p>
+<p class="meta">By CozyLoops</p>
 <div class="article-share"><button type="button" id="article-share-button" class="article-share-button">Share this article</button><button type="button" id="article-print-button" class="article-print-button">Print / Save PDF</button><span id="article-share-status" role="status" aria-live="polite"></span></div>
 <p>{esc(description)}</p>
 {image_html}
