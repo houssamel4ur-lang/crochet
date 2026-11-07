@@ -188,6 +188,7 @@ def render_page(article, css, articles=None):
     return f'''<!doctype html>
 <html lang="en">
 <head>
+<script src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js" async></script>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(title)} | CozyLoops</title>
 <meta name="description" content="{esc(description)}">
