@@ -172,7 +172,7 @@ if(url&&publishableKey){
   };
   // These six starter articles were deliberately deleted by the owner.
   const permanentlyRemovedSlugs=new Set(["crochet-for-absolute-beginners","how-to-read-crochet-patterns","easy-crochet-scarf-guide","amigurumi-basics","choosing-crochet-yarn","crochet-stitch-counting"]);
-  let githubEditorPosts=[];
+  let githubEditorPosts=[],githubPublishedSlugs=new Set(),editorialCatalogLoaded=false;
   let schedulerReady=false, schedulerInstalled=false, editingPublished=false;
   const scheduleZone=Intl.DateTimeFormat().resolvedOptions().timeZone;
   const scheduleLabel=post=>post.status==='draft'&&post.scheduled_at?'scheduled':post.status||'draft';
@@ -189,7 +189,7 @@ if(url&&publishableKey){
   postField('status').addEventListener('change',updateScheduleFields);
   $('post-scheduled-at').addEventListener('input',updateScheduleFields);
   const checkScheduler=async()=>{
-    schedulerReady=false;
+    schedulerReady=false;schedulerInstalled=false;
     try{const {data,error}=await supabase.rpc('article_scheduler_status');schedulerInstalled=!error&&typeof data==='boolean';schedulerReady=schedulerInstalled&&data===true;}catch{}
     postField('status').querySelector('option[value="scheduled"]').disabled=!schedulerReady;
     $('scheduler-health').textContent=schedulerReady?'Automatic publishing is active. Schedule a new article or an unpublished draft.':'Automatic publishing needs server activation. Normal draft and published saves remain available.';
@@ -202,12 +202,13 @@ if(url&&publishableKey){
     if(error){postMsg.textContent='Could not load posts: '+error.message;postMsg.className='error';return;}
     await checkScheduler();
     postRows=(data||[]).filter(p=>!permanentlyRemovedSlugs.has(p.slug));
-    githubEditorPosts=[];
+    githubEditorPosts=[];editorialCatalogLoaded=false;
     try{
       const response=await fetch('../content/github_articles.json',{cache:'no-store'});
       if(!response.ok)throw Error('GitHub article catalog returned '+response.status);
       const items=await response.json();
       if(!Array.isArray(items))throw Error('GitHub article catalog is not a list');
+      githubPublishedSlugs=new Set(items.filter(p=>p?.status==='published').map(p=>p.slug));editorialCatalogLoaded=true;
       const savedSlugs=new Set(postRows.map(p=>p.slug));
       githubEditorPosts=items.filter(p=>p&&p.status==='published'&&typeof p.slug==='string'
         &&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug)
@@ -401,7 +402,8 @@ if(url&&publishableKey){
       if(mode==='scheduled'){
         await checkScheduler();
         if(!schedulerReady)throw Error('Automatic publishing is not active. Activate the server scheduler first.');
-        if(editingPublished||editingGitHubSource||githubEditorPosts.some(p=>p.slug===slug))throw Error('Scheduling is for new articles and unpublished drafts. This URL is already published on GitHub.');
+        if(!editorialCatalogLoaded)throw Error('Could not verify existing public URLs. Refresh Posts before scheduling.');
+        if(editingPublished||editingGitHubSource||githubPublishedSlugs.has(slug))throw Error('Scheduling is for new articles and unpublished drafts. This URL is already published on GitHub.');
         const date=new Date($('post-scheduled-at').value);
         if(!Number.isFinite(date.getTime())||date.getTime()<=Date.now()+60000)throw Error('Choose a publication time at least one minute in the future.');
         payload.status='draft';payload.scheduled_at=date.toISOString();
