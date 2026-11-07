@@ -5,6 +5,11 @@
  */
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const editorialCatalog = JSON.parse(fs.readFileSync(path.join(__dirname, '../content/github_articles.json'), 'utf8'));
+const featuredEditorial = editorialCatalog.find(item => item.slug === 'crochet-patterns-for-beginners-guide');
+if (!featuredEditorial) throw new Error('Browser fixture editorial article not found');
 const base = 'http://127.0.0.1:8765';
 const post = {
   title: 'CozyLoops Test Crochet Article',
@@ -30,6 +35,11 @@ const failures = [];
         if (url.includes('/site_settings?')) body = [{ site_name: 'CozyLoops' }];
         await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body), headers: {'access-control-allow-origin': '*'} });
       });
+      await page.route('**/content/github_articles.json', route => route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([featuredEditorial])
+      }));
       await page.route('https://images.unsplash.com/**', route => route.abort());
       await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
       await page.waitForFunction(() => document.querySelectorAll('#postGrid .card').length === 2, {timeout:12000});
