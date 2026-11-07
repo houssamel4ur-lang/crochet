@@ -17,7 +17,8 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <div id="dashboard" class="hide"><p id="welcome"></p><div class="admin-layout">
 <nav class="admin-nav" aria-label="Admin sections">
 <button type="button" class="active" data-panel="overview">⌂ Dashboard</button>
-<button type="button" data-panel="posts">▤ Posts</button>
+<button type="button" data-panel="posts" data-post-filter="all">▤ Posts</button>
+<button type="button" data-panel="posts" data-post-filter="scheduled" id="scheduled-posts-nav">🗓 Scheduled</button>
 <button type="button" data-panel="theme">◈ Theme</button>
 <button type="button" data-panel="social">↗ Social Media</button>
 <button type="button" data-panel="contact">✉ Contact</button>
@@ -26,7 +27,7 @@ button:disabled{opacity:.5;cursor:default}.notice{padding:12px;background:#f2f6e
 <button type="button" data-panel="account">♙ Admin Account</button>
 </nav><div class="admin-content">
 <section id="panel-overview" class="admin-panel active"><h2>Dashboard</h2><p class="muted">A live overview of articles stored in Supabase.</p><div id="dashboard-stats" class="stats-grid" aria-live="polite"><p>Loading...</p></div><h3>Recently added posts</h3><div id="dashboard-recent"></div><p class="muted">These statistics summarize saved Supabase articles. GitHub editorial articles are available for editing from Posts.</p></section>
-<section id="panel-posts" class="admin-panel"><h2>Posts</h2><p class="muted">Manage your articles. Published GitHub editorials appear below with an Edit &amp; Import button; saving them creates an editable Supabase post without changing their public URL.</p>
+<section id="panel-posts" class="admin-panel"><h2 id="posts-heading">Posts</h2><p class="muted">Manage your articles. Published GitHub editorials appear below with an Edit &amp; Import button; saving them creates an editable Supabase post without changing their public URL.</p>
 <div class="post-actions"><button type="button" id="new-post">+ New Post</button><button type="button" class="secondary" id="refresh-posts">Refresh</button></div>
 <p id="posts-message" role="status"></p><div id="posts-list"></div>
 <form id="post-form" class="post-form hide">
@@ -172,6 +173,12 @@ if(url&&publishableKey){
   };
   // These six starter articles were deliberately deleted by the owner.
   const permanentlyRemovedSlugs=new Set(["crochet-for-absolute-beginners","how-to-read-crochet-patterns","easy-crochet-scarf-guide","amigurumi-basics","choosing-crochet-yarn","crochet-stitch-counting"]);
+  let postListFilter='all';
+  document.querySelectorAll('[data-post-filter]').forEach(button=>button.addEventListener('click',()=>{
+    postListFilter=button.dataset.postFilter;
+    postForm.classList.add('hide');postList.classList.remove('hide');
+    loadPosts();
+  }));
   let githubEditorPosts=[],githubPublishedSlugs=new Set(),editorialCatalogLoaded=false;
   let schedulerReady=false, schedulerInstalled=false, editingPublished=false;
   const scheduleZone=Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -218,10 +225,14 @@ if(url&&publishableKey){
     updatePostSections();renderStats();loadVisitorAnalytics();
     postMsg.textContent=postRows.length+' Supabase post(s), '+githubEditorPosts.length+' GitHub article(s) available for editing.';
     postList.replaceChildren();
-    const displayed=[...githubEditorPosts,...postRows];
+    const scheduled=postRows.filter(p=>p.status==='draft'&&p.scheduled_at).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at));
+    $('scheduled-posts-nav').textContent='🗓 Scheduled ('+scheduled.length+')';
+    $('posts-heading').textContent=postListFilter==='scheduled'?'Scheduled Posts':'Posts';
+    if(postListFilter==='scheduled')postMsg.textContent=scheduled.length+' scheduled post(s), ordered by publication time. Use Edit to change the time or save as Draft to cancel.';
+    const displayed=postListFilter==='scheduled'?scheduled:[...githubEditorPosts,...postRows];
     if(!displayed.length){
       const p=document.createElement('p');p.className='notice';
-      p.textContent='No posts yet. Click New Post to create one.';postList.append(p);
+      p.textContent=postListFilter==='scheduled'?'No scheduled posts yet. Create a post and choose Scheduled to set its publication time.':'No posts yet. Click New Post to create one.';postList.append(p);
     }
     for(const post of displayed){
       const isGithub=githubEditorPosts.includes(post);
