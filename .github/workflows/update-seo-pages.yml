@@ -6,6 +6,9 @@ on:
     paths:
       - 'scripts/build_seo.py'
       - 'scripts/make_starfish_art.py'
+      - 'scripts/generate_new15_assets.py'
+      - 'scripts/new15_article_data.py'
+      - 'editorial_sources_new15/**'
       - 'content/github_articles.json'
       - '.github/workflows/update-seo-pages.yml'
   workflow_dispatch:
@@ -45,8 +48,9 @@ jobs:
             git reset --hard origin/main
             python -m pip install --disable-pip-version-check Pillow==12.0.0
             python scripts/make_starfish_art.py
+            python scripts/generate_new15_assets.py --images-only
             python scripts/build_seo.py
-            git add -A posts/ sitemap.xml assets/starfish-baby-crochet-outfit.webp assets/starfish-baby-panels-construction.webp assets/starfish-baby-yarn-tools.webp
+            git add -A posts/ sitemap.xml assets/
             if git diff --cached --quiet; then
               echo "SEO pages already up to date."
               exit 0
