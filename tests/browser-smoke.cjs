@@ -193,6 +193,10 @@ const failures = [];
       status:200,contentType:'application/javascript',
       headers:{'access-control-allow-origin':'*'},body:mockSource
     }));
+    await owner.route('**/content/github_articles.json', route => route.fulfill({
+      status:200,contentType:'application/json',
+      body:JSON.stringify([featuredEditorial])
+    }));
     await owner.goto(base+'/admin/',{waitUntil:'domcontentloaded'});
     await owner.locator('#dashboard').waitFor({state:'visible',timeout:12000});
     await owner.locator('.admin-nav button[data-panel="posts"]').click();
