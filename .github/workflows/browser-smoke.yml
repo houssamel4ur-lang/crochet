@@ -7,6 +7,7 @@ on:
       - 'index.html'
       - 'admin/index.html'
       - 'tests/browser-smoke.cjs'
+      - 'tests/scheduling.cjs'
       - 'scripts/article_analytics.js'
       - 'scripts/build_seo.py'
       - 'posts/**'
@@ -38,5 +39,7 @@ jobs:
           echo $! > /tmp/cozyloops-http.pid
           sleep 2
           curl --fail http://127.0.0.1:8765/ >/dev/null
+      - name: Test scheduled publishing controls safely in memory
+        run: node tests/scheduling.cjs
       - name: Test desktop mobile search navigation posts and admin access
         run: node tests/browser-smoke.cjs

@@ -177,7 +177,7 @@ async function loadPublishedPosts(){
       const body=typeof p.content==='string'?p.content:'';
       const category=typeof p.category==='string'&&p.category.trim()?p.category.slice(0,100):'Crochet Tips';
       const excerpt=typeof p.excerpt==='string'?p.excerpt:'';
-      const created=p.created_at?new Date(p.created_at):null;
+      const created=(p.published_at||p.created_at)?new Date(p.published_at||p.created_at):null;
       const publishedAt=created&&!Number.isNaN(created.getTime())?created.getTime():0;
       const date=publishedAt?created.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'';
       posts.push({slug:p.slug,title:p.title,category,date,publishedAt,
@@ -193,7 +193,7 @@ async function loadPublishedPosts(){
   // Show GitHub editorial without waiting for a database connection.
   renderAll([]);
   try{
-    const endpoint='https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/articles?status=eq.published&select=title,slug,content,excerpt,image_url,category,created_at&order=created_at.desc';
+    const endpoint='https://yqmrunstyhrhnvxoyrap.supabase.co/rest/v1/articles?status=eq.published&select=*&order=created_at.desc';
     const response=await fetch(endpoint,{headers:{apikey:themeKey}});
     if(!response.ok)throw Error('Article request returned '+response.status);
     const remote=await response.json();

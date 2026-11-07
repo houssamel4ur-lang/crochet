@@ -113,7 +113,7 @@ def load_articles():
     editorials = json.loads((ROOT / "content" / "github_articles.json").read_text(encoding="utf-8"))
     if not isinstance(editorials, list):
         raise RuntimeError("Expected GitHub editorial catalog array")
-    url = API + "?status=eq.published&select=title,slug,content,excerpt,image_url,category,created_at,updated_at&order=created_at.desc&limit=1000"
+    url = API + "?status=eq.published&select=*&order=created_at.desc&limit=1000"
     req = Request(url, headers={"apikey": KEY, "Accept": "application/json", "User-Agent": "CozyLoopsStaticBuilder/1.0"})
     try:
         with urlopen(req, timeout=25) as response:
@@ -131,7 +131,7 @@ def load_articles():
                 and SLUG.fullmatch(item["slug"]) and isinstance(item.get("title"), str)
                 and item["title"].strip() and item.get("status", "published") == "published"):
             articles[item["slug"]] = item
-    return sorted(articles.values(), key=lambda p: p.get("created_at") or "", reverse=True)
+    return sorted(articles.values(), key=lambda p: p.get("published_at") or p.get("created_at") or "", reverse=True)
 
 def related_articles(article, articles, limit=3):
     """Select other posts, prioritizing the same category."""
@@ -163,7 +163,7 @@ def render_page(article, css, articles=None):
     category = str(article.get("category") or "Crochet Patterns")
     related_html = render_related(article, articles or [])
     toc_html = table_of_contents(str(article.get("content") or ""))
-    published = str(article.get("created_at") or "")
+    published = str(article.get("published_at") or article.get("created_at") or "")
     modified = str(article.get("updated_at") or published)
     structured = {
         "@context": "https://schema.org",
