@@ -288,6 +288,8 @@ def main():
     xml += "".join("  <url><loc>" + esc(url) + "</loc></url>\n" for url in sitemap)
     xml += "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(xml, encoding="utf-8")
+    from security_policy import main as apply_security_policy
+    apply_security_policy()
     print(f"Generated {len(current)} SEO article pages and sitemap entries")
 
 if __name__ == "__main__":
