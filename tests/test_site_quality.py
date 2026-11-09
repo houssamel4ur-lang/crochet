@@ -72,7 +72,7 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn("const articleLinkAttribute='href';", self.home)
         self.assertNotIn('href="${postHref(', self.home)
         self.assertNotIn('href="${esc(postHref(', self.home)
-        self.assertNotIn('href="'+esc(postHref(', self.home)
+        self.assertNotIn("href=\"\u0027+esc(postHref(", self.home)
         self.assertIn("function updateCardLinks()", self.home)
         self.assertRegex(self.home, r"function drawCards\(\).*updateCardLinks\(\)")
         self.assertIn("  drawStarterGuides();\n  updateCardLinks();", self.home)
