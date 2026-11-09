@@ -199,7 +199,7 @@ const failures = [];
     }));
     await owner.goto(base+'/admin/',{waitUntil:'domcontentloaded'});
     await owner.locator('#dashboard').waitFor({state:'visible',timeout:12000});
-    await owner.locator('.admin-nav button[data-panel="posts"]').click();
+    await owner.locator('.admin-nav button[data-panel="posts"][data-post-filter="all"]').click();
     const editorialRow=owner.locator('#posts-list .post-row',{hasText:'Crochet Patterns for Beginners'});
     await editorialRow.waitFor({timeout:5000});
     assert.equal(await owner.locator('#import-original-posts').count(),0,'deleted six-post importer is gone');
