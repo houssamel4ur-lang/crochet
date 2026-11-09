@@ -299,7 +299,7 @@ function drawStarterGuides(){
  }).filter(Boolean);
  root.innerHTML=links.length?links.join(''):'<a class="starter-guide" href="#articles"><span class="step">GET STARTED</span><strong>Explore beginner tutorials</strong><span class="hint">Browse free crochet lessons →</span></a>';
 }
-function drawCards(){const list=posts.filter(p=>(filter==="All"||p.category===filter)&&(p.title+" "+p.excerpt+" "+p.category).toLowerCase().includes(query.toLowerCase()));document.getElementById("postGrid").innerHTML=articlesLoadError?'<p class="empty">Articles are temporarily unavailable. Please refresh this page.</p>':list.length?list.map(card).join(""):'<p class="empty">No published articles found.</p>'}
+function drawCards(){const list=posts.filter(p=>(filter==="All"||p.category===filter)&&(p.title+" "+p.excerpt+" "+p.category).toLowerCase().includes(query.toLowerCase()));document.getElementById("postGrid").innerHTML=articlesLoadError?'<p class="empty">Articles are temporarily unavailable. Please refresh this page.</p>':list.length?list.map(card).join(""):'<p class="empty">No published articles found.</p>';updateCardLinks()}
 function refreshPostResults(){
   const grid=document.getElementById('postGrid');
   const chipArea=document.querySelector('.chips');
@@ -313,6 +313,7 @@ function refreshPostResults(){
   drawCards();
   drawCategorySections();
   drawStarterGuides();
+  updateCardLinks();
 }
 function drawCategorySections(){
   const root=document.getElementById('categorySections');if(!root)return;
@@ -321,12 +322,14 @@ function drawCategorySections(){
     if(!items.length)return '';
     return `<section class="category-section" id="section-${esc(c.toLowerCase().replace(/[^a-z0-9]+/g,'-'))}"><div class="container"><div class="section-head"><div><span class="eyebrow">Explore by category</span><h2>${esc(c)}</h2></div><a class="btn" href="#category/${encodeURIComponent(c)}">View All →</a></div><div class="grid">${items.slice(0,3).map(card).join('')}</div></div></section>`;
   }).join('');
+  updateCardLinks();
 }
 function categoryPage(category){
   if(!categories.includes(category)||category==='All'){notFound();return;}
   document.title=category+' | '+siteTheme.site_name;
   const items=posts.filter(p=>p.category===category);
   document.getElementById('app').innerHTML=`<section class="section"><div class="container"><a class="text-link" href="#home">← Home</a><h1>${esc(category)}</h1><p>${items.length} article(s)</p><div class="grid">${items.map(card).join('')}</div></div></section>`;
+  updateCardLinks();
 }
 function renderArticleMarkdown(source){
  let headingIndex=0;
@@ -377,6 +380,7 @@ async function shareArticle(url,title,status){
  }
 }
 function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.minutes} min read</p><div class="article-share"><button type="button" class="article-share-button">Share this article</button><button type="button" class="article-print-button">Print / Save PDF</button><span class="article-share-status" role="status" aria-live="polite"></span></div><p>${esc(p.excerpt)}</p><img src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div>${p.markdown?articleTableOfContents(p.markdown):""}${p.markdown?renderArticleMarkdown(p.markdown):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`;
+ updateCardLinks();
  requestAnimationFrame(scheduleReadingProgress);
  const printButton=document.querySelector('.article-print-button');
  if(printButton)printButton.addEventListener('click',()=>window.print());
