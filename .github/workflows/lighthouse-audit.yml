@@ -35,10 +35,18 @@ jobs:
             --only-categories=performance,accessibility,best-practices,seo \
             --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' \
             --output=json --output-path=lighthouse-reports/home-mobile.json --quiet
-          node_modules/.bin/lighthouse 'https://cozyloops.site/posts/crochet-for-absolute-beginners/' \
+          node_modules/.bin/lighthouse 'https://cozyloops.site/posts/crochet-patterns-for-beginners-guide/' \
             --only-categories=performance,accessibility,best-practices,seo \
             --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' \
             --output=json --output-path=lighthouse-reports/article-mobile.json --quiet
+      - name: Audit published homepage (desktop)
+        run: |
+          export CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          node_modules/.bin/lighthouse 'https://cozyloops.site/' \
+            --preset=desktop \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' \
+            --output=json --output-path=lighthouse-reports/home-desktop.json --quiet
       - name: Summarize real Lighthouse results
         if: always()
         run: |
