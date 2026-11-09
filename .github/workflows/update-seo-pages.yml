@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/build_seo.py'
+      - 'scripts/build_card_thumbnails.py'
       - 'scripts/make_starfish_art.py'
       - 'scripts/generate_new15_assets.py'
       - 'scripts/new15_article_data.py'
@@ -50,6 +51,7 @@ jobs:
             python scripts/make_starfish_art.py
             python scripts/generate_new15_assets.py --images-only
             python scripts/build_seo.py
+            python scripts/build_card_thumbnails.py
             git add -A posts/ sitemap.xml assets/
             if git diff --cached --quiet; then
               echo "SEO pages already up to date."
