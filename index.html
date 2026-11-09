@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js" async></script>
-<meta charset="UTF-8"><link rel="preconnect" href="https://images.pexels.com"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><link rel="preconnect" href="https://images.pexels.com" crossorigin><link rel="dns-prefetch" href="//images.unsplash.com"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CozyLoops | Free Crochet Patterns, Tutorials & Ideas</title>
 <meta name="description" content="Discover free crochet patterns, beginner-friendly tutorials, amigurumi ideas, and helpful crochet tips at CozyLoops.">
 <meta name="theme-color" content="#4f694c">
@@ -75,6 +75,9 @@ footer .brand{color:#f2f6ec}
 @media print{.nav-search-trigger,.nav-menu-toggle,.site-drawer{display:none!important}}
 /* Keep text readable on the feature and newsletter panels. */
 .feature p{color:#48554a}.newsletter{color:#29342d}.newsletter p,.newsletter .eyebrow{color:#29342d}
+/* Skip layout and paint for offscreen cards and lower-page sections. */
+@supports (content-visibility:auto){.category-section,.starter-section{content-visibility:auto;contain-intrinsic-size:auto 680px}}
+@media print{.category-section,.starter-section{content-visibility:visible}}
 /* Skip layout and paint for offscreen cards; keep their scroll space reserved. */
 .card{content-visibility:auto;contain-intrinsic-size:auto 470px}
 @media print{.card{content-visibility:visible}}
