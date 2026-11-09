@@ -66,6 +66,20 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn("esc(safeHttps(p.image)", self.home)
         self.assertNotIn('src="${p.image}"', self.home)
 
+    def test_article_links_are_hydrated_after_each_render(self):
+        # Sucuri previously treated JavaScript template fragments as real
+        # href values and reported invented URLs as 404 pages.
+        self.assertIn("const articleLinkAttribute='href';", self.home)
+        self.assertNotIn('href="${postHref(', self.home)
+        self.assertNotIn('href="${esc(postHref(', self.home)
+        self.assertNotIn('href="'+esc(postHref(', self.home)
+        self.assertIn("function updateCardLinks()", self.home)
+        self.assertRegex(self.home, r"function drawCards\(\).*updateCardLinks\(\)")
+        self.assertIn("  drawStarterGuides();\n  updateCardLinks();", self.home)
+        self.assertIn("  updateCardLinks();\n}\nfunction categoryPage", self.home)
+        self.assertIn("  updateCardLinks();\n}\nfunction renderArticleMarkdown", self.home)
+        self.assertIn(" updateCardLinks();\n requestAnimationFrame(scheduleReadingProgress)", self.home)
+
     def test_admin_not_indexable(self):
         self.assertRegex(self.admin, r'<meta name="robots" content="noindex,nofollow">')
         self.assertIn("is_super_admin", self.admin)
