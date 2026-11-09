@@ -12,7 +12,7 @@ const assert=require('node:assert/strict');
       await page.route('https://esm.sh/@supabase/supabase-js@2',r=>r.fulfill({contentType:'application/javascript',body:mock}));
       await page.goto('http://127.0.0.1:8765/admin/');
       await page.locator('#dashboard').waitFor({state:'visible'});
-      await page.locator('[data-panel="posts"]').click();
+      await page.locator('[data-panel="posts"][data-post-filter="all"]').click();
       await page.waitForFunction(()=>!document.querySelector('#scheduler-health').textContent.includes('Checking'));
       assert.equal(await page.locator('option[value="scheduled"]').isDisabled(),!active);
       await page.locator('#new-post').click();
