@@ -1,9 +1,11 @@
 """Regression checks for SEO, readable article layouts, and safe publishing."""
 import importlib.util
+import sys
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
 spec = importlib.util.spec_from_file_location("build_seo", ROOT / "scripts/build_seo.py")
 build = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(build)
