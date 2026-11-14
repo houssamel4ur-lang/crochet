@@ -148,6 +148,12 @@ def load_articles():
                 and item["slug"] not in REMOVED_STARTER_SLUGS
                 and SLUG.fullmatch(item["slug"]) and isinstance(item.get("title"), str)
                 and item["title"].strip() and item.get("status", "published") == "published"):
+            # The original GitHub editorial is sometimes mirrored in Supabase.
+            # Upgrade only its unchanged legacy cover, never a custom Admin image.
+            legacy = BASE + "assets/" + item["slug"] + "-1.webp"
+            polished = ROOT / "assets" / "legacy-polished" / (item["slug"] + "-cover.webp")
+            if item.get("image_url") == legacy and polished.is_file():
+                item = {**item, "image_url": BASE + "assets/legacy-polished/" + polished.name}
             articles[item["slug"]] = item
     return sorted(articles.values(), key=lambda p: p.get("published_at") or p.get("created_at") or "", reverse=True)
 
