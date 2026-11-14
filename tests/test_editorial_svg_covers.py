@@ -39,6 +39,15 @@ class EditorialCovers(unittest.TestCase):
                     self.assertEqual(cover.size, (1200, 750))
                 self.assertLess(source.with_suffix(".webp").stat().st_size, 450_000)
 
+    def test_homepage_uses_only_exact_default_article_covers(self):
+        home = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn("function upgradeDefaultEditorialCover(p)", home)
+        self.assertIn("illustratedDefaultSlugs.has(p.slug)", home)
+        self.assertIn("p.image_url!=='https://cozyloops.site/assets/'+p.slug+'-01.webp'", home)
+        self.assertIn("chosen.set(p.slug,upgradeDefaultEditorialCover(p))", home)
+        self.assertIn("dynamic-illustration-cover", home)
+        self.assertEqual(home.count("hbagency_space_349628"), 2)
+
     def test_default_low_resolution_cover_only_is_upgraded(self):
         for source in self.files:
             slug = source.stem.removesuffix("-cover")

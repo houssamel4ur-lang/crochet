@@ -93,6 +93,7 @@ header{position:relative;top:auto}
 .card{content-visibility:auto;contain-intrinsic-size:auto 470px}.load-more-wrap{grid-column:1/-1;text-align:center;padding:16px 0 4px}
 @media print{.card{content-visibility:visible}}
 .article img.dynamic-concept-cover{width:min(100%,340px);height:340px;max-height:340px;object-fit:cover;object-position:left center;margin:20px auto;box-shadow:0 8px 25px #27392a12}
+.article img.dynamic-illustration-cover{width:100%;height:auto;max-width:790px;max-height:none;aspect-ratio:8/5;object-fit:contain;object-position:center;margin:20px auto;background:#f9f6ef;box-shadow:0 8px 25px #27392a0b}
 .article-toc{padding:0 18px}.article-toc summary{padding:15px 4px;cursor:pointer;min-height:44px;font-weight:700;color:#294332}.article-toc nav{border-top:1px solid #e5e7df;max-height:280px;overflow:auto}.article-toc ol{margin:10px 0;padding-left:22px}
 .article-toc .toc-jump{display:inline-flex;align-items:center;min-height:40px;color:#24432d}
 .article-disclosure{margin:34px 0 18px;padding:0 18px;border:1px solid #e1e6dd;border-radius:14px;background:#f8faf5}.article-disclosure summary{padding:14px 0;cursor:pointer;min-height:44px}.article-disclosure p{font-size:14px}
@@ -180,6 +181,22 @@ const imageBase="https://images.unsplash.com/";
 // Always show the GitHub editorial article, even while Supabase loads.
 const featuredEditorial={"slug":"crochet-patterns-for-beginners-guide","title":"Crochet Patterns for Beginners: Read, Choose & Make Your First Project","category":"Beginner Tutorials","date":"November 3, 2026","publishedAt":1793745300000,"minutes":9,"image":"https://images.pexels.com/photos/4792079/pexels-photo-4792079.jpeg?auto=compress&cs=tinysrgb&w=1200","excerpt":"Learn how to read crochet patterns, decode US stitch abbreviations, choose beginner projects, and make a simple cotton washcloth with step-by-step instructions.","markdown":""};
 const removedStarterSlugs=new Set(["crochet-for-absolute-beginners","how-to-read-crochet-patterns","easy-crochet-scarf-guide","amigurumi-basics","choosing-crochet-yarn","crochet-stitch-counting"]);
+
+const illustratedDefaultSlugs=new Set([
+  'crochet-daisy-flower-bookmark-free-pattern','crochet-phone-pouch-crossbody-size-guide',
+  'crochet-flower-coasters-free-pattern','crochet-tulip-bouquet-stems-guide',
+  'crochet-butterfly-ornament-wing-guide','pink-axolotl-crochet-amigurumi-guide',
+  'crochet-penguin-ornament-free-pattern','mini-crochet-dinosaur-amigurumi-guide',
+  'crochet-strawberry-crossbody-bag-guide','crochet-bow-keychain-free-pattern',
+  'crochet-baby-booties-sizing-sole-guide','crochet-baby-animal-hats-bear-bunny-frog-guide',
+  'crochet-flower-keychains-scrap-yarn-guide','mini-woodland-amigurumi-animal-ideas',
+  'mini-farm-animals-amigurumi-collection'
+]);
+function upgradeDefaultEditorialCover(p){
+  if(!p||!illustratedDefaultSlugs.has(p.slug))return p;
+  if(p.image_url!=='https://cozyloops.site/assets/'+p.slug+'-01.webp')return p;
+  return {...p,image_url:'https://cozyloops.site/assets/editorial-illustrations/'+p.slug+'-cover.webp'};
+}
 const posts=[featuredEditorial];
 const categories=["All","Beginner Tutorials","Free Patterns","Amigurumi","Crochet Tips"];
 let articlesLoadError=false;
@@ -199,7 +216,7 @@ async function loadPublishedPosts(){
       slug:featuredEditorial.slug,title:featuredEditorial.title,category:featuredEditorial.category,
       excerpt:featuredEditorial.excerpt,image_url:featuredEditorial.image,created_at:'2026-11-03T22:35:00Z',content:''
     }]]);
-    for(const p of editorial)if(p&&typeof p.slug==='string'&&!removedStarterSlugs.has(p.slug))chosen.set(p.slug,p);
+    for(const p of editorial)if(p&&typeof p.slug==='string'&&!removedStarterSlugs.has(p.slug))chosen.set(p.slug,upgradeDefaultEditorialCover(p));
     // Approved Admin edits take precedence over the original GitHub editorial.
     // Supabase mirrors may still reference a retired legacy cover.
     // Upgrade only those exact default URLs; owner-selected replacements win.
@@ -213,7 +230,7 @@ async function loadPublishedPosts(){
       if(!p||typeof p.slug!=='string'||removedStarterSlugs.has(p.slug))continue;
       const oldCover='https://cozyloops.site/assets/'+p.slug+'-1.webp';
       const isOldCover=refinedLegacy.has(p.slug)&&p.image_url===oldCover;
-      chosen.set(p.slug,isOldCover?{...p,image_url:'https://cozyloops.site/assets/legacy-polished/'+p.slug+'-cover.webp'}:p);
+      chosen.set(p.slug,upgradeDefaultEditorialCover(isOldCover?{...p,image_url:'https://cozyloops.site/assets/legacy-polished/'+p.slug+'-cover.webp'}:p));
     }
     posts.length=0;
     categories.splice(1,categories.length-1,'Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips');
@@ -446,7 +463,7 @@ async function shareArticle(url,title,status){
    if(status)status.textContent='Copy this article URL from your address bar.';
  }
 }
-function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}const display=editorialViewContent(p.markdown);document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.minutes} min read</p><div class="article-share"><button type="button" class="article-share-button">Share this article</button><button type="button" class="article-print-button">Print / Save PDF</button><span class="article-share-status" role="status" aria-live="polite"></span></div><p>${esc(p.excerpt)}</p><img class="${display.note?'dynamic-concept-cover':''}" src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div><div id='hbagency_space_349628'></div>${display.body?articleTableOfContents(display.body):""}<div class="hb-ad-inpage">
+function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}const display=editorialViewContent(p.markdown);document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.minutes} min read</p><div class="article-share"><button type="button" class="article-share-button">Share this article</button><button type="button" class="article-print-button">Print / Save PDF</button><span class="article-share-status" role="status" aria-live="polite"></span></div><p>${esc(p.excerpt)}</p><img class="${display.note?(p.image.includes('/assets/editorial-illustrations/')?'dynamic-illustration-cover':'dynamic-concept-cover'):''}" src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div><div id='hbagency_space_349628'></div>${display.body?articleTableOfContents(display.body):""}<div class="hb-ad-inpage">
     <div class="hb-ad-inner"> 
     <div class="hbagency_cls hbagency_space_349630"></div></div> </div>${display.body?renderArticleMarkdown(display.body):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${display.note?'<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>'+esc(display.note)+'</p></details>':''}<div id='hbagency_space_349629'></div>${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`;
  updateCardLinks();
