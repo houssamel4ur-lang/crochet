@@ -404,13 +404,25 @@ function categoryPage(category){
   document.getElementById('app').innerHTML=`<section class="section"><div class="container"><a class="text-link" href="#home">← Home</a><h1>${esc(category)}</h1><p>${items.length} article(s)</p><div class="grid">${items.map(card).join('')}</div></div></section>`;
   updateCardLinks();
 }
-function renderArticleMarkdown(source){
+function renderArticleMarkdown(source,articleSlug=''){
  let headingIndex=0;
  const inline=value=>{
   const parts=String(value).split(/(!\[[^\]]*\]\(https:\/\/[^\s)]+\))/g);
   return parts.map(part=>{
    const match=part.match(/^!\[([^\]]*)\]\((https:\/\/[^\s)]+)\)$/);
-   if(match){const url=safeHttps(match[2]);if(url)return '<img loading="lazy" style="width:100%;height:auto;border-radius:14px;margin:16px 0" src="'+esc(url)+'" alt="'+esc(match[1])+'" width="1000" height="625" decoding="async">';}
+   if(match){
+     let url=safeHttps(match[2]),alt=match[1],width=1000,height=625;
+     // 15 original concept articles had photos blown up from tiny contact sheets.
+     // Use purpose-built scalable vector references, never relabel them as photos.
+     const crop=match[2].match(/^https:\/\/cozyloops\.site\/assets\/([a-z0-9-]+)-(02|04|09)\.webp$/);
+     if(crop&&crop[1]===articleSlug&&illustratedDefaultSlugs.has(articleSlug)){
+       const stage={02:'materials',04:'construction',09:'finishing'}[crop[2]];
+       url='https://cozyloops.site/assets/editorial-illustrations/'+articleSlug+'-panel-'+crop[2]+'.svg';
+       alt='Scalable illustrated '+stage+' reference for '+articleSlug.replace(/-/g,' ')+'; not a real project photograph';
+       width=900;height=1120;
+     }
+     if(url)return '<img loading="lazy" style="width:100%;height:auto;border-radius:14px;margin:16px 0" src="'+esc(url)+'" alt="'+esc(alt)+'" width="'+width+'" height="'+height+'" decoding="async">';
+   }
    return esc(part).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   }).join('');
  };
@@ -465,7 +477,7 @@ async function shareArticle(url,title,status){
 }
 function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}const display=editorialViewContent(p.markdown);document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.minutes} min read</p><div class="article-share"><button type="button" class="article-share-button">Share this article</button><button type="button" class="article-print-button">Print / Save PDF</button><span class="article-share-status" role="status" aria-live="polite"></span></div><p>${esc(p.excerpt)}</p><img class="${display.note?(p.image.includes('/assets/editorial-illustrations/')?'dynamic-illustration-cover':'dynamic-concept-cover'):''}" src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div><div id='hbagency_space_349628'></div>${display.body?articleTableOfContents(display.body):""}<div class="hb-ad-inpage">
     <div class="hb-ad-inner"> 
-    <div class="hbagency_cls hbagency_space_349630"></div></div> </div>${display.body?renderArticleMarkdown(display.body):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${display.note?'<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>'+esc(display.note)+'</p></details>':''}<div id='hbagency_space_349629'></div>${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`;
+    <div class="hbagency_cls hbagency_space_349630"></div></div> </div>${display.body?renderArticleMarkdown(display.body,p.slug):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${display.note?'<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>'+esc(display.note)+'</p></details>':''}<div id='hbagency_space_349629'></div>${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`;
  updateCardLinks();
  requestAnimationFrame(scheduleReadingProgress);
  const printButton=document.querySelector('.article-print-button');
