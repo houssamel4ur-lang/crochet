@@ -27,7 +27,7 @@
     document.head.appendChild(sheet);
   }
   function setActiveLink() {
-    const active = /^\/posts\/[^/]+\//.test(location.pathname) ? '#articles' : (location.hash || '#home');
+    const active = location.pathname.startsWith('/posts/') ? '#articles' : (location.hash || '#home');
     nav.querySelectorAll('.top-links a').forEach(link => {
       if (link.hash === active) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
