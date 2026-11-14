@@ -39,6 +39,8 @@ jobs:
         run: python scripts/security_policy.py
       - name: Validate SEO, structure and article integrity
         run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Audit every published article for broken local media and SEO links
+        run: python scripts/audit_editorial.py
       - name: Validate optional Cloudflare edge protections
         run: node --test tests/security-edge.test.cjs
       - name: Validate public JavaScript syntax
