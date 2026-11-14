@@ -33,7 +33,9 @@ export default {
     h.set('X-Content-Type-Options', 'nosniff');
     h.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     h.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-    h.set('Strict-Transport-Security', 'max-age=31536000');
+    // Start with a one-day HSTS policy. Increase only after HTTPS has been
+    // verified across every necessary host and rollback has been tested.
+    h.set('Strict-Transport-Security', 'max-age=86400');
 
     if (/\btext\/html\b/i.test(h.get('content-type') || '')) {
       h.set('Content-Security-Policy', CSP);
