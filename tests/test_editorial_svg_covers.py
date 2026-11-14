@@ -46,7 +46,7 @@ class EditorialCovers(unittest.TestCase):
         self.assertIn("p.image_url!=='https://cozyloops.site/assets/'+p.slug+'-01.webp'", home)
         self.assertIn("chosen.set(p.slug,upgradeDefaultEditorialCover(p))", home)
         self.assertIn("dynamic-illustration-cover", home)
-        self.assertEqual(home.count("hbagency_space_349628"), 1)
+        self.assertEqual(home.count("hbagency_space_349628"), 2)
 
     def test_default_low_resolution_cover_only_is_upgraded(self):
         for source in self.files:
