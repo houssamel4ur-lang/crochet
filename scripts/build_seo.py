@@ -198,6 +198,19 @@ def normalize_article_content(source):
     clean = (content[:match.start()] + content[match.end():]).strip()
     return clean, note
 
+def concise_editorial_illustrations(content):
+    """Retain useful concept panels and avoid eight near-duplicate screenshots.
+    The full unmodified source remains in Supabase/the editorial catalog.
+    """
+    blocks = re.split(r"(\n\s*\n)", content)
+    kept = []
+    for block in blocks:
+        match = re.fullmatch(r"!\[[^\]]*\]\(https://cozyloops\.site/assets/[a-z0-9-]+-(\d\d)\.webp\)", block.strip())
+        if match and match.group(1) not in ("02", "04", "09"):
+            continue
+        kept.append(block)
+    return "".join(kept).strip()
+
 def seo_description(article):
     """Unique, descriptive, concise snippet; avoid cutting a word in half."""
     source = re.sub(r"\s+", " ", str(article.get("excerpt") or "").strip())
@@ -217,6 +230,8 @@ def render_page(article, css, articles=None):
     category = str(article.get("category") or "Crochet Patterns")
     related_html = render_related(article, articles or [])
     article_content, visual_note = normalize_article_content(article.get("content") or "")
+    if visual_note:
+        article_content = concise_editorial_illustrations(article_content)
     toc_html = table_of_contents(article_content)
     published = str(article.get("published_at") or article.get("created_at") or "")
     modified = str(article.get("updated_at") or published)
@@ -242,7 +257,7 @@ def render_page(article, css, articles=None):
     cover_alt = str(article.get("image_alt") or title)
     # The 2026 editorial collection uses concept images, not verified stitch photos.
     image_disclosure = '<figcaption>Illustrative crochet concept — follow the written stitch instructions.</figcaption>' if visual_note else ''
-    image_html = (f'<figure class="article-hero"><img class="article-cover" src="{esc(cover)}" '
+    image_html = (f'<figure class="article-hero{" concept-hero" if visual_note else ""}"><img class="article-cover" src="{esc(cover)}" '
                   f'alt="{esc(cover_alt)}" width="{cover_width}" height="{cover_height}" '
                   f'fetchpriority="high" decoding="async">{image_disclosure}</figure>') if cover else ""
     structured_json = json.dumps(structured, ensure_ascii=False).replace("<", "\\u003c")
@@ -276,6 +291,10 @@ def render_page(article, css, articles=None):
 .article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:16px;background:#f8f5ef}}
 .article-hero{{margin:22px 0 24px}}.article-hero img{{display:block;margin:0 auto}}
 .article-hero figcaption{{font:12px/1.6 system-ui,sans-serif;text-align:center;color:#536153;margin:7px auto 0}}
+.concept-hero{{display:flex;flex-direction:column;align-items:center}}
+.concept-hero .article-cover{{width:min(100%,520px);height:auto;aspect-ratio:1;object-fit:cover;object-position:left center;max-height:none;box-shadow:0 10px 28px #2b352b12}}
+.article figure:not(.article-hero) img{{max-width:min(100%,650px);display:block;margin:0 auto}}
+.article figure:not(.article-hero){{margin:24px 0}}
 .article-toc{{margin:16px 0 28px;padding:0 18px;background:#fff;border:1px solid #e3e8df;border-radius:14px}}
 .article-toc summary{{padding:15px 4px;cursor:pointer;font:700 14px/1.5 system-ui,sans-serif;color:#294332;min-height:44px}}
 .article-toc nav{{border-top:1px solid #e3e8df;padding:10px 0 15px;max-height:285px;overflow-y:auto}}
