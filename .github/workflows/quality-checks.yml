@@ -35,6 +35,8 @@ jobs:
                   assert im.format == 'WEBP', path
                   print(path, im.size, path.stat().st_size)
           PY
+      - name: Refresh admin CSP hash for changed inline scripts
+        run: python scripts/security_policy.py
       - name: Validate SEO, structure and article integrity
         run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Validate public JavaScript syntax
