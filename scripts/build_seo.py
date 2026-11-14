@@ -65,6 +65,8 @@ def image_size(url):
         if parsed.scheme == "https" and parsed.hostname == "cozyloops.site" and parsed.path.startswith("/assets/"):
             path = ROOT / parsed.path.lstrip("/")
             if path.is_file() and path.resolve().is_relative_to((ROOT / "assets").resolve()):
+                if path.suffix == ".svg" and path.name.endswith(("-panel-02.svg", "-panel-04.svg", "-panel-09.svg")):
+                    return 900, 1120
                 from PIL import Image  # Publishing workflow dependency; optional for lightweight tests.
                 with Image.open(path) as pic:
                     width, height = pic.size
@@ -248,6 +250,31 @@ def concise_editorial_illustrations(content):
         kept.append(block)
     return "".join(kept).strip()
 
+def crisp_concept_panels(content, slug):
+    """Use original scalable project diagrams rather than upscaled tiny photos.
+
+    Only the 15 documented original concept articles are eligible. Supabase
+    custom uploads and every non-matching article image remain unchanged.
+    """
+    if not isinstance(slug, str) or not SLUG.fullmatch(slug):
+        return content
+    artwork = ROOT / "assets" / "editorial-illustrations" / (slug + "-cover.svg")
+    if not artwork.is_file():
+        return content
+    stage_names = {"02": "materials", "04": "construction", "09": "finishing"}
+    for number, label in stage_names.items():
+        visual = ROOT / "assets" / "editorial-illustrations" / (slug + "-panel-" + number + ".svg")
+        if not visual.is_file():
+            continue
+        old = re.compile(
+            r"!\[[^\]]*\]\(" + re.escape(BASE + "assets/" + slug + "-" + number + ".webp") + r"\)"
+        )
+        new_alt = f"Scalable illustrated {label} reference for {slug.replace('-', ' ')}; not a real project photograph"
+        replacement = f"![{new_alt}]({BASE}assets/editorial-illustrations/{visual.name})"
+        content = old.sub(lambda _m: replacement, content)
+    return content
+
+
 def seo_description(article):
     """Unique, descriptive, concise snippet; avoid cutting a word in half."""
     source = re.sub(r"\s+", " ", str(article.get("excerpt") or "").strip())
@@ -269,6 +296,7 @@ def render_page(article, css, articles=None):
     article_content, visual_note = normalize_article_content(article.get("content") or "")
     if visual_note:
         article_content = concise_editorial_illustrations(article_content)
+        article_content = crisp_concept_panels(article_content, slug)
     toc_html = table_of_contents(article_content)
     published = str(article.get("published_at") or article.get("created_at") or "")
     modified = str(article.get("updated_at") or published)
