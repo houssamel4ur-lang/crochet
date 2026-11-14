@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'admin/index.html'
+      - 'scripts/security_policy.py'
       - 'scripts/build_seo.py'
       - 'scripts/refine_legacy_images.py'
       - 'scripts/build_card_thumbnails.py'
@@ -55,7 +57,7 @@ jobs:
             python scripts/refine_legacy_images.py
             python scripts/build_seo.py
             python scripts/build_card_thumbnails.py
-            git add -A posts/ sitemap.xml assets/ content/github_articles.json
+            git add -A posts/ sitemap.xml assets/ content/github_articles.json admin/index.html
             if git diff --cached --quiet; then
               echo "SEO pages already up to date."
               exit 0
