@@ -23,6 +23,10 @@ const post = {
 };
 const failures = [];
 (async () => {
+  // The real local browser server must expose the freshly generated SVG asset.
+  const panel = await fetch(base + '/assets/editorial-illustrations/crochet-tulip-bouquet-stems-guide-panel-02.svg');
+  assert.equal(panel.status, 200, 'Crisp editorial materials panel must be served');
+  assert.match(await panel.text(), /FOLLOW THE WRITTEN INSTRUCTIONS/);
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
   try {
     for (const viewport of [{ width: 1365, height: 900 }, { width: 390, height: 844 }]) {
