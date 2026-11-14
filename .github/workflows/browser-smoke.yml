@@ -13,6 +13,8 @@ on:
       - 'posts/**'
       - 'tests/mock-admin-supabase.mjs'
       - '.github/workflows/browser-smoke.yml'
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:

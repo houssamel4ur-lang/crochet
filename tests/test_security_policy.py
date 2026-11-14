@@ -12,6 +12,7 @@ class SecurityPolicy(unittest.TestCase):
         source = (ROOT / 'admin/index.html').read_text()
         policy = re.search(r'Content-Security-Policy" content="([^"]+)', source)[1]
         self.assertNotIn("'unsafe-inline'", policy.split('script-src ')[1].split(';')[0])
+        self.assertIn("connect-src 'self' https://yqmrunstyhrhnvxoyrap.supabase.co", policy)
         for body in re.findall(r'<script[^>]*>(.*?)</script>', source, re.S):
             digest = base64.b64encode(hashlib.sha256(body.encode()).digest()).decode()
             self.assertIn("'sha256-" + digest + "'", policy)

@@ -74,7 +74,7 @@ class SiteQualityTests(unittest.TestCase):
         self.assertNotIn('href="${esc(postHref(', self.home)
         self.assertNotIn("href=\"\u0027+esc(postHref(", self.home)
         self.assertIn("function updateCardLinks()", self.home)
-        self.assertRegex(self.home, r"function drawCards\(\).*updateCardLinks\(\)")
+        self.assertRegex(self.home, r"(?s)function drawCards\(\).*?updateCardLinks\(\)")
         self.assertIn("  drawStarterGuides();\n  updateCardLinks();", self.home)
         self.assertIn("  updateCardLinks();\n}\nfunction categoryPage", self.home)
         self.assertIn("  updateCardLinks();\n}\nfunction renderArticleMarkdown", self.home)

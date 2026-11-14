@@ -58,6 +58,22 @@ def linked_text(value):
     return "".join(output)
 
 
+def image_size(url):
+    """Use native dimensions for local media to prevent unnecessary layout shifts."""
+    try:
+        parsed = urlsplit(url)
+        if parsed.scheme == "https" and parsed.hostname == "cozyloops.site" and parsed.path.startswith("/assets/"):
+            path = ROOT / parsed.path.lstrip("/")
+            if path.is_file() and path.resolve().is_relative_to((ROOT / "assets").resolve()):
+                from PIL import Image  # Publishing workflow dependency; optional for lightweight tests.
+                with Image.open(path) as pic:
+                    width, height = pic.size
+                if 0 < width <= 16000 and 0 < height <= 16000:
+                    return width, height
+    except (OSError, ImportError, ValueError):
+        pass
+    return 1000, 625
+
 def inline(value):
     output = []
     pos = 0
@@ -65,7 +81,8 @@ def inline(value):
         output.append(linked_text(value[pos:match.start()]))
         url = safe_image(match.group(2))
         if url:
-            output.append(f'<figure><img loading="lazy" decoding="async" src="{esc(url)}" alt="{esc(match.group(1))}" width="1000" height="625"></figure>')
+            width, height = image_size(url)
+            output.append(f'<figure><img loading="lazy" decoding="async" src="{esc(url)}" alt="{esc(match.group(1))}" width="{width}" height="{height}"></figure>')
         pos = match.end()
     output.append(linked_text(value[pos:]))
     return "".join(output)
@@ -181,7 +198,7 @@ def render_page(article, css, articles=None):
     if cover:
         structured["image"] = cover
     is_starfish = article.get("slug") == "starfish-baby-crochet-outfit-guide"
-    cover_width, cover_height = (720, 1257) if is_starfish else (1000, 625)
+    cover_width, cover_height = (720, 1257) if is_starfish else image_size(cover)
     article_class = "article starfish-featured" if is_starfish else "article"
     image_html = f'<img class="article-cover" src="{esc(cover)}" alt="{esc(article.get("image_alt") or title)}" width="{cover_width}" height="{cover_height}" fetchpriority="high" decoding="async">' if cover else ""
     structured_json = json.dumps(structured, ensure_ascii=False).replace("<", "\\u003c")
@@ -189,8 +206,9 @@ def render_page(article, css, articles=None):
     return inject_hb_ads(f'''<!doctype html>
 <html lang="en">
 <head>
-<script src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js" async></script>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<script defer fetchpriority="low" src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(title)} | CozyLoops</title>
 <meta name="description" content="{esc(description)}">
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -207,7 +225,7 @@ def render_page(article, css, articles=None):
 <script defer src="../../scripts/site_navigation.js"></script>
 <style>{css}
 
-.article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:18px}}
+.article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:18px;background:#f8f5ef}}
 .starfish-featured .article-cover{{width:min(100%,640px);max-height:none;height:auto;aspect-ratio:auto;object-fit:contain;margin:24px auto 34px;box-shadow:0 12px 40px #29342d0d}}
 .starfish-featured figure img{{max-width:670px;margin:16px auto;object-fit:contain}}
 .article figure{{margin:22px 0}}.article figure img{{width:100%;height:auto;border-radius:15px}}
