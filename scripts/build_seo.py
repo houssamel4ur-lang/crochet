@@ -389,7 +389,7 @@ def render_page(article, css, articles=None):
 </body></html>
 ''')
 
-def protect_published_urls(previous, current, approved_removals=()):
+def protect_published_urls(previous, current, approved_removals=None):
     """Fail closed if the Supabase API silently omits previously published pages.
 
     A successful HTTP 200 response with an incomplete list must not remove
@@ -403,6 +403,8 @@ def protect_published_urls(previous, current, approved_removals=()):
         raise RuntimeError("Invalid existing article manifest; refusing to republish")
     if len(set(previous)) != len(previous):
         raise RuntimeError("Duplicate URLs in existing article manifest; refusing to republish")
+    if approved_removals is None:
+        approved_removals = []
     if not isinstance(approved_removals, list) or any(
         not isinstance(slug, str) or not SLUG.fullmatch(slug) for slug in approved_removals
     ):
