@@ -131,6 +131,22 @@ def markdown(source):
 
 REMOVED_STARTER_SLUGS = {'crochet-for-absolute-beginners','how-to-read-crochet-patterns','easy-crochet-scarf-guide','amigurumi-basics','choosing-crochet-yarn','crochet-stitch-counting'}
 
+def improved_editorial_cover(item):
+    """Replace only default low-res contact-sheet covers; retain owner Admin choices."""
+    slug = item.get("slug", "")
+    if not isinstance(slug, str) or not SLUG.fullmatch(slug):
+        return item
+    default = BASE + "assets/" + slug + "-01.webp"
+    improved = ROOT / "assets" / "editorial-illustrations" / (slug + "-cover.webp")
+    if item.get("image_url") != default or not improved.is_file():
+        return item
+    return {
+        **item,
+        "image_url": BASE + "assets/editorial-illustrations/" + improved.name,
+        "image_alt": "Original editorial illustration of " + str(item.get("title") or slug)
+                     + ", not a photograph of a physically crocheted sample",
+    }
+
 def load_articles():
     """Published Supabase articles and intentional GitHub editorials only."""
     editorials = json.loads((ROOT / "content" / "github_articles.json").read_text(encoding="utf-8"))
@@ -154,6 +170,8 @@ def load_articles():
                 and item["slug"] not in REMOVED_STARTER_SLUGS
                 and SLUG.fullmatch(item["slug"]) and isinstance(item.get("title"), str)
                 and item["title"].strip() and item.get("status", "published") == "published"):
+            # Preserve customized Admin uploads; upgrade only untouched originals.
+            item = improved_editorial_cover(item)
             # The original GitHub editorial is sometimes mirrored in Supabase.
             # Upgrade only its unchanged legacy cover, never a custom Admin image.
             legacy = BASE + "assets/" + item["slug"] + "-1.webp"
@@ -276,7 +294,9 @@ def render_page(article, css, articles=None):
     cover_alt = str(article.get("image_alt") or title)
     # The 2026 editorial collection uses concept images, not verified stitch photos.
     image_disclosure = '<figcaption>Illustrative crochet concept — follow the written stitch instructions.</figcaption>' if visual_note else ''
-    image_html = (f'<figure class="article-hero{" concept-hero" if visual_note else ""}"><img class="article-cover" src="{esc(cover)}" '
+    is_illustration = "/assets/editorial-illustrations/" in cover
+    hero_variant = " illustration-hero" if is_illustration else (" concept-hero" if visual_note else "")
+    image_html = (f'<figure class="article-hero{hero_variant}"><img class="article-cover" src="{esc(cover)}" '
                   f'alt="{esc(cover_alt)}" width="{cover_width}" height="{cover_height}" '
                   f'fetchpriority="high" decoding="async">{image_disclosure}</figure>') if cover else ""
     structured_json = json.dumps(structured, ensure_ascii=False).replace("<", "\\u003c")
@@ -310,6 +330,8 @@ def render_page(article, css, articles=None):
 .article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:16px;background:#f8f5ef}}
 .article-hero{{margin:22px 0 24px}}.article-hero img{{display:block;margin:0 auto}}
 .article-hero figcaption{{font:12px/1.6 system-ui,sans-serif;text-align:center;color:#536153;margin:7px auto 0}}
+.illustration-hero{{display:flex;flex-direction:column;align-items:center}}
+.illustration-hero .article-cover{{width:100%;height:auto;max-width:860px;max-height:none;aspect-ratio:8/5;object-fit:contain;background:#f9f6ef;box-shadow:0 10px 28px #2b352b0b}}
 .concept-hero{{display:flex;flex-direction:column;align-items:center}}
 .concept-hero .article-cover{{width:min(100%,340px);height:340px;aspect-ratio:1;object-fit:cover;object-position:left center;max-height:340px;box-shadow:0 10px 28px #2b352b12}}
 @media(max-width:640px){{.concept-hero .article-cover{{width:min(100%,310px);height:min(82vw,310px)}}}}
