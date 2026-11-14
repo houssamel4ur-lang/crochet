@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'tests/live_site_smoke.py'
+      - 'tests/live_headers_audit.py'
       - '.github/workflows/live-release-checks.yml'
   workflow_dispatch:
   schedule:
@@ -26,3 +27,12 @@ jobs:
           python-version: '3.12'
       - name: Validate public production pages, SEO sitemap and privacy
         run: python tests/live_site_smoke.py
+      - name: Audit actual HTTP response security headers
+        run: python tests/live_headers_audit.py
+      - name: Save security header inventory
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cozyloops-live-security-headers
+          path: security/live-header-audit.json
+          if-no-files-found: ignore
