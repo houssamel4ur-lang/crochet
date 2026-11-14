@@ -208,13 +208,13 @@ def normalize_article_content(source):
     for filler in repeated_padding:
         clean = clean.replace(filler, "")
     photo_faq = re.compile(
-        r"(?m)^### Why do the photos not match every stitch?\\n\\n"
-        r"All project images are AI-generated editorial visuals, not documentary step-by-step photos of a tested sample\\. "
-        r"The written stitch counts and assembly notes are the intended reference\\. "
-        r"If a technique or measurement is unclear, make a small swatch before continuing\\."
+        r"(?m)^### Why do the photos not match every stitch\?\n\n"
+        r"All project images are AI-generated editorial visuals, not documentary step-by-step photos of a tested sample\. "
+        r"The written stitch counts and assembly notes are the intended reference\. "
+        r"If a technique or measurement is unclear, make a small swatch before continuing\."
     )
     clean = photo_faq.sub("", clean)
-    clean = re.sub(r"\\n{3,}", "\\n\\n", clean).strip()
+    clean = re.sub(r"\n{3,}", "\n\n", clean).strip()
     return clean, note
 
 def concise_editorial_illustrations(content):
