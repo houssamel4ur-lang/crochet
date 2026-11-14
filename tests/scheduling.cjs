@@ -14,6 +14,8 @@ const assert=require('node:assert/strict');
       await page.locator('#dashboard').waitFor({state:'visible'});
       await page.locator('[data-panel="posts"][data-post-filter="all"]').click();
       await page.waitForFunction(()=>!document.querySelector('#scheduler-health').textContent.includes('Checking'));
+      // Loading the editorial catalog is async; scheduling requires it to finish.
+      await page.waitForFunction(()=>document.querySelector('#posts-message').textContent.includes('available for editing.'));
       assert.equal(await page.locator('option[value="scheduled"]').isDisabled(),!active);
       await page.locator('#new-post').click();
       await page.locator('#post-title').fill('Schedule regression article');
@@ -23,7 +25,17 @@ const assert=require('node:assert/strict');
         await page.locator('#post-status').selectOption('scheduled');
         await page.locator('#post-scheduled-at').fill('2020-01-01T12:00');
         await page.locator('#save-post').click();
-        await page.getByText('Choose a publication time at least one minute in the future.').waitFor();
+        const invalidMessage=page.locator('#post-form-message');
+        await invalidMessage.getByText('Choose a publication time at least one minute in the future.').waitFor({
+          timeout:5000
+        }).catch(async ()=>{
+          const details=await page.evaluate(()=>({
+            status:document.querySelector('#post-form-message').textContent,
+            valid:document.querySelector('#post-form').checkValidity(),
+            scheduler:document.querySelector('#scheduler-health').textContent
+          }));
+          throw Error('Past-time validation failed: '+JSON.stringify(details));
+        });
         assert.equal(await page.evaluate(()=>window.__mockAdminRows.length),0);
         const target=await page.evaluate(()=>{const d=new Date(Date.now()+3600000);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)});
         await page.locator('#post-scheduled-at').fill(target);
