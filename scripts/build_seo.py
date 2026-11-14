@@ -285,7 +285,8 @@ def render_page(article, css, articles=None):
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script defer fetchpriority="low" src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js"></script>
+<link rel="preconnect" href="https://d3u598arehftfk.cloudfront.net" crossorigin>
+<script defer fetchpriority="high" src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(title)} | CozyLoops</title>
 <meta name="description" content="{esc(description)}">
