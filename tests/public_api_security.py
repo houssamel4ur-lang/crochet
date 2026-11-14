@@ -42,6 +42,19 @@ class AnonymousPermissions(unittest.TestCase):
         self.assertTrue(all(post.get("status") == "published" for post in data),
                         "Anonymous query exposed non-published articles")
 
+    def test_all_unpublished_statuses_are_hidden(self):
+        code, data = request("articles", {"select": "slug,status", "status": "neq.published", "limit": "100"})
+        self.assertIn(code, (200, 401, 403, 404))
+        if code == 200:
+            self.assertEqual(data, [], "Unpublished or scheduled articles visible to anonymous visitors")
+
+    def test_admin_user_directory_is_private(self):
+        # Never fetch a person's fields: simply ensure the public role sees no rows.
+        code, data = request("admin_users", {"select": "id", "limit": "1"})
+        self.assertIn(code, (200, 400, 401, 403, 404))
+        if code == 200:
+            self.assertEqual(data, [], "Super Admin membership exposed to anonymous visitors")
+
     def test_drafts_cannot_be_read_by_anonymous_users(self):
         code, data = request("articles", {"select": "slug,status", "status": "eq.draft", "limit": "5"})
         self.assertTrue(code in (200, 401, 403, 404), "Unexpected response checking draft visibility")

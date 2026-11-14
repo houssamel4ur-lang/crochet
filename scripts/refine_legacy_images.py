@@ -77,8 +77,15 @@ def main():
         origin = ASSETS / (LEGACY[slug] + "-1.webp")
         if not origin.is_file():
             raise FileNotFoundError(f"Legacy photo missing: {origin}")
-        cover = polish_scarf() if slug == "easy-crochet-scarf-for-beginners" else polish_regular(origin)
         target = TARGET / (slug + "-cover.webp")
+        # Preserve any future manually improved cover. Refine only when missing.
+        if target.is_file():
+            article["image_url"] = "https://cozyloops.site/assets/legacy-polished/" + target.name
+            if slug == "easy-crochet-scarf-for-beginners":
+                article["image_alt"] = "Three clear views of the sage crochet scarf: finished scarf, stitching detail, and scarf on a chair"
+            processed += 1
+            continue
+        cover = polish_scarf() if slug == "easy-crochet-scarf-for-beginners" else polish_regular(origin)
         temp = target.with_suffix(".tmp.webp")
         cover.save(temp, "WEBP", quality=88, method=6)
         if not target.exists() or target.read_bytes() != temp.read_bytes():

@@ -85,6 +85,10 @@ def paragraph(draw,text,x,y,maxw,font,fill,spacing=8,max_lines=7):
     return y
 
 def make(slug,seq,topic,ph,idx,sections):
+    # Never overwrite manually upgraded hi-res editorial assets on hourly SEO runs.
+    destination = OUT / f'{slug}-{seq+1:02d}.webp'
+    if destination.exists() and '--force-image-overwrite' not in __import__('sys').argv:
+        return
     light,dark,accent=COLORS[idx%len(COLORS)]; bg=rgb(light);ink=rgb(dark);wash=rgb(accent)
     width,height=1200,750
     im=Image.new('RGB',(width,height),bg);d=ImageDraw.Draw(im)

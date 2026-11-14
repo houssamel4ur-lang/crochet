@@ -88,19 +88,24 @@ def inline(value):
     return "".join(output)
 
 def table_of_contents(source):
-    """Build accessible jump links for Markdown headings without external parsers."""
+    """Compact optional navigation: only main sections, never 16 FAQ subquestions."""
     headings = []
+    all_heading_number = 0
     for line in (source or "").splitlines():
-        match = re.match(r"^#{1,3}\s+(.+)$", line.strip())
-        if match:
-            headings.append(match.group(1))
+        match = re.match(r"^(#{1,3})\s+(.+)$", line.strip())
+        if not match:
+            continue
+        all_heading_number += 1
+        if len(match.group(1)) == 2:
+            headings.append((all_heading_number, match.group(2)))
     if len(headings) < 2:
         return ""
     links = "".join(
-        f'<li><a href="#section-{i}">{esc(title.replace('**', ''))}</a></li>'
-        for i, title in enumerate(headings, 1)
+        f'<li><a href="#section-{number}">{esc(title.replace("**", ""))}</a></li>'
+        for number, title in headings
     )
-    return f'<nav class="article-toc" aria-label="On this page"><strong>On this page</strong><ol>{links}</ol></nav>'
+    return ('<details class="article-toc"><summary>On this page — jump to a section</summary>'
+            '<nav aria-label="Article sections"><ol>' + links + '</ol></nav></details>')
 
 
 def markdown(source):
@@ -139,8 +144,9 @@ def load_articles():
         if not isinstance(remote, list):
             raise RuntimeError("Expected JSON list from Supabase")
     except (OSError, ValueError) as error:
-        print(f"Supabase unavailable; using GitHub editorial catalog: {error}")
-        remote = []
+        # Never republish a partial catalog: that would delete existing Supabase-only
+        # pages from the generated manifest/sitemap when the REST API is briefly down.
+        raise RuntimeError("Supabase article export unavailable; preserving the last published site") from error
     articles = {}
     # Supabase wins over GitHub editorial, so edits saved in Posts propagate.
     for item in editorials + remote:
@@ -178,15 +184,74 @@ def render_related(article, articles):
     return f'<section class="related-posts" aria-label="Related crochet articles"><h2>Read Next</h2><ul>{links}</ul></section>'
 
 
+EDITORIAL_NOTE = re.compile(r"(?m)^\*\*Editorial note:\*\* .*?(?=\n\s*\n|\Z)", re.S)
+
+def normalize_article_content(source):
+    """Move a long AI-visual disclosure out of the opening flow without hiding it.
+    Keeps underlying instructions, cautions and all project-specific stitch counts.
+    """
+    content = str(source or "").strip()
+    match = EDITORIAL_NOTE.search(content)
+    if not match:
+        return content, ""
+    note = match.group(0).strip()
+    clean = (content[:match.start()] + content[match.end():]).strip()
+    # These repeated template paragraphs added no project-specific stitch guidance.
+    # Keep each original pattern, safety warning, measurements, and FAQ answers.
+    repeated_padding = (
+        "Think of this as a small, useful project rather than a decorative photograph. Read the whole pattern before you cut yarn, then identify the edges, openings and pieces to sew before starting.",
+        "For a reliable result, choose smooth yarn with visible stitches, the hook recommended by your yarn or pattern notes, a tapestry needle for secure finishing, and a stitch marker for shaping rounds. Avoid changing yarn weight halfway through the project: dimensions and texture can shift noticeably.",
+        "Take a moment to stop at the end of each numbered row or round, count the top V-shaped stitches, and move your marker. It is faster to correct one row now than unravel several rows later.",
+        "The most repeatable way to customize a crochet pattern is to change **one variable at a time**: yarn thickness, hook size, or the number of rows and rounds. Record any change and make a sample rather than promising a universal finished size.",
+        "The most important part of learning crochet is producing something you can inspect and improve. Try the first version slowly, count each row, keep notes on your yarn and hook, and adapt the next version using what you learned.",
+    )
+    for filler in repeated_padding:
+        clean = clean.replace(filler, "")
+    photo_faq = re.compile(
+        r"(?m)^### Why do the photos not match every stitch\?\n\n"
+        r"All project images are AI-generated editorial visuals, not documentary step-by-step photos of a tested sample\. "
+        r"The written stitch counts and assembly notes are the intended reference\. "
+        r"If a technique or measurement is unclear, make a small swatch before continuing\."
+    )
+    clean = photo_faq.sub("", clean)
+    clean = re.sub(r"\n{3,}", "\n\n", clean).strip()
+    return clean, note
+
+def concise_editorial_illustrations(content):
+    """Retain useful concept panels and avoid eight near-duplicate screenshots.
+    The full unmodified source remains in Supabase/the editorial catalog.
+    """
+    blocks = re.split(r"(\n\s*\n)", content)
+    kept = []
+    for block in blocks:
+        match = re.fullmatch(r"!\[[^\]]*\]\(https://cozyloops\.site/assets/[a-z0-9-]+-(\d\d)\.webp\)", block.strip())
+        if match and match.group(1) not in ("02", "04", "09"):
+            continue
+        kept.append(block)
+    return "".join(kept).strip()
+
+def seo_description(article):
+    """Unique, descriptive, concise snippet; avoid cutting a word in half."""
+    source = re.sub(r"\s+", " ", str(article.get("excerpt") or "").strip())
+    if not source:
+        source = str(article.get("content") or "").split("\n", 1)[0]
+    source = re.sub(r"\*\*", "", source).strip()
+    if len(source) <= 160:
+        return source
+    return source[:158].rsplit(" ", 1)[0].rstrip(".,;:") + "…"
+
 def render_page(article, css, articles=None):
     slug = article["slug"]
     title = str(article["title"])
-    description = str(article.get("excerpt") or "")[:280]
+    description = seo_description(article)
     canonical = BASE + "posts/" + quote(slug) + "/"
     cover = safe_image(article.get("image_url"))
     category = str(article.get("category") or "Crochet Patterns")
     related_html = render_related(article, articles or [])
-    toc_html = table_of_contents(str(article.get("content") or ""))
+    article_content, visual_note = normalize_article_content(article.get("content") or "")
+    if visual_note:
+        article_content = concise_editorial_illustrations(article_content)
+    toc_html = table_of_contents(article_content)
     published = str(article.get("published_at") or article.get("created_at") or "")
     modified = str(article.get("updated_at") or published)
     structured = {
@@ -203,10 +268,17 @@ def render_page(article, css, articles=None):
     }
     if cover:
         structured["image"] = cover
+    if article_content:
+        structured["wordCount"] = len(article_content.split())
     is_starfish = article.get("slug") == "starfish-baby-crochet-outfit-guide"
     cover_width, cover_height = (720, 1257) if is_starfish else image_size(cover)
     article_class = "article starfish-featured" if is_starfish else "article"
-    image_html = f'<img class="article-cover" src="{esc(cover)}" alt="{esc(article.get("image_alt") or title)}" width="{cover_width}" height="{cover_height}" fetchpriority="high" decoding="async">' if cover else ""
+    cover_alt = str(article.get("image_alt") or title)
+    # The 2026 editorial collection uses concept images, not verified stitch photos.
+    image_disclosure = '<figcaption>Illustrative crochet concept — follow the written stitch instructions.</figcaption>' if visual_note else ''
+    image_html = (f'<figure class="article-hero{" concept-hero" if visual_note else ""}"><img class="article-cover" src="{esc(cover)}" '
+                  f'alt="{esc(cover_alt)}" width="{cover_width}" height="{cover_height}" '
+                  f'fetchpriority="high" decoding="async">{image_disclosure}</figure>') if cover else ""
     structured_json = json.dumps(structured, ensure_ascii=False).replace("<", "\\u003c")
     social_image = f'<meta property="og:image" content="{esc(cover)}">' if cover else ""
     return inject_hb_ads(f'''<!doctype html>
@@ -224,20 +296,41 @@ def render_page(article, css, articles=None):
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(description)}">
 <meta property="og:url" content="{esc(canonical)}">
+<meta property="og:site_name" content="CozyLoops">
+<meta property="og:locale" content="en_US">
 {social_image}
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{esc(title)}">
+<meta name="twitter:description" content="{esc(description)}">
 <script type="application/ld+json">{structured_json}</script>
 <script defer src="{BASE}scripts/article_analytics.js"></script>
 <script defer src="../../scripts/site_navigation.js"></script>
 <style>{css}
 
-.article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:18px;background:#f8f5ef}}
+.article-cover{{max-height:520px;width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:16px;background:#f8f5ef}}
+.article-hero{{margin:22px 0 24px}}.article-hero img{{display:block;margin:0 auto}}
+.article-hero figcaption{{font:12px/1.6 system-ui,sans-serif;text-align:center;color:#536153;margin:7px auto 0}}
+.concept-hero{{display:flex;flex-direction:column;align-items:center}}
+.concept-hero .article-cover{{width:min(100%,520px);height:auto;aspect-ratio:1;object-fit:cover;object-position:left center;max-height:none;box-shadow:0 10px 28px #2b352b12}}
+.article figure:not(.article-hero) img{{max-width:min(100%,650px);display:block;margin:0 auto}}
+.article figure:not(.article-hero){{margin:24px 0}}
+.article-toc{{margin:16px 0 28px;padding:0 18px;background:#fff;border:1px solid #e3e8df;border-radius:14px}}
+.article-toc summary{{padding:15px 4px;cursor:pointer;font:700 14px/1.5 system-ui,sans-serif;color:#294332;min-height:44px}}
+.article-toc nav{{border-top:1px solid #e3e8df;padding:10px 0 15px;max-height:285px;overflow-y:auto}}
+.article-toc ol{{margin:4px 0;padding-left:22px}}.article-toc li{{margin:4px 0}}
+.article-toc a{{display:inline-flex;align-items:center;min-height:36px;color:#24432d;text-underline-offset:3px}}
+.article-disclosure{{margin:38px 0 12px;padding:0 18px;border:1px solid #e4e8e2;border-radius:14px;background:#fafbf8}}
+.article-disclosure summary{{cursor:pointer;padding:15px 2px;min-height:48px;font-weight:650}}
+.article-disclosure p{{font-size:14px;line-height:1.7;color:#35463b}}
+.article>h1{{line-height:1.12;text-wrap:balance;overflow-wrap:break-word}}
+@media(max-width:640px){{.article>h1{{font-size:clamp(30px,7.2vw,42px);line-height:1.13;letter-spacing:-.015em}}.article-hero{{margin:16px 0 20px}}.article-toc{{margin-bottom:20px}}.article-share{{gap:8px}}}}
+
 .starfish-featured .article-cover{{width:min(100%,640px);max-height:none;height:auto;aspect-ratio:auto;object-fit:contain;margin:24px auto 34px;box-shadow:0 12px 40px #29342d0d}}
 .starfish-featured figure img{{max-width:670px;margin:16px auto;object-fit:contain}}
 .article figure{{margin:22px 0}}.article figure img{{width:100%;height:auto;border-radius:15px}}
 .article ul{{padding-left:26px}}.article strong{{font-weight:700}}
 .related-posts{{margin:32px 0;padding:22px;border:1px solid var(--line,#e5e7df);border-radius:16px;background:var(--white,#fff)}}
-.article-toc{{padding:20px 24px;border:1px solid var(--line,#e5e7df);border-radius:16px;background:var(--white,#fff);margin:24px 0}}.article-toc ol{{margin:8px 0 0;padding-left:24px}}.article-toc li{{margin:5px 0}}.article-toc a{{text-decoration:underline;text-underline-offset:3px}}.article h2[id],.article h3[id],.article h4[id]{{scroll-margin-top:24px}}
+.article h2[id],.article h3[id],.article h4[id]{{scroll-margin-top:24px}}
 .related-posts ul{{margin:12px 0 0;padding-left:22px}}.related-posts li{{margin:8px 0}}.related-posts a{{text-decoration:underline;text-underline-offset:3px}}
 .article-share{{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0 24px}}.article-share-button{{border:1px solid var(--green,#4f694c);background:transparent;color:var(--green,#4f694c);border-radius:25px;padding:8px 16px;font:600 14px/1.4 system-ui,sans-serif;cursor:pointer}}.article-share-button:hover,.article-share-button:focus-visible{{background:var(--green,#4f694c);color:white}}#article-share-status{{font-size:14px;color:var(--muted,#68736a)}}
 .article-print-button{{border:1px solid var(--line,#e5e7df);background:var(--white,#fff);color:var(--ink,#29342d);border-radius:25px;padding:8px 16px;font:600 14px/1.4 system-ui,sans-serif;cursor:pointer}}.article-print-button:hover,.article-print-button:focus-visible{{border-color:var(--green,#4f694c);color:var(--green,#4f694c)}}
@@ -260,7 +353,8 @@ def render_page(article, css, articles=None):
 <p>{esc(description)}</p>
 {image_html}
 {toc_html}
-{markdown(str(article.get("content") or ""))}
+{markdown(article_content)}
+{('<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>' + linked_text(visual_note) + '</p></details>') if visual_note else ''}
 {related_html}
 <h2>Keep Creating</h2>
 <p>Explore more crochet articles and patterns at CozyLoops.</p>

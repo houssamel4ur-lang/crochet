@@ -13,9 +13,13 @@ class SecurityPolicy(unittest.TestCase):
         policy = re.search(r'Content-Security-Policy" content="([^"]+)', source)[1]
         self.assertNotIn("'unsafe-inline'", policy.split('script-src ')[1].split(';')[0])
         self.assertIn("connect-src 'self' https://yqmrunstyhrhnvxoyrap.supabase.co", policy)
-        for body in re.findall(r'<script[^>]*>(.*?)</script>', source, re.S):
+        for attrs, body in re.findall(r'<script\\b([^>]*)>(.*?)</script>', source, re.S):
+            if re.search(r'\\bsrc\\s*=', attrs):
+                continue
             digest = base64.b64encode(hashlib.sha256(body.encode()).digest()).decode()
             self.assertIn("'sha256-" + digest + "'", policy)
+        self.assertIn('<script type="module" src="./app.js"></script>', source)
+        self.assertNotIn("'sha256-", policy)
         self.assertLess(source.index('Content-Security-Policy'), source.index('<script'))
         self.assertEqual(protect(source, True), source)
 
