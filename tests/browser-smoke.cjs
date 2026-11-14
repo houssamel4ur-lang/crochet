@@ -205,6 +205,25 @@ const failures = [];
     }));
     await owner.goto(base+'/admin/',{waitUntil:'domcontentloaded'});
     await owner.locator('#dashboard').waitFor({state:'visible',timeout:12000});
+    await owner.locator('.admin-nav button[data-panel="analytics"]').click();
+    await owner.locator('#traffic-chart svg.traffic-chart-svg').waitFor({timeout:12000});
+    assert.equal(await owner.locator('[data-analytics-range]').count(),5,'five analytics periods are available');
+    assert.equal(await owner.locator('#traffic-chart .traffic-chart-dot').count(),30,'30-day chart has 30 daily buckets');
+    assert.match(await owner.locator('#visitor-stats').innerText(),/Page views[\\s\\S]*10/);
+    for(const [range,expected] of [['15d',15],['7d',7],['1d',24],['1h',12],['30d',30]]){
+      await owner.locator('[data-analytics-range="'+range+'"]').click();
+      await owner.waitForFunction(n=>document.querySelectorAll('#traffic-chart .traffic-chart-dot').length===n,expected);
+      assert.equal(await owner.locator('[data-analytics-range="'+range+'"]').getAttribute('aria-pressed'),'true');
+    }
+    await owner.locator('[data-analytics-range="1h"]').click();
+    await owner.locator('#traffic-chart rect[role="button"]').first().focus();
+    assert.match(await owner.locator('.traffic-chart-selection').innerText(),/tracked page views/);
+    await owner.setViewportSize({width:390,height:844});
+    assert.equal(await owner.locator('#traffic-chart svg').isVisible(),true,'mobile analytics chart visible');
+    const graphWidth=await owner.locator('#traffic-chart svg').evaluate(node=>node.getBoundingClientRect().width);
+    assert.ok(graphWidth>0&&graphWidth<390,'chart fits inside mobile viewport');
+    await owner.setViewportSize({width:1365,height:900});
+    console.log('OK authenticated Admin Pinterest-style analytics filters, chart, keyboard and mobile layout');
     await owner.locator('.admin-nav button[data-panel="posts"][data-post-filter="all"]').click();
     const editorialRow=owner.locator('#posts-list .post-row',{hasText:'Crochet Patterns for Beginners'});
     await editorialRow.waitFor({timeout:5000});
