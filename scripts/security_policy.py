@@ -23,7 +23,7 @@ def protect(source, admin=False):
         policy = ("default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'self'; "
                   "script-src 'self' https://esm.sh " + ' '.join(hashes) + "; "
                   "style-src 'self' 'unsafe-inline'; img-src 'self' https: blob: data:; "
-                  "connect-src https://yqmrunstyhrhnvxoyrap.supabase.co; "
+                  "connect-src 'self' https://yqmrunstyhrhnvxoyrap.supabase.co; "
                   "frame-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests")
     block = ('\n<!-- cozy-security:start -->\n'
              '<meta http-equiv="Content-Security-Policy" content="' + policy + '">\n'
