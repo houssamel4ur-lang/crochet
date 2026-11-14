@@ -48,7 +48,8 @@ class SiteQualityTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.home = (ROOT / "index.html").read_text(encoding="utf-8")
-        cls.admin = (ROOT / "admin/index.html").read_text(encoding="utf-8")
+        cls.admin = ((ROOT / "admin/index.html").read_text(encoding="utf-8") + '\n'
+                     + (ROOT / "admin/app.js").read_text(encoding="utf-8"))
         cls.manifest = json.loads((ROOT / "posts/manifest.json").read_text(encoding="utf-8"))
         cls.sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
 
