@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+// Recovery fallback: some Supabase projects still redirect to the Site URL.
+// Send only real recovery callbacks to the account UI; leave normal page routing alone.
+(()=>{const fragment=location.hash;if(!fragment||fragment.length<12)return;
+const params=new URLSearchParams(fragment.slice(1));
+if(params.get('type')==='recovery')location.replace('/account/?mode=update'+fragment);
+})();
+</script>
 <!-- cozy-security:start -->
 <meta http-equiv="Content-Security-Policy" content="base-uri 'none'; object-src 'none'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
