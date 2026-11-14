@@ -28,7 +28,10 @@ export function renderTrafficChart(root,rawSeries,period){
     const p=document.createElement('p');p.className='muted';p.textContent='No timeline data available yet.';root.append(p);
     return;
   }
-  const width=780,height=300,left=53,right=15,top=23,bottom=46;
+  // Keep SVG text readable on phones instead of shrinking a 780px chart by half.
+  const compact=root.clientWidth<490;
+  const width=compact?420:780,height=compact?275:300;
+  const left=compact?42:53,right=compact?12:15,top=23,bottom=46;
   const plotWidth=width-left-right,plotHeight=height-top-bottom;
   const maxValue=Math.max(1,...series.map(p=>p.views));
   const maxY=Math.max(4,Math.ceil(maxValue/4)*4);
@@ -43,7 +46,9 @@ export function renderTrafficChart(root,rawSeries,period){
     svg.append(createSvg('line',{x1:left,y1:level,x2:width-right,y2:level,class:'traffic-chart-grid'}));
     svg.append(createSvg('text',{x:left-10,y:level+4,'text-anchor':'end',class:'traffic-chart-axis'},shortNumber(value)));
   }
-  const labels=new Set([0,Math.floor((series.length-1)/4),Math.floor((series.length-1)/2),Math.floor((series.length-1)*3/4),series.length-1]);
+  const labels=compact
+    ?new Set([0,Math.floor((series.length-1)/2),series.length-1])
+    :new Set([0,Math.floor((series.length-1)/4),Math.floor((series.length-1)/2),Math.floor((series.length-1)*3/4),series.length-1]);
   for(const index of labels){
     svg.append(createSvg('text',{x:x(index),y:height-13,'text-anchor':index===0?'start':index===series.length-1?'end':'middle',class:'traffic-chart-axis'},chartTimestamp(series[index].at,period)));
   }
