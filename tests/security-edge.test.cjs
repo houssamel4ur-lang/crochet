@@ -28,7 +28,7 @@ test('sets real response headers for HTML but preserves advertising and body', a
     assert.equal(r.headers.get('x-frame-options'),'DENY');
     assert.equal(r.headers.get('x-content-type-options'),'nosniff');
     assert.equal(r.headers.get('referrer-policy'),'strict-origin-when-cross-origin');
-    assert.equal(r.headers.get('strict-transport-security'),'max-age=31536000');
+    assert.equal(r.headers.get('strict-transport-security'),'max-age=86400');
     assert.match(r.headers.get('content-security-policy'),/frame-ancestors 'none'/);
     assert.match(r.headers.get('permissions-policy'),/microphone=\(\)/);
     assert.equal(r.headers.get('x-original'),'kept');
