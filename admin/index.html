@@ -433,7 +433,9 @@ if(url&&publishableKey){
       const payload={title,slug,category:postField('category').value,excerpt:postField('excerpt').value.trim(),content:postField('content').value.trim(),image_url:image||null,status:postField('status').value};
       const mode=postField('status').value;
       if(editingPublished&&originalPostSlug!==slug)throw Error('Published article URLs cannot be renamed here. Keep the original slug to protect search rankings and incoming links.');
-      if(mode==='published'){
+      // Existing public articles must remain editable even when their historic assets
+      // predate the stricter image standard; apply the gate to new publications.
+      if(mode==='published'&&!editingPublished&&!editingGitHubSource&&!githubPublishedSlugs.has(slug)){
         const wordCount=(payload.content.match(/\b[\w'-]+\b/g)||[]).length;
         const headings=(payload.content.match(/^##\s+.+/gm)||[]).length;
         const photos=[...payload.content.matchAll(/!\[([^\]]+)\]\((https:\/\/[^\s)]+)\)/g)];
