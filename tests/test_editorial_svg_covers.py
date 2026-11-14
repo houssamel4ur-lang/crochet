@@ -32,8 +32,8 @@ class EditorialCovers(unittest.TestCase):
                 self.assertIn('<title id="title">', content)
                 self.assertNotIn("<script", content)
                 self.assertNotIn("<foreignObject", content)
-                self.assertNotRegex(content, r'(?i)(?:href|src)\\s*=\\s*["\\']https?://')
-                self.assertNotRegex(content, r'(?i)onload\\s*=')
+                self.assertNotRegex(content, r'(?i)(?:href|src)\s*=\s*"https?://')
+                self.assertNotRegex(content, r'(?i)onload\s*=')
                 with Image.open(source.with_suffix(".webp")) as cover:
                     self.assertEqual(cover.format, "WEBP")
                     self.assertEqual(cover.size, (1200, 750))
