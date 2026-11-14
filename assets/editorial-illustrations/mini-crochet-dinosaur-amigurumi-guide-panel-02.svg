@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1120"
+viewBox="0 0 900 1120" role="img" aria-labelledby="title desc">
+<title id="title">Materials at a glance — Mini Crochet Dinosaur: Easy Green Amigurumi with Back Spikes</title>
+<desc id="desc">Original scalable editorial concept illustration. Not a real photograph or a tested crochet step.</desc>
+<defs><linearGradient id="paper" x1="0" x2="1" y1="0" y2="1">
+<stop stop-color="#FFFDF9"/><stop offset="1" stop-color="#F3F3EA"/>
+</linearGradient></defs>
+<rect width="900" height="1120" fill="url(#paper)"/>
+<path d="M0 1000 Q330 958 620 1012 T900 994 L900 1120 H0Z" fill="#D9E7D8" opacity=".36"/>
+<circle cx="460" cy="858" r="259" fill="#D9E7D8" opacity=".62"/>
+<circle cx="460" cy="858" r="239" fill="#FFFCF7" stroke="#527762" stroke-opacity=".2" stroke-width="2"/>
+<rect x="35" y="35" width="830" height="609" rx="25" fill="#FFFEFC" stroke="#E1E8DD" stroke-width="2"/>
+<path d="M72 135 H829" stroke="#E4E9E0" stroke-width="2"/>
+<text x="66" y="94" font-family="Arial,sans-serif" font-size="19"
+letter-spacing="3" font-weight="700" fill="#527762">COZYLOOPS  /  ILLUSTRATED GUIDE</text>
+<text x="66" y="221" font-family="Georgia,serif" font-size="49"
+font-weight="700" fill="#304439">Materials at a glance</text>
+<path d="M68 240 H235" stroke="#527762" stroke-width="6" stroke-linecap="round"/>
+<text x="66" y="309" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#304439">Mini Crochet Dinosaur: Easy</text><text x="66" y="355" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#304439">Green Amigurumi with Back</text><text x="66" y="401" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#304439">Spikes</text>
+<text x="99" y="465" font-family="Arial,sans-serif" font-size="29" fill="#46584C">Follow the yarn and hook notes</text><circle cx="77" cy="455" r="5" fill="#527762"/><text x="99" y="523" font-family="Arial,sans-serif" font-size="29" fill="#46584C">Keep a stitch marker nearby</text><circle cx="77" cy="513" r="5" fill="#527762"/><text x="99" y="581" font-family="Arial,sans-serif" font-size="29" fill="#46584C">Make a gauge swatch first</text><circle cx="77" cy="571" r="5" fill="#527762"/>
+<g transform="translate(-530 500) scale(1.05)"><g xmlns="http://www.w3.org/2000/svg" transform="translate(742 133) scale(.98)"><path d="M92 288 Q98 177 215 176 L222 102 Q218 66 261 65 Q326 68 339 122 L327 303 Q304 372 226 383 L135 385 Q77 364 92 288Z" fill="#A9C09E" stroke="#6E936C" stroke-width="7" /><path d="M104 206 L74 168 L118 173 L103 121 L155 153 L163 104 L201 156" fill="#789B78" /><path d="M112 355 Q102 401 84 414 M246 368 Q254 414 278 414" fill="none" stroke="#789B78" stroke-width="24" stroke-linecap="round" /><ellipse cx="264" cy="172" rx="9" ry="12" fill="#365346" /><path d="M287 225 Q309 230 326 210" fill="none" stroke="#57765C" stroke-width="5" /><ellipse cx="259" cy="293" rx="68" ry="90" fill="#C7D4B2" opacity=".8" /></g>
+</g>
+<text x="66" y="1080" font-family="Arial,sans-serif" font-size="17" fill="#667668">
+CONCEPT VISUAL · FOLLOW THE WRITTEN INSTRUCTIONS</text>
+</svg>

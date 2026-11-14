@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1120"
+viewBox="0 0 900 1120" role="img" aria-labelledby="title desc">
+<title id="title">Finish with care — Crochet Baby Booties: Simple Sole and Cuff with Sizing Checks</title>
+<desc id="desc">Original scalable editorial concept illustration. Not a real photograph or a tested crochet step.</desc>
+<defs><linearGradient id="paper" x1="0" x2="1" y1="0" y2="1">
+<stop stop-color="#FFFDF9"/><stop offset="1" stop-color="#F3F3EA"/>
+</linearGradient></defs>
+<rect width="900" height="1120" fill="url(#paper)"/>
+<path d="M0 1000 Q330 958 620 1012 T900 994 L900 1120 H0Z" fill="#EEE4D2" opacity=".36"/>
+<circle cx="460" cy="858" r="259" fill="#EEE4D2" opacity=".62"/>
+<circle cx="460" cy="858" r="239" fill="#FFFCF7" stroke="#8C714F" stroke-opacity=".2" stroke-width="2"/>
+<rect x="35" y="35" width="830" height="609" rx="25" fill="#FFFEFC" stroke="#E1E8DD" stroke-width="2"/>
+<path d="M72 135 H829" stroke="#E4E9E0" stroke-width="2"/>
+<text x="66" y="94" font-family="Arial,sans-serif" font-size="19"
+letter-spacing="3" font-weight="700" fill="#8C714F">COZYLOOPS  /  ILLUSTRATED GUIDE</text>
+<text x="66" y="221" font-family="Georgia,serif" font-size="49"
+font-weight="700" fill="#304439">Finish with care</text>
+<path d="M68 240 H235" stroke="#8C714F" stroke-width="6" stroke-linecap="round"/>
+<text x="66" y="309" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#304439">Crochet Baby Booties: Simple</text><text x="66" y="355" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#304439">Sole and Cuff with Sizing</text><text x="66" y="401" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#304439">Checks</text>
+<text x="99" y="465" font-family="Arial,sans-serif" font-size="29" fill="#46584C">Align parts before joining</text><circle cx="77" cy="455" r="5" fill="#8C714F"/><text x="99" y="523" font-family="Arial,sans-serif" font-size="29" fill="#46584C">Secure and weave in yarn ends</text><circle cx="77" cy="513" r="5" fill="#8C714F"/><text x="99" y="581" font-family="Arial,sans-serif" font-size="29" fill="#46584C">Check the finished measurements</text><circle cx="77" cy="571" r="5" fill="#8C714F"/>
+<g transform="translate(-530 500) scale(1.05)"><g xmlns="http://www.w3.org/2000/svg" transform="translate(742 133) scale(.98)"><path d="M55 197 L167 185 Q179 256 198 283 L250 334 Q284 394 196 408 L61 408 Q21 390 49 345 Q80 306 55 197Z" fill="#D9BAA6" stroke="#AC8E7D" stroke-width="7" /><path d="M179 198 L284 177 Q304 248 315 270 L355 330 Q386 382 323 400 L222 399 Q183 392 210 352 Q248 319 211 274Z" fill="#E3CCB9" stroke="#B19788" stroke-width="7" /><rect x="43" y="177" width="137" height="76" rx="18" fill="#EAD4C2" stroke="#B19788" stroke-width="6" /><rect x="168" y="162" width="134" height="71" rx="17" fill="#D4B19F" stroke="#AC8E7D" stroke-width="6" /><path d="M75 222 H153 M199 205 H280" stroke="#F7E9DB" stroke-width="6" stroke-dasharray="12 8" /></g>
+</g>
+<text x="66" y="1080" font-family="Arial,sans-serif" font-size="17" fill="#667668">
+CONCEPT VISUAL · FOLLOW THE WRITTEN INSTRUCTIONS</text>
+</svg>

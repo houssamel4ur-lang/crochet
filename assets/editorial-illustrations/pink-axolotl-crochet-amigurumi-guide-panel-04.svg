@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1120"
+viewBox="0 0 900 1120" role="img" aria-labelledby="title desc">
+<title id="title">Start the construction — Pink Axolotl Crochet: Beginner Amigurumi Body and Frilled Gills</title>
+<desc id="desc">Original scalable editorial concept illustration. Not a real photograph or a tested crochet step.</desc>
+<defs><linearGradient id="paper" x1="0" x2="1" y1="0" y2="1">
+<stop stop-color="#FFFDF9"/><stop offset="1" stop-color="#F3F3EA"/>
+</linearGradient></defs>
+<rect width="900" height="1120" fill="url(#paper)"/>
+<path d="M0 1000 Q330 958 620 1012 T900 994 L900 1120 H0Z" fill="#F2DFE2" opacity=".36"/>
+<circle cx="460" cy="858" r="259" fill="#F2DFE2" opacity=".62"/>
+<circle cx="460" cy="858" r="239" fill="#FFFCF7" stroke="#A26D77" stroke-opacity=".2" stroke-width="2"/>
+<rect x="35" y="35" width="830" height="609" rx="25" fill="#FFFEFC" stroke="#E1E8DD" stroke-width="2"/>
+<path d="M72 135 H829" stroke="#E4E9E0" stroke-width="2"/>
+<text x="66" y="94" font-family="Arial,sans-serif" font-size="19"
+letter-spacing="3" font-weight="700" fill="#A26D77">COZYLOOPS  /  ILLUSTRATED GUIDE</text>
+<text x="66" y="221" font-family="Georgia,serif" font-size="49"
+font-weight="700" fill="#304439">Start the construction</text>
+<path d="M68 240 H235" stroke="#A26D77" stroke-width="6" stroke-linecap="round"/>
+<text x="66" y="309" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#304439">Pink Axolotl Crochet: Beginner</text><text x="66" y="355" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#304439">Amigurumi Body and Frilled</text><text x="66" y="401" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#304439">Gills</text>
+<text x="99" y="465" font-family="Arial,sans-serif" font-size="29" fill="#46584C">Follow the written stitch counts</text><circle cx="77" cy="455" r="5" fill="#A26D77"/><text x="99" y="523" font-family="Arial,sans-serif" font-size="29" fill="#46584C">Mark the start of each round</text><circle cx="77" cy="513" r="5" fill="#A26D77"/><text x="99" y="581" font-family="Arial,sans-serif" font-size="29" fill="#46584C">Check the shaping as you go</text><circle cx="77" cy="571" r="5" fill="#A26D77"/>
+<g transform="translate(-530 500) scale(1.05)"><g xmlns="http://www.w3.org/2000/svg" transform="translate(742 133) scale(.98)"><path d="M101 161 L46 104 M100 195 L31 196 M113 234 L53 290 M300 162 L358 99 M307 198 L381 194 M297 239 L359 290" stroke="#CD829B" stroke-width="18" stroke-linecap="round" /><ellipse cx="203" cy="217" rx="140" ry="123" fill="#ECB5C6" stroke="#BD7992" stroke-width="6" /><ellipse cx="202" cy="350" rx="75" ry="82" fill="#E4A3B8" /><circle cx="155" cy="219" r="10" fill="#625160" /><circle cx="254" cy="219" r="10" fill="#625160" /><path d="M178 254 Q203 273 229 254" stroke="#975E76" stroke-width="5" fill="none" stroke-linecap="round" /><circle cx="127" cy="250" r="19" fill="#F3CAD1" /><circle cx="280" cy="249" r="19" fill="#F3CAD1" /></g>
+</g>
+<text x="66" y="1080" font-family="Arial,sans-serif" font-size="17" fill="#667668">
+CONCEPT VISUAL · FOLLOW THE WRITTEN INSTRUCTIONS</text>
+</svg>
