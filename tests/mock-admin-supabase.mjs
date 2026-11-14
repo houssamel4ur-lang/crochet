@@ -49,8 +49,25 @@ export function createClient(){
       signOut:async()=>({error:null}),
       signInWithPassword:async()=>({error:null})
     },
-    rpc:async(name)=>name==='is_super_admin'?{data:true,error:null}:
-      {data:{total_page_views:0,home_views:0,article_views:0,today_page_views:0,top_articles:[]},error:null},
+    rpc:async(name,args={})=>{
+      if(name==='is_super_admin')return {data:true,error:null};
+      if(name==='cozyloop_analytics_range'){
+        const period=args.p_period||'30d',count=period==='1h'?12:period==='1d'?24:period==='7d'?7:period==='15d'?15:30;
+        const step=period==='1h'?300000:period==='1d'?3600000:86400000;
+        const end=Date.now();
+        const series=Array.from({length:count},(_,i)=>({
+          at:new Date(end-(count-1-i)*step).toISOString(),
+          views:i===count-1?7:i===count-3?3:0
+        }));
+        return {data:{
+          period,bucket_minutes:step/60000,total_page_views:10,home_views:4,
+          article_views:6,previous_page_views:5,
+          top_articles:[{slug:'crochet-patterns-for-beginners-guide',views:6}],
+          series
+        },error:null};
+      }
+      return {data:{total_page_views:0,home_views:0,article_views:0,today_page_views:0,top_articles:[]},error:null};
+    },
     from:table=>new Query(table),
     storage:{from:()=>({upload:async()=>({error:null}),getPublicUrl:()=>({data:{publicUrl:'https://example.invalid/image.jpg'}})})}
   };
