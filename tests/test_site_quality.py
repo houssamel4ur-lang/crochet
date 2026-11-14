@@ -118,6 +118,13 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn("file.size>5*1024*1024", self.admin)
         self.assertIn("Math.min(3,Math.max(2,match[1].length))", self.admin)
 
+    def test_new_editorial_uploads_reject_low_resolution_and_repeated_images(self):
+        self.assertIn("const minHeight=kind==='cover'?540:400;", self.admin)
+        self.assertIn("if(bitmap.width<minWidth||bitmap.height<minHeight)", self.admin)
+        self.assertIn("if(ratio<0.5||ratio>2.5)", self.admin)
+        self.assertIn("m[1].trim().length>=12", self.admin)
+        self.assertIn("new Set(imageUrls).size!==imageUrls.length", self.admin)
+
     def test_owner_release_guidance_is_available_without_false_claims(self):
         self.assertIn("Owner launch verification", self.admin)
         self.assertIn("supabase/rls_audit_readonly.sql", self.admin)
@@ -164,7 +171,7 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn('class="nav top-nav"', self.home)
         self.assertIn(':focus-visible', self.home)
         self.assertIn('class="skip-link"', self.home)
-        self.assertIn('srcset="${imageBase}photo-', self.home)
+        self.assertRegex(self.home, r'(?s)<section class="section feature"[^>]*>.*?<img[^>]* srcset="[^"]+"[^>]* sizes="[^"]+"')
         self.assertIn('sizes="(max-width:800px)', self.home)
         self.assertIn('function route(preserveScroll=false)', self.home)
         self.assertIn('function readablePrimary(', self.home)
