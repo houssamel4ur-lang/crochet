@@ -9,7 +9,7 @@ const assert=require('node:assert/strict');
       const page=await browser.newPage({timezoneId:'Africa/Casablanca',viewport:{width:390,height:844}});
       const errors=[];page.on('pageerror',e=>errors.push(e.message));
       const mock=fs.readFileSync('tests/mock-admin-supabase.mjs','utf8').replace("name==='is_super_admin'?", "name==='article_scheduler_status'?{data:"+active+",error:null}:name==='is_super_admin'?");
-      await page.route('https://esm.sh/@supabase/supabase-js@2',r=>r.fulfill({contentType:'application/javascript',body:mock}));
+      await page.route('https://esm.sh/@supabase/supabase-js@2.119.0',r=>r.fulfill({contentType:'application/javascript',body:mock}));
       // This test is isolated from production content and always has a valid catalog.
       await page.route('**/content/github_articles.json',r=>r.fulfill({contentType:'application/json',body:'[]'}));
       await page.goto('http://127.0.0.1:8765/admin/');
