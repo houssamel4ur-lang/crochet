@@ -183,7 +183,7 @@ def render_related(article, articles):
     return f'<section class="related-posts" aria-label="Related crochet articles"><h2>Read Next</h2><ul>{links}</ul></section>'
 
 
-EDITORIAL_NOTE = re.compile(r"(?m)^\\*\\*Editorial note:\\*\\* .*?(?=\\n\\s*\\n|\\Z)", re.S)
+EDITORIAL_NOTE = re.compile(r"(?m)^\*\*Editorial note:\*\* .*?(?=\n\s*\n|\Z)", re.S)
 
 def normalize_article_content(source):
     """Move a long AI-visual disclosure out of the opening flow without hiding it.
@@ -199,10 +199,10 @@ def normalize_article_content(source):
 
 def seo_description(article):
     """Unique, descriptive, concise snippet; avoid cutting a word in half."""
-    source = re.sub(r"\\s+", " ", str(article.get("excerpt") or "").strip())
+    source = re.sub(r"\s+", " ", str(article.get("excerpt") or "").strip())
     if not source:
-        source = str(article.get("content") or "").split("\\n", 1)[0]
-    source = re.sub(r"\\*\\*", "", source).strip()
+        source = str(article.get("content") or "").split("\n", 1)[0]
+    source = re.sub(r"\*\*", "", source).strip()
     if len(source) <= 160:
         return source
     return source[:158].rsplit(" ", 1)[0].rstrip(".,;:") + "…"
