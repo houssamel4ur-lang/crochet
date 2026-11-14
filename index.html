@@ -86,6 +86,13 @@ footer .brand{color:#f2f6ec}
 /* Skip layout and paint for offscreen cards; keep their scroll space reserved. */
 .card{content-visibility:auto;contain-intrinsic-size:auto 470px}.load-more-wrap{grid-column:1/-1;text-align:center;padding:16px 0 4px}
 @media print{.card{content-visibility:visible}}
+/* High-contrast actions and generous touch targets on phones. */
+.card .text-link{display:inline-flex;align-items:center;min-height:44px;color:#24432d}
+@media(max-width:650px){
+ footer a{display:inline-flex;align-items:center;min-height:44px;padding:7px 6px;margin-right:8px}
+ .related-posts a,.article-toc a{display:inline-flex;align-items:center;min-height:44px}
+ .card .meta{margin-top:10px}
+}
 </style>
 </head>
 <body>
