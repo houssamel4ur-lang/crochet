@@ -196,6 +196,25 @@ def normalize_article_content(source):
         return content, ""
     note = match.group(0).strip()
     clean = (content[:match.start()] + content[match.end():]).strip()
+    # These repeated template paragraphs added no project-specific stitch guidance.
+    # Keep each original pattern, safety warning, measurements, and FAQ answers.
+    repeated_padding = (
+        "Think of this as a small, useful project rather than a decorative photograph. Read the whole pattern before you cut yarn, then identify the edges, openings and pieces to sew before starting.",
+        "For a reliable result, choose smooth yarn with visible stitches, the hook recommended by your yarn or pattern notes, a tapestry needle for secure finishing, and a stitch marker for shaping rounds. Avoid changing yarn weight halfway through the project: dimensions and texture can shift noticeably.",
+        "Take a moment to stop at the end of each numbered row or round, count the top V-shaped stitches, and move your marker. It is faster to correct one row now than unravel several rows later.",
+        "The most repeatable way to customize a crochet pattern is to change **one variable at a time**: yarn thickness, hook size, or the number of rows and rounds. Record any change and make a sample rather than promising a universal finished size.",
+        "The most important part of learning crochet is producing something you can inspect and improve. Try the first version slowly, count each row, keep notes on your yarn and hook, and adapt the next version using what you learned.",
+    )
+    for filler in repeated_padding:
+        clean = clean.replace(filler, "")
+    photo_faq = re.compile(
+        r"(?m)^### Why do the photos not match every stitch?\\n\\n"
+        r"All project images are AI-generated editorial visuals, not documentary step-by-step photos of a tested sample\\. "
+        r"The written stitch counts and assembly notes are the intended reference\\. "
+        r"If a technique or measurement is unclear, make a small swatch before continuing\\."
+    )
+    clean = photo_faq.sub("", clean)
+    clean = re.sub(r"\\n{3,}", "\\n\\n", clean).strip()
     return clean, note
 
 def concise_editorial_illustrations(content):
