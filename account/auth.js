@@ -9,7 +9,12 @@ const supabase=createClient(
 const byId=id=>document.getElementById(id);
 const views=[...document.querySelectorAll('[data-view]')];
 const status=byId('auth-status');
-let mode=new URLSearchParams(location.search).get('mode')==='update'?'update':'login';
+const query=new URLSearchParams(location.search);
+const hash=new URLSearchParams(location.hash.startsWith('#')?location.hash.slice(1):'');
+const requestedRecovery=query.get('mode')==='update'||hash.get('type')==='recovery';
+const callbackError=query.get('error_code')||hash.get('error_code')||query.get('error')||hash.get('error');
+let mode=requestedRecovery?'update':'login';
+let recoveryEvent=false;
 let busy=false;
 function message(text,type='info'){
   status.textContent=text;status.classList.toggle('error',type==='error');status.hidden=!text;
@@ -36,7 +41,21 @@ document.querySelectorAll('[data-switch]').forEach(button=>button.addEventListen
   // Never keep OAuth callback code or recovery tokens in the address bar.
   history.replaceState(null,'',location.pathname);
 }));
+// Avoid sending users to the raw Supabase error page when the Google provider is disabled.
+async function googleProviderEnabled(){
+  const response=await fetch('https://yqmrunstyhrhnvxoyrap.supabase.co/auth/v1/settings',{
+    headers:{apikey:'sb_publishable_HqkcpvBz8P8KJTZFgefrWQ_rFxKPMNh',Accept:'application/json'},
+    cache:'no-store'
+  });
+  if(!response.ok)throw Error('Google provider settings unavailable');
+  const config=await response.json();
+  return config?.external?.google===true;
+}
 document.querySelectorAll('[data-google]').forEach(button=>button.addEventListener('click',()=>run(async()=>{
+  let enabled=false;
+  try{enabled=await googleProviderEnabled()}
+  catch{message('Google sign-in is unavailable right now. Please use email and password.','error');return}
+  if(!enabled){message('Google sign-in has not been enabled yet. Please use email and password.','error');return}
   const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+'/account/'}});
   if(error)feedback(error);
 })));
@@ -57,7 +76,7 @@ byId('register-form').addEventListener('submit',event=>{
 byId('recover-form').addEventListener('submit',event=>{
   event.preventDefault();const email=byId('recover-email').value.trim();
   run(async()=>{
-    const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/account/?mode=update'});
+    const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/account/'});
     // Avoid confirming whether a supplied email address belongs to a member.
     feedback(error,'If an account exists for this email, you will receive a password reset link. Check your inbox and spam folder.');
   });
@@ -67,6 +86,8 @@ byId('update-form').addEventListener('submit',event=>{
   const password=byId('update-password').value;
   if(password!==byId('update-confirm').value){message('Passwords do not match.','error');return}
   run(async()=>{
+    const {data:{session},error:sessionError}=await supabase.auth.getSession();
+    if(sessionError||!session){show('recover');message('Your reset link is invalid or expired. Request a new one.','error');return}
     const {error}=await supabase.auth.updateUser({password});
     if(error){feedback(error);return}
     await supabase.auth.signOut();
@@ -82,13 +103,23 @@ async function showProfile(){
   byId('profile-email').textContent=user?.email||'Signed in';
 }
 supabase.auth.onAuthStateChange((event)=>{
-  if(event==='PASSWORD_RECOVERY'){show('update');}
+  if(event==='PASSWORD_RECOVERY'){recoveryEvent=true;show('update');}
   else if(event==='SIGNED_OUT'&&mode==='profile'){show('login')}
 });
 try{
   const {data:{session},error}=await supabase.auth.getSession();
   if(error)throw error;
-  if(mode==='update'){show('update')}
-  else if(session?.user){show('profile');await showProfile()}
+  if(callbackError){
+    show('recover');history.replaceState(null,'',location.pathname);
+    message('Your password reset link is invalid or expired. Please request a new link.','error');
+  }else if((requestedRecovery||recoveryEvent)&&session?.user){
+    show('update');history.replaceState(null,'',location.pathname);
+  }else if(requestedRecovery||recoveryEvent){
+    show('recover');history.replaceState(null,'',location.pathname);
+    message('Your password reset link is invalid or expired. Please request a new link.','error');
+  }else if(session?.user){show('profile');await showProfile()}
   else show('login');
-}catch(err){show(mode);message('Unable to connect to member accounts. Please try again later.','error')}
+}catch(err){
+  show(requestedRecovery?'recover':'login');
+  message(requestedRecovery?'Your reset link is invalid or expired. Please request a new one.':'Unable to connect to member accounts. Please try again later.','error')
+}
