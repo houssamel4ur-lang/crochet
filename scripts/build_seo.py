@@ -312,7 +312,8 @@ def render_page(article, css, articles=None):
 .article-hero{{margin:22px 0 24px}}.article-hero img{{display:block;margin:0 auto}}
 .article-hero figcaption{{font:12px/1.6 system-ui,sans-serif;text-align:center;color:#536153;margin:7px auto 0}}
 .concept-hero{{display:flex;flex-direction:column;align-items:center}}
-.concept-hero .article-cover{{width:min(100%,520px);height:auto;aspect-ratio:1;object-fit:cover;object-position:left center;max-height:none;box-shadow:0 10px 28px #2b352b12}}
+.concept-hero .article-cover{{width:min(100%,340px);height:340px;aspect-ratio:1;object-fit:cover;object-position:left center;max-height:340px;box-shadow:0 10px 28px #2b352b12}}
+@media(max-width:640px){{.concept-hero .article-cover{{width:min(100%,310px);height:min(82vw,310px)}}}}
 .article figure:not(.article-hero) img{{max-width:min(100%,650px);display:block;margin:0 auto}}
 .article figure:not(.article-hero){{margin:24px 0}}
 .article-toc{{margin:16px 0 28px;padding:0 18px;background:#fff;border:1px solid #e3e8df;border-radius:14px}}
