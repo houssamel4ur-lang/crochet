@@ -389,6 +389,35 @@ def render_page(article, css, articles=None):
 </body></html>
 ''')
 
+def protect_published_urls(previous, current, approved_removals=()):
+    """Fail closed if the Supabase API silently omits previously published pages.
+
+    A successful HTTP 200 response with an incomplete list must not remove
+    indexed pages, their internal links or sitemap entries. The owner may
+    explicitly approve a deliberate removal using approved_page_removals.json.
+    This check runs before any generated page is written or deleted.
+    """
+    if not isinstance(previous, list) or any(
+        not isinstance(slug, str) or not SLUG.fullmatch(slug) for slug in previous
+    ):
+        raise RuntimeError("Invalid existing article manifest; refusing to republish")
+    if len(set(previous)) != len(previous):
+        raise RuntimeError("Duplicate URLs in existing article manifest; refusing to republish")
+    if not isinstance(approved_removals, list) or any(
+        not isinstance(slug, str) or not SLUG.fullmatch(slug) for slug in approved_removals
+    ):
+        raise RuntimeError("Invalid approved page removals list")
+    if not current or len(set(current)) != len(current):
+        raise RuntimeError("Empty or duplicate article export; preserving published site")
+    missing = sorted(set(previous) - set(current) - set(approved_removals))
+    if missing:
+        raise RuntimeError(
+            "Refusing to remove published article URLs without explicit approval: "
+            + ", ".join(missing)
+            + ". Check Supabase RLS, API availability and publication status first."
+        )
+
+
 def main():
     source = (ROOT / "index.html").read_text(encoding="utf-8")
     found = re.search(r"<style>(.*?)</style>", source, re.S)
@@ -400,18 +429,20 @@ def main():
     output_root.mkdir(exist_ok=True)
     manifest = output_root / "manifest.json"
     legacy_manifest = output_root / ".generated_slugs.json"
-    try:
+    # Corrupted manifests are an error, not a reason to silently forget URLs.
+    if manifest.exists():
         previous = json.loads(manifest.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError):
-        try:
-            previous = json.loads(legacy_manifest.read_text(encoding="utf-8"))
-        except (FileNotFoundError, json.JSONDecodeError):
-            previous = []
-    current = []
+    elif legacy_manifest.exists():
+        previous = json.loads(legacy_manifest.read_text(encoding="utf-8"))
+    else:
+        previous = []
+    approval_file = ROOT / "content" / "approved_page_removals.json"
+    approved_removals = json.loads(approval_file.read_text(encoding="utf-8")) if approval_file.exists() else []
+    current = [item["slug"] for item in articles]
+    protect_published_urls(previous, current, approved_removals)
     sitemap = [BASE]
     for item in articles:
         slug = item["slug"]
-        current.append(slug)
         page_dir = output_root / slug
         page_dir.mkdir(parents=True, exist_ok=True)
         (page_dir / "index.html").write_text(render_page(item, css, articles), encoding="utf-8")
