@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+<title id="title">Crochet Strawberry Bag — CozyLoops</title><desc id="desc">Original scalable editorial illustration, not a photo or physically tested crochet sample.</desc>
+<defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFEFB"/><stop offset="1" stop-color="#F5F1E7"/></linearGradient></defs>
+<rect width="1200" height="750" fill="url(#paper)"/>
+<path d="M0 628 C242 588 435 673 616 637 C823 604 1037 631 1200 583 L1200 750 L0 750Z" fill="#F1EDE4" opacity=".68"/>
+<circle cx="935" cy="363" r="284" fill="#D88B83" opacity=".15"/><circle cx="935" cy="363" r="260" fill="#FBFCF6" stroke="#D88B83" stroke-opacity=".35" stroke-width="2"/><circle cx="935" cy="363" r="228" fill="#D88B83" opacity=".17"/>
+<path d="M103 116 H453" stroke="#D7DCD0" stroke-width="2"/>
+<text x="73" y="107" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="4" font-weight="700" fill="#496C54">COZYLOOPS  /  CROCHET JOURNAL</text>
+<text x="74" y="282" font-family="Georgia,'Times New Roman',serif" font-size="63" font-weight="700" letter-spacing="-1.2" fill="#294434"><tspan x="74">Crochet Strawberry</tspan><tspan x="74" dy="73">Bag</tspan></text>
+<line x1="74" y1="420" x2="268" y2="420" stroke="#D88B83" stroke-width="8" stroke-linecap="round"/>
+<text x="74" y="476" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#5F685F">Freshly picked inspiration</text>
+<text x="74" y="630" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="1.4" fill="#617364">ILLUSTRATED PROJECT GUIDE</text>
+<text x="74" y="666" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#8A8F83">A visual concept · see written instructions inside</text>
+<g transform="translate(742 133) scale(.98)"><path d="M145 122 Q194 58 262 122" fill="none" stroke="#7C8E6D" stroke-width="16" stroke-linecap="round"/><path d="M115 184 Q104 317 204 417 Q301 316 290 184 Q240 144 115 184Z" fill="#D98485" stroke="#AC5E66" stroke-width="7"/><path d="M108 194 Q135 124 166 148 Q179 109 204 126 Q224 107 241 151 Q281 129 305 190 Q252 180 207 203 Q145 181 108 194Z" fill="#7DA17D" stroke="#587F60" stroke-width="6"/><g fill="#F5D9B4"><ellipse cx="174" cy="239" rx="6" ry="12"/><ellipse cx="229" cy="239" rx="6" ry="12"/><ellipse cx="199" cy="284" rx="6" ry="12"/><ellipse cx="156" cy="316" rx="6" ry="12"/><ellipse cx="251" cy="316" rx="6" ry="12"/><ellipse cx="204" cy="358" rx="6" ry="12"/></g></g>
+<g fill="none" stroke="#A8B9A7" stroke-width="2" opacity=".45"><path d="M70 700 q38 -18 76 0 t76 0"/><path d="M1020 67 q38 -18 76 0 t76 0"/></g>
+</svg>

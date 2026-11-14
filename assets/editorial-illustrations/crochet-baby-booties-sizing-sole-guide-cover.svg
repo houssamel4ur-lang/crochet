@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+<title id="title">Crochet Baby Booties — CozyLoops</title><desc id="desc">Original scalable editorial illustration, not a photo or physically tested crochet sample.</desc>
+<defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFEFB"/><stop offset="1" stop-color="#F5F1E7"/></linearGradient></defs>
+<rect width="1200" height="750" fill="url(#paper)"/>
+<path d="M0 628 C242 588 435 673 616 637 C823 604 1037 631 1200 583 L1200 750 L0 750Z" fill="#F1EDE4" opacity=".68"/>
+<circle cx="935" cy="363" r="284" fill="#D6B5A0" opacity=".15"/><circle cx="935" cy="363" r="260" fill="#FBFCF6" stroke="#D6B5A0" stroke-opacity=".35" stroke-width="2"/><circle cx="935" cy="363" r="228" fill="#D6B5A0" opacity=".17"/>
+<path d="M103 116 H453" stroke="#D7DCD0" stroke-width="2"/>
+<text x="73" y="107" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="4" font-weight="700" fill="#496C54">COZYLOOPS  /  CROCHET JOURNAL</text>
+<text x="74" y="282" font-family="Georgia,'Times New Roman',serif" font-size="63" font-weight="700" letter-spacing="-1.2" fill="#294434"><tspan x="74">Crochet Baby</tspan><tspan x="74" dy="73">Booties</tspan></text>
+<line x1="74" y1="420" x2="268" y2="420" stroke="#D6B5A0" stroke-width="8" stroke-linecap="round"/>
+<text x="74" y="476" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#5F685F">Soft soles and little cuffs</text>
+<text x="74" y="630" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="1.4" fill="#617364">ILLUSTRATED PROJECT GUIDE</text>
+<text x="74" y="666" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#8A8F83">A visual concept · see written instructions inside</text>
+<g transform="translate(742 133) scale(.98)"><path d="M55 197 L167 185 Q179 256 198 283 L250 334 Q284 394 196 408 L61 408 Q21 390 49 345 Q80 306 55 197Z" fill="#D9BAA6" stroke="#AC8E7D" stroke-width="7"/><path d="M179 198 L284 177 Q304 248 315 270 L355 330 Q386 382 323 400 L222 399 Q183 392 210 352 Q248 319 211 274Z" fill="#E3CCB9" stroke="#B19788" stroke-width="7"/><rect x="43" y="177" width="137" height="76" rx="18" fill="#EAD4C2" stroke="#B19788" stroke-width="6"/><rect x="168" y="162" width="134" height="71" rx="17" fill="#D4B19F" stroke="#AC8E7D" stroke-width="6"/><path d="M75 222 H153 M199 205 H280" stroke="#F7E9DB" stroke-width="6" stroke-dasharray="12 8"/></g>
+<g fill="none" stroke="#A8B9A7" stroke-width="2" opacity=".45"><path d="M70 700 q38 -18 76 0 t76 0"/><path d="M1020 67 q38 -18 76 0 t76 0"/></g>
+</svg>
