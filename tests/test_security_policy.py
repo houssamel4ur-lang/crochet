@@ -16,6 +16,8 @@ class SecurityPolicy(unittest.TestCase):
         for body in re.findall(r'<script[^>]*>(.*?)</script>', source, re.S):
             digest = base64.b64encode(hashlib.sha256(body.encode()).digest()).decode()
             self.assertIn("'sha256-" + digest + "'", policy)
+        self.assertIn('<script type="module" src="./app.js"></script>', source)
+        self.assertNotIn("'sha256-", policy)
         self.assertLess(source.index('Content-Security-Policy'), source.index('<script'))
         self.assertEqual(protect(source, True), source)
 
