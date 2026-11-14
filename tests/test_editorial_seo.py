@@ -3,7 +3,9 @@ import json
 from pathlib import Path
 import re
 import unittest
+import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from scripts.build_seo import (
     ROOT, IMAGE, normalize_article_content, concise_editorial_illustrations,
     render_page, seo_description, table_of_contents,
