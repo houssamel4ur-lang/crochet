@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+<title id="title">Crochet Penguin Ornament — CozyLoops</title><desc id="desc">Original scalable editorial illustration, not a photo or physically tested crochet sample.</desc>
+<defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFEFB"/><stop offset="1" stop-color="#F5F1E7"/></linearGradient></defs>
+<rect width="1200" height="750" fill="url(#paper)"/>
+<path d="M0 628 C242 588 435 673 616 637 C823 604 1037 631 1200 583 L1200 750 L0 750Z" fill="#F1EDE4" opacity=".68"/>
+<circle cx="935" cy="363" r="284" fill="#94A8B9" opacity=".15"/><circle cx="935" cy="363" r="260" fill="#FBFCF6" stroke="#94A8B9" stroke-opacity=".35" stroke-width="2"/><circle cx="935" cy="363" r="228" fill="#94A8B9" opacity=".17"/>
+<path d="M103 116 H453" stroke="#D7DCD0" stroke-width="2"/>
+<text x="73" y="107" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="4" font-weight="700" fill="#496C54">COZYLOOPS  /  CROCHET JOURNAL</text>
+<text x="74" y="282" font-family="Georgia,'Times New Roman',serif" font-size="63" font-weight="700" letter-spacing="-1.2" fill="#294434"><tspan x="74">Crochet Penguin</tspan><tspan x="74" dy="73">Ornament</tspan></text>
+<line x1="74" y1="420" x2="268" y2="420" stroke="#94A8B9" stroke-width="8" stroke-linecap="round"/>
+<text x="74" y="476" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#5F685F">A cheerful little character</text>
+<text x="74" y="630" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="1.4" fill="#617364">ILLUSTRATED PROJECT GUIDE</text>
+<text x="74" y="666" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#8A8F83">A visual concept · see written instructions inside</text>
+<g transform="translate(742 133) scale(.98)"><ellipse cx="207" cy="240" rx="127" ry="193" fill="#657D86" stroke="#4C6773" stroke-width="6"/><ellipse cx="206" cy="287" rx="85" ry="121" fill="#F0EDE1"/><ellipse cx="153" cy="187" rx="51" ry="63" fill="#F0EDE1"/><ellipse cx="262" cy="187" rx="51" ry="63" fill="#F0EDE1"/><circle cx="168" cy="198" r="9" fill="#455965"/><circle cx="245" cy="198" r="9" fill="#455965"/><path d="M187 229 L226 229 L207 251Z" fill="#E5B46F"/><path d="M152 409 Q132 448 110 440 M264 408 Q284 448 303 437" stroke="#D8A369" stroke-width="24" stroke-linecap="round"/><path d="M93 270 Q40 252 63 317 M321 268 Q367 263 345 323" stroke="#637C87" stroke-width="28" stroke-linecap="round" fill="none"/></g>
+<g fill="none" stroke="#A8B9A7" stroke-width="2" opacity=".45"><path d="M70 700 q38 -18 76 0 t76 0"/><path d="M1020 67 q38 -18 76 0 t76 0"/></g>
+</svg>

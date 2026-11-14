@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+<title id="title">Mini Woodland Amigurumi — CozyLoops</title><desc id="desc">Original scalable editorial illustration, not a photo or physically tested crochet sample.</desc>
+<defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFEFB"/><stop offset="1" stop-color="#F5F1E7"/></linearGradient></defs>
+<rect width="1200" height="750" fill="url(#paper)"/>
+<path d="M0 628 C242 588 435 673 616 637 C823 604 1037 631 1200 583 L1200 750 L0 750Z" fill="#F1EDE4" opacity=".68"/>
+<circle cx="935" cy="363" r="284" fill="#C09D7D" opacity=".15"/><circle cx="935" cy="363" r="260" fill="#FBFCF6" stroke="#C09D7D" stroke-opacity=".35" stroke-width="2"/><circle cx="935" cy="363" r="228" fill="#C09D7D" opacity=".17"/>
+<path d="M103 116 H453" stroke="#D7DCD0" stroke-width="2"/>
+<text x="73" y="107" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="4" font-weight="700" fill="#496C54">COZYLOOPS  /  CROCHET JOURNAL</text>
+<text x="74" y="282" font-family="Georgia,'Times New Roman',serif" font-size="63" font-weight="700" letter-spacing="-1.2" fill="#294434"><tspan x="74">Mini Woodland</tspan><tspan x="74" dy="73">Amigurumi</tspan></text>
+<line x1="74" y1="420" x2="268" y2="420" stroke="#C09D7D" stroke-width="8" stroke-linecap="round"/>
+<text x="74" y="476" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#5F685F">Tiny creatures of the forest</text>
+<text x="74" y="630" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="1.4" fill="#617364">ILLUSTRATED PROJECT GUIDE</text>
+<text x="74" y="666" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#8A8F83">A visual concept · see written instructions inside</text>
+<g transform="translate(742 133) scale(.98)"><path d="M77 155 L92 59 L157 118 Q201 109 244 117 L308 57 L324 155 Q370 223 316 333 Q274 405 204 416 Q127 402 81 335 Q38 239 77 155Z" fill="#C99971" stroke="#9E795A" stroke-width="7"/><path d="M96 249 Q144 276 203 305 Q268 272 309 249 Q278 391 204 397 Q126 386 96 249Z" fill="#EEE0CA"/><path d="M106 129 L110 96 L146 128 M261 128 L293 96 L303 130" fill="#E6C3AB"/><circle cx="157" cy="241" r="9" fill="#5B4B43"/><circle cx="251" cy="241" r="9" fill="#5B4B43"/><path d="M189 291 L220 291 L205 311Z" fill="#5B4B43"/><path d="M205 312 Q181 334 164 321 M205 312 Q230 331 246 321" fill="none" stroke="#735B4D" stroke-width="5"/></g>
+<g fill="none" stroke="#A8B9A7" stroke-width="2" opacity=".45"><path d="M70 700 q38 -18 76 0 t76 0"/><path d="M1020 67 q38 -18 76 0 t76 0"/></g>
+</svg>

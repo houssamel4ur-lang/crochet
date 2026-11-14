@@ -21,9 +21,10 @@ jobs:
           python-version: '3.12'
       - name: Check legacy-cover generation without altering the repository
         run: |
-          python -m pip install --disable-pip-version-check Pillow==12.0.0
+          python -m pip install --disable-pip-version-check Pillow==12.0.0 CairoSVG==2.8.2
           python -m py_compile scripts/build_seo.py scripts/refine_legacy_images.py
           python scripts/refine_legacy_images.py
+          python scripts/rasterize_editorial_covers.py
           python - <<'PY'
           from pathlib import Path
           from PIL import Image

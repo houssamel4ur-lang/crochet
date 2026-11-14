@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+<title id="title">Crochet Tulip Bouquet — CozyLoops</title><desc id="desc">Original scalable editorial illustration, not a photo or physically tested crochet sample.</desc>
+<defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFEFB"/><stop offset="1" stop-color="#F5F1E7"/></linearGradient></defs>
+<rect width="1200" height="750" fill="url(#paper)"/>
+<path d="M0 628 C242 588 435 673 616 637 C823 604 1037 631 1200 583 L1200 750 L0 750Z" fill="#F1EDE4" opacity=".68"/>
+<circle cx="935" cy="363" r="284" fill="#CE8A93" opacity=".15"/><circle cx="935" cy="363" r="260" fill="#FBFCF6" stroke="#CE8A93" stroke-opacity=".35" stroke-width="2"/><circle cx="935" cy="363" r="228" fill="#CE8A93" opacity=".17"/>
+<path d="M103 116 H453" stroke="#D7DCD0" stroke-width="2"/>
+<text x="73" y="107" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="4" font-weight="700" fill="#496C54">COZYLOOPS  /  CROCHET JOURNAL</text>
+<text x="74" y="282" font-family="Georgia,'Times New Roman',serif" font-size="63" font-weight="700" letter-spacing="-1.2" fill="#294434"><tspan x="74">Crochet Tulip</tspan><tspan x="74" dy="73">Bouquet</tspan></text>
+<line x1="74" y1="420" x2="268" y2="420" stroke="#CE8A93" stroke-width="8" stroke-linecap="round"/>
+<text x="74" y="476" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#5F685F">Handmade flowers to keep</text>
+<text x="74" y="630" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="1.4" fill="#617364">ILLUSTRATED PROJECT GUIDE</text>
+<text x="74" y="666" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#8A8F83">A visual concept · see written instructions inside</text>
+<g transform="translate(742 133) scale(.98)"><g fill="none" stroke="#65856F" stroke-width="14" stroke-linecap="round"><path d="M128 198 Q132 314 185 418"/><path d="M233 175 Q219 310 183 418"/><path d="M305 216 Q265 344 184 419"/></g><path d="M157 320 Q91 252 61 280 Q97 346 165 348" fill="#78A07A"/><path d="M209 353 Q296 275 325 298 Q281 369 205 379" fill="#88AA80"/><path d="M122 185 C77 151 91 103 104 65 Q129 87 143 107 Q154 73 176 57 Q200 130 163 176 Q141 204 122 185Z" fill="#D99BA0" stroke="#B9737D" stroke-width="5"/><path d="M226 169 C186 127 191 90 205 45 Q234 66 252 99 Q265 70 286 53 Q314 127 275 166 Q250 191 226 169Z" fill="#D78D96" stroke="#B16B76" stroke-width="5"/><path d="M293 211 Q262 173 285 115 Q314 136 324 158 Q344 133 362 133 Q371 206 327 223Z" fill="#E6B7A7" stroke="#C58D8C" stroke-width="5"/><path d="M121 122 Q139 138 145 186 M239 98 Q248 121 247 171" fill="none" stroke="#F3CBC0" stroke-width="5" stroke-linecap="round"/></g>
+<g fill="none" stroke="#A8B9A7" stroke-width="2" opacity=".45"><path d="M70 700 q38 -18 76 0 t76 0"/><path d="M1020 67 q38 -18 76 0 t76 0"/></g>
+</svg>
