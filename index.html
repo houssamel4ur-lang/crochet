@@ -85,6 +85,12 @@ header{position:relative;top:auto}
 /* Skip layout and paint for offscreen cards; keep their scroll space reserved. */
 .card{content-visibility:auto;contain-intrinsic-size:auto 470px}.load-more-wrap{grid-column:1/-1;text-align:center;padding:16px 0 4px}
 @media print{.card{content-visibility:visible}}
+.article img.dynamic-concept-cover{width:min(100%,340px);height:340px;max-height:340px;object-fit:cover;object-position:left center;margin:20px auto;box-shadow:0 8px 25px #27392a12}
+.article-toc{padding:0 18px}.article-toc summary{padding:15px 4px;cursor:pointer;min-height:44px;font-weight:700;color:#294332}.article-toc nav{border-top:1px solid #e5e7df;max-height:280px;overflow:auto}.article-toc ol{margin:10px 0;padding-left:22px}
+.article-toc .toc-jump{display:inline-flex;align-items:center;min-height:40px;color:#24432d}
+.article-disclosure{margin:34px 0 18px;padding:0 18px;border:1px solid #e1e6dd;border-radius:14px;background:#f8faf5}.article-disclosure summary{padding:14px 0;cursor:pointer;min-height:44px}.article-disclosure p{font-size:14px}
+@media(max-width:640px){.article img.dynamic-concept-cover{width:min(100%,310px);height:min(82vw,310px)}}
+@media print{.article-toc,.article-disclosure summary{display:none!important}}
 /* High-contrast actions and generous touch targets on phones. */
 .card .text-link{display:inline-flex;align-items:center;min-height:44px;color:#24432d}
 @media(max-width:650px){
@@ -395,11 +401,22 @@ function renderArticleMarkdown(source){
  }).join('');
 }
 function articleTableOfContents(source){
- const headings=String(source||'').split(/\n/).map(line=>line.trim().match(/^#{1,3}\s+(.+)$/)).filter(Boolean);
+ // IDs count every H2/H3, but the visual index includes only primary sections.
+ const headings=String(source||'').split(/\n/).map(line=>line.trim().match(/^(#{1,3})\s+(.+)$/)).filter(Boolean)
+   .map((match,index)=>({level:match[1].length,title:match[2],id:index+1})).filter(entry=>entry.level===2);
  if(headings.length<2)return '';
- return '<nav class="article-toc" aria-label="On this page"><strong>On this page</strong><ol>'+
-   headings.map((match,i)=>'<li><button type="button" class="toc-jump" data-heading="'+(i+1)+'">'+esc(match[1].replace(/\*\*/g,''))+'</button></li>').join('')+
-   '</ol></nav>';
+ return '<details class="article-toc"><summary>On this page — jump to a section</summary><nav aria-label="Article sections"><ol>'+
+   headings.map(entry=>'<li><button type="button" class="toc-jump" data-heading="'+entry.id+'">'+esc(entry.title.replace(/\*\*/g,''))+'</button></li>').join('')+
+   '</ol></nav></details>';
+}
+function editorialViewContent(source){
+ const original=String(source||'');
+ const match=original.match(/^\*\*Editorial note:\*\*[^\n]*(?:\n(?!\s*\n)[^\n]*)*/m);
+ if(!match)return {body:original,note:''};
+ // Retain disclosure, but move it below the tutorial, and keep three concept panels.
+ const body=original.replace(match[0],'').replace(/!\[[^\]]*\]\(https:\/\/cozyloops\.site\/assets\/[a-z0-9-]+-(\d\d)\.webp\)/g,
+   (full,num)=>['02','04','09'].includes(num)?full:'').replace(/\n{3,}/g,'\n\n').trim();
+ return {body,note:match[0]};
 }
 function relatedArticleLinks(p){
  const related=posts.filter(item=>item.slug!==p.slug)
@@ -422,9 +439,9 @@ async function shareArticle(url,title,status){
    if(status)status.textContent='Copy this article URL from your address bar.';
  }
 }
-function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.minutes} min read</p><div class="article-share"><button type="button" class="article-share-button">Share this article</button><button type="button" class="article-print-button">Print / Save PDF</button><span class="article-share-status" role="status" aria-live="polite"></span></div><p>${esc(p.excerpt)}</p><img src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div><div id='hbagency_space_349628'></div>${p.markdown?articleTableOfContents(p.markdown):""}<div class="hb-ad-inpage">
+function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}const display=editorialViewContent(p.markdown);document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${p.minutes} min read</p><div class="article-share"><button type="button" class="article-share-button">Share this article</button><button type="button" class="article-print-button">Print / Save PDF</button><span class="article-share-status" role="status" aria-live="polite"></span></div><p>${esc(p.excerpt)}</p><img class="${display.note?'dynamic-concept-cover':''}" src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div><div id='hbagency_space_349628'></div>${display.body?articleTableOfContents(display.body):""}<div class="hb-ad-inpage">
     <div class="hb-ad-inner"> 
-    <div class="hbagency_cls hbagency_space_349630"></div></div> </div>${p.markdown?renderArticleMarkdown(p.markdown):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}<div id='hbagency_space_349629'></div>${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`;
+    <div class="hbagency_cls hbagency_space_349630"></div></div> </div>${display.body?renderArticleMarkdown(display.body):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${display.note?'<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>'+esc(display.note)+'</p></details>':''}<div id='hbagency_space_349629'></div>${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`;
  updateCardLinks();
  requestAnimationFrame(scheduleReadingProgress);
  const printButton=document.querySelector('.article-print-button');

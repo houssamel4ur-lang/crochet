@@ -79,5 +79,14 @@ class EditorialSeoQuality(unittest.TestCase):
                 self.assertEqual(page.count('class="article-cover"'), 1)
                 self.assertIn('content="summary_large_image"', page)
 
+    def test_homepage_article_fallback_matches_static_editorial_rules(self):
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn("function editorialViewContent(source)", html)
+        self.assertIn("display.body?articleTableOfContents(display.body)", html)
+        self.assertIn("display.note?'<details class=\"article-disclosure\"", html)
+        self.assertIn("dynamic-concept-cover", html)
+        self.assertIn("filter(entry=>entry.level===2)", html)
+        self.assertIn("['02','04','09'].includes(num)", html)
+
 if __name__ == "__main__":
     unittest.main()
