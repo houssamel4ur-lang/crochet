@@ -6,6 +6,7 @@ on:
     paths:
       - 'index.html'
       - 'admin/index.html'
+      - 'admin/app.js'
       - 'tests/browser-smoke.cjs'
       - 'tests/scheduling.cjs'
       - 'scripts/article_analytics.js'
