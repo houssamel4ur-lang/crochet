@@ -135,7 +135,7 @@ class SiteQualityTests(unittest.TestCase):
     def test_site_has_consent_and_accessibility(self):
         self.assertIn('id="privacy-choice"', self.home)
         self.assertIn("analyticsConsent()", self.home)
-        self.assertIn('class="site-drawer"', self.home)
+        self.assertIn('class="nav top-nav"', self.home)
         self.assertIn(':focus-visible', self.home)
         self.assertIn('class="skip-link"', self.home)
         self.assertIn('srcset="${imageBase}photo-', self.home)
@@ -185,11 +185,11 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn("removedStarterSlugs", self.home)
         self.assertIn("REMOVED_STARTER_SLUGS", (ROOT / "scripts/build_seo.py").read_text(encoding="utf-8"))
 
-    def test_restored_saved_design_and_sidebar(self):
+    def test_restored_saved_design_and_top_navigation(self):
         self.assertNotIn("CozyLoops Theme B", self.home)
         self.assertIn("photos/4792079/pexels-photo-4792079.jpeg", self.home)
-        self.assertIn('class="nav-menu-toggle"', self.home)
-        self.assertIn('id="site-drawer"', self.home)
+        self.assertIn('class="top-links"', self.home)
+        self.assertNotIn('id="site-drawer"', self.home)
         self.assertIn("scripts/site_navigation.js", self.home)
         self.assertIn('const posts=[featuredEditorial];', self.home)
         self.assertIn('crochet-patterns-for-beginners-guide', self.home)
