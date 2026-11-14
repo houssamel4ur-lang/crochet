@@ -35,6 +35,8 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
+      - name: Refresh Content Security Policy for current admin script
+        run: python3 scripts/security_policy.py
       - name: Serve local site
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/cozyloops-http.log 2>&1 &
