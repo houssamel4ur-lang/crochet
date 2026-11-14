@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.119.0';
 const url='https://yqmrunstyhrhnvxoyrap.supabase.co'; // Supabase Project URL (public)
 const publishableKey='sb_publishable_HqkcpvBz8P8KJTZFgefrWQ_rFxKPMNh'; // sb_publishable_... (public, never secret/service_role)
 const $=id=>document.getElementById(id);
