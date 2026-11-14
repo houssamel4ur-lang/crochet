@@ -62,38 +62,38 @@ def create_panels():
         title_lines = title_lines[:3] if title_lines else ["Crochet project"]
         for number, (heading, bullets, color, tint) in STAGES.items():
             title_markup = "".join(
-                f'<text x="78" y="{330+40*i}" font-family="Georgia,serif" '
-                f'font-size="29" font-weight="700" fill="#304439">{escape(line)}</text>'
+                f'<text x="66" y="{309+46*i}" font-family="Georgia,serif" '
+                f'font-size="34" font-weight="700" fill="#304439">{escape(line)}</text>'
                 for i, line in enumerate(title_lines)
             )
             bullet_markup = "".join(
-                f'<text x="101" y="{475+51*i}" font-family="Arial,sans-serif" '
-                f'font-size="22" fill="#46584C">{escape(line)}</text>'
-                f'<circle cx="83" cy="{467+51*i}" r="5" fill="{color}"/>'
+                f'<text x="99" y="{465+58*i}" font-family="Arial,sans-serif" '
+                f'font-size="29" fill="#46584C">{escape(line)}</text>'
+                f'<circle cx="77" cy="{455+58*i}" r="5" fill="{color}"/>'
                 for i, line in enumerate(bullets)
             )
-            body = f"""<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750"
-viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+            body = f"""<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1120"
+viewBox="0 0 900 1120" role="img" aria-labelledby="title desc">
 <title id="title">{escape(heading)} — {escape(titles[slug])}</title>
 <desc id="desc">Original scalable editorial concept illustration. Not a real photograph or a tested crochet step.</desc>
 <defs><linearGradient id="paper" x1="0" x2="1" y1="0" y2="1">
 <stop stop-color="#FFFDF9"/><stop offset="1" stop-color="#F3F3EA"/>
 </linearGradient></defs>
-<rect width="1200" height="750" fill="url(#paper)"/>
-<path d="M0 681 Q310 638 620 676 T1200 658 L1200 750 H0Z" fill="{tint}" opacity=".36"/>
-<circle cx="950" cy="370" r="291" fill="{tint}" opacity=".62"/>
-<circle cx="950" cy="370" r="261" fill="#FFFCF7" stroke="{color}" stroke-opacity=".2" stroke-width="2"/>
-<rect x="46" y="44" width="592" height="648" rx="25" fill="#FFFEFC" stroke="#E1E8DD" stroke-width="2"/>
-<path d="M82 145 H600" stroke="#E4E9E0" stroke-width="2"/>
-<text x="79" y="103" font-family="Arial,sans-serif" font-size="19"
+<rect width="900" height="1120" fill="url(#paper)"/>
+<path d="M0 1000 Q330 958 620 1012 T900 994 L900 1120 H0Z" fill="{tint}" opacity=".36"/>
+<circle cx="460" cy="858" r="259" fill="{tint}" opacity=".62"/>
+<circle cx="460" cy="858" r="239" fill="#FFFCF7" stroke="{color}" stroke-opacity=".2" stroke-width="2"/>
+<rect x="35" y="35" width="830" height="609" rx="25" fill="#FFFEFC" stroke="#E1E8DD" stroke-width="2"/>
+<path d="M72 135 H829" stroke="#E4E9E0" stroke-width="2"/>
+<text x="66" y="94" font-family="Arial,sans-serif" font-size="19"
 letter-spacing="3" font-weight="700" fill="{color}">COZYLOOPS  /  ILLUSTRATED GUIDE</text>
-<text x="78" y="221" font-family="Georgia,serif" font-size="42"
+<text x="66" y="221" font-family="Georgia,serif" font-size="49"
 font-weight="700" fill="#304439">{escape(heading)}</text>
-<path d="M80 250 H236" stroke="{color}" stroke-width="6" stroke-linecap="round"/>
+<path d="M68 240 H235" stroke="{color}" stroke-width="6" stroke-linecap="round"/>
 {title_markup}
 {bullet_markup}
-{artwork_xml}
-<text x="80" y="651" font-family="Arial,sans-serif" font-size="17" fill="#667668">
+<g transform="translate(-530 500) scale(1.05)">{artwork_xml}</g>
+<text x="66" y="1080" font-family="Arial,sans-serif" font-size="17" fill="#667668">
 CONCEPT VISUAL · FOLLOW THE WRITTEN INSTRUCTIONS</text>
 </svg>
 """
