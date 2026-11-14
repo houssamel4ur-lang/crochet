@@ -49,9 +49,8 @@ jobs:
           if (!script) throw new Error('Public script missing');
           new vm.Script(script[1], {filename:'index.html'});
           const admin = fs.readFileSync('admin/index.html', 'utf8');
-          const moduleScript = admin.match(/<script type="module">([\s\S]*?)<\/script>/);
-          if (!moduleScript) throw new Error('Admin script missing');
-          const js = moduleScript[1].replace(/^import .*?;\s*$/gm,'');
+          if (!admin.includes('<script type="module" src="./app.js"></script>')) throw new Error('Admin external script missing');
+          const js = fs.readFileSync('admin/app.js', 'utf8').replace(/^import .*?;\s*$/gm,'');
           new vm.Script('(async()=>{' + js + '})', {filename:'admin/index.html'});
           const article = fs.readFileSync('scripts/article_analytics.js', 'utf8');
           new vm.Script(article, {filename:'scripts/article_analytics.js'});
