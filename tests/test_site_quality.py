@@ -171,7 +171,7 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn('class="nav top-nav"', self.home)
         self.assertIn(':focus-visible', self.home)
         self.assertIn('class="skip-link"', self.home)
-        self.assertRegex(self.home, r'(?s)<section class="section feature"[^>]*>.*?<img[^>]*\\bsrcset="[^"]+"[^>]*\\bsizes="[^"]+"')
+        self.assertRegex(self.home, r'(?s)<section class="section feature"[^>]*>.*?<img[^>]* srcset="[^"]+"[^>]* sizes="[^"]+"')
         self.assertIn('sizes="(max-width:800px)', self.home)
         self.assertIn('function route(preserveScroll=false)', self.home)
         self.assertIn('function readablePrimary(', self.home)
