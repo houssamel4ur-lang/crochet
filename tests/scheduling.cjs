@@ -8,7 +8,7 @@ const assert=require('node:assert/strict');
     for(const active of [false,true]){
       const page=await browser.newPage({timezoneId:'Africa/Casablanca',viewport:{width:390,height:844}});
       const errors=[];page.on('pageerror',e=>errors.push(e.message));
-      const mock=fs.readFileSync('tests/mock-admin-supabase.mjs','utf8').replace("name==='is_super_admin'?", "name==='article_scheduler_status'?{data:"+active+",error:null}:name==='is_super_admin'?");
+      const mock=fs.readFileSync('tests/mock-admin-supabase.mjs','utf8').replace("if(name==='is_super_admin')return", "if(name==='article_scheduler_status')return {data:"+active+",error:null};if(name==='is_super_admin')return");
       await page.route('https://esm.sh/@supabase/supabase-js@2.119.0',r=>r.fulfill({contentType:'application/javascript',body:mock}));
       // This test is isolated from production content and always has a valid catalog.
       await page.route('**/content/github_articles.json',r=>r.fulfill({contentType:'application/json',body:'[]'}));
