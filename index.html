@@ -416,7 +416,7 @@ function renderArticleMarkdown(source,articleSlug=''){
      // Use purpose-built scalable vector references, never relabel them as photos.
      const crop=match[2].match(/^https:\/\/cozyloops\.site\/assets\/([a-z0-9-]+)-(02|04|09)\.webp$/);
      if(crop&&crop[1]===articleSlug&&illustratedDefaultSlugs.has(articleSlug)){
-       const stage={02:'materials',04:'construction',09:'finishing'}[crop[2]];
+       const stage={'02':'materials','04':'construction','09':'finishing'}[crop[2]];
        url='https://cozyloops.site/assets/editorial-illustrations/'+articleSlug+'-panel-'+crop[2]+'.svg';
        alt='Scalable illustrated '+stage+' reference for '+articleSlug.replace(/-/g,' ')+'; not a real project photograph';
        width=900;height=1120;
