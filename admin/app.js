@@ -1,3 +1,4 @@
+import { renderTrafficChart, shortNumber, periodLabel } from './traffic-chart.js';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.119.0';
 const url='https://yqmrunstyhrhnvxoyrap.supabase.co'; // Supabase Project URL (public)
 const publishableKey='sb_publishable_HqkcpvBz8P8KJTZFgefrWQ_rFxKPMNh'; // sb_publishable_... (public, never secret/service_role)
@@ -35,32 +36,76 @@ if(url&&publishableKey){
   let postRows=[],editingPost=null,editingGitHubSource=false;
   const slugify=v=>v.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,180);
   const postField=k=>$('post-'+k);
+  let analyticsPeriod='30d', analyticsRequest=0;
   const loadVisitorAnalytics=async()=>{
-    const msg=$('visitor-analytics-message'),root=$('visitor-stats'),top=$('top-viewed-posts');
-    msg.textContent='';root.replaceChildren();top.replaceChildren();
-    const {data,error}=await supabase.rpc('cozyloop_analytics');
-    if(error){
-      msg.textContent='Visitor counts are not configured yet. Run supabase/page_view_analytics.sql in Supabase SQL Editor. ('+error.message+')';
-      msg.className='muted';return;
+    const request=++analyticsRequest;
+    const msg=$('visitor-analytics-message'),root=$('visitor-stats'),top=$('top-viewed-posts'),chart=$('traffic-chart');
+    const period=analyticsPeriod;
+    document.querySelectorAll('[data-analytics-range]').forEach(button=>{
+      const selected=button.dataset.analyticsRange===period;
+      button.classList.toggle('active',selected);
+      button.setAttribute('aria-pressed',String(selected));
+    });
+    $('traffic-chart-title').textContent='Page view trend · '+(periodLabel[period]||'Selected period');
+    $('top-articles-period').textContent='('+String(periodLabel[period]||'Selected period').toLowerCase()+')';
+    $('traffic-chart-zone').textContent=period==='1h'?'5-minute buckets':period==='1d'?'Hourly buckets':'Daily buckets · UTC';
+    msg.textContent='Loading traffic for '+(periodLabel[period]||period).toLowerCase()+'...';msg.className='muted';
+    chart.replaceChildren();root.replaceChildren();top.replaceChildren();
+    $('traffic-chart-compare').textContent='';
+    const loading=document.createElement('p');loading.className='muted';loading.textContent='Loading real page views...';chart.append(loading);
+    let data,error;
+    try{
+      ({data,error}=await supabase.rpc('cozyloop_analytics_range',{p_period:period}));
+    }catch(err){error=err;}
+    if(request!==analyticsRequest)return;
+    chart.replaceChildren();
+    if(error||!data||!Array.isArray(data.series)){
+      msg.textContent='Time-range analytics require the owner-only Supabase setup. Run supabase/page_view_analytics_range.sql in your project SQL Editor after page_view_analytics.sql. '+(error?.message?'('+error.message+')':'');
+      msg.className='error';
+      const p=document.createElement('p');p.className='muted';
+      p.textContent='No chart data available. Existing recorded views are not deleted.';
+      chart.append(p);
+      return;
     }
-    const metrics=[['Page views',data.total_page_views],['Home views',data.home_views],['Article views',data.article_views],['Today (UTC)',data.today_page_views]];
+    const metrics=[
+      ['Page views',data.total_page_views],
+      ['Home views',data.home_views],
+      ['Article views',data.article_views],
+      ['Previous period',data.previous_page_views]
+    ];
     for(const [name,value] of metrics){
       const box=document.createElement('div');box.className='stat-box';
-      const num=document.createElement('strong');num.textContent=String(value??0);
+      const num=document.createElement('strong');num.textContent=shortNumber(value);
       const label=document.createElement('span');label.textContent=name;
       box.append(num,label);root.append(box);
     }
+    renderTrafficChart(chart,data.series,period);
+    const current=Number(data.total_page_views)||0,previous=Number(data.previous_page_views)||0;
+    const difference=current-previous;
+    const comparison=$('traffic-chart-compare');
+    comparison.textContent=previous>0
+      ?(difference>=0?'+':'')+((difference/previous)*100).toFixed(1)+'% vs the previous equivalent period ('+shortNumber(previous)+' tracked views).'
+      :current>0?'No recorded views in the previous equivalent period.':'No tracked views in either period.';
     const values=Array.isArray(data.top_articles)?data.top_articles:[];
-    if(!values.length){const p=document.createElement('p');p.textContent='No tracked article views yet.';top.append(p);}
-    else{
+    if(!values.length){
+      const p=document.createElement('p');p.textContent='No tracked article views in this period.';top.append(p);
+    }else{
       const list=document.createElement('ol');list.className='summary-list';
       for(const item of values){
         const article=postRows.find(p=>p.slug===item.slug);
-        const row=document.createElement('li');row.textContent=(article?.title||item.slug)+' — '+item.views+' views';list.append(row);
+        const row=document.createElement('li');row.textContent=(article?.title||item.slug)+' — '+shortNumber(item.views)+' views';list.append(row);
       }
       top.append(list);
     }
+    msg.textContent='Updated · '+new Date().toLocaleTimeString()+' · Based on consenting, daily-deduplicated page views.';
+    msg.className='muted';
   };
+  document.querySelectorAll('[data-analytics-range]').forEach(button=>button.addEventListener('click',()=>{
+    if(analyticsPeriod===button.dataset.analyticsRange)return;
+    analyticsPeriod=button.dataset.analyticsRange;
+    loadVisitorAnalytics();
+  }));
+  $('analytics-refresh').addEventListener('click',loadVisitorAnalytics);
   const renderStats=()=>{
     const total=postRows.length;
     const published=postRows.filter(p=>p.status==='published').length;
