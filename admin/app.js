@@ -307,7 +307,12 @@ if(url&&publishableKey){
     try{
       if(bitmap.width>8000||bitmap.height>8000)throw Error('Image dimensions are too large; maximum 8000 px per side.');
       const minWidth=kind==='cover'?900:640;
-      if(bitmap.width<minWidth)throw Error('This '+kind+' image is blurry at article size. Upload at least '+minWidth+' px width.');
+      const minHeight=kind==='cover'?540:400;
+      if(bitmap.width<minWidth||bitmap.height<minHeight)
+        throw Error('This '+kind+' image is too small for a clear article display. Upload at least '+minWidth+' × '+minHeight+' pixels.');
+      const ratio=bitmap.width/bitmap.height;
+      if(ratio<0.5||ratio>2.5)
+        throw Error('The image is unusually narrow or wide. Crop a copy to a normal photo ratio before uploading.');
       const scale=Math.min(1,1800/Math.max(bitmap.width,bitmap.height));
       const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
       const ctx=canvas.getContext('2d');if(!ctx)throw Error('Image optimization is unavailable in this browser.');
@@ -408,9 +413,13 @@ if(url&&publishableKey){
         if(payload.excerpt.length<70||payload.excerpt.length>180)throw Error('Publish checklist: write a unique 70–180 character summary.');
         if(headings<3)throw Error('Publish checklist: include at least three useful main sections (## Heading).');
         if(wordCount<300)throw Error('Publish checklist: add substantial, original step-by-step content before publishing.');
-        const isWebP=url=>/\.webp(?:\?.*)?$/i.test(new URL(url).pathname);
-        if(!isWebP(image)||photos.filter(m=>isWebP(m[2])).length<2)
-          throw Error('Publish checklist: include a WebP cover and at least two descriptive WebP images inside the article.');
+        const isWebP=url=>/\.webp$/i.test(new URL(url).pathname);
+        const descriptivePhotos=photos.filter(m=>m[1].trim().length>=12&&isWebP(m[2]));
+        if(!isWebP(image)||descriptivePhotos.length<2)
+          throw Error('Publish checklist: include a WebP cover and at least two WebP photos with descriptive alt text (12+ characters).');
+        const imageUrls=[image,...photos.map(m=>m[2])].map(url=>new URL(url).href);
+        if(new Set(imageUrls).size!==imageUrls.length)
+          throw Error('Publish checklist: use different photos for the cover and each step; repeated image URLs are not accepted.');
       }
       if(mode==='scheduled'){
         await checkScheduler();
