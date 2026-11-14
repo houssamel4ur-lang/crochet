@@ -29,6 +29,23 @@
     nav.classList.add('top-nav');
     document.getElementById('site-drawer')?.remove();
   }
+
+  // Public member entry stays compact on phones and never changes the five navigation links.
+  if (!nav.querySelector('.nav-account-trigger')) {
+    const account=document.createElement('a');
+    account.className='nav-account-trigger';
+    account.href=new URL('/account/',location.href).href;
+    account.setAttribute('aria-label','Log in or create an account');
+    account.setAttribute('title','Log in or register');
+    account.innerHTML='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20v-2.4a7 7 0 0 1 14 0V20z"></path></svg><span>Login / Register</span>';
+    nav.append(account);
+  }
+  if (!document.getElementById('cozy-account-nav-style')) {
+    const authStyle=document.createElement('style');
+    authStyle.id='cozy-account-nav-style';
+    authStyle.textContent='.top-nav .nav-account-trigger{display:inline-flex;align-items:center;justify-content:center;flex:none;gap:7px;padding:9px 13px;border-radius:999px;min-height:40px;border:1px solid #dfe7db;background:#edf3e9;color:#375641;font:700 12px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;white-space:nowrap}.top-nav .nav-account-trigger:hover{background:#dfeadd}.top-nav .nav-account-trigger:focus-visible{outline:3px solid #bd946e;outline-offset:3px}@media(max-width:760px){.nav.top-nav{grid-template-columns:minmax(0,1fr) 38px 38px;grid-template-areas:"brand search account" "links links links"}.top-nav .nav-account-trigger{grid-area:account;width:37px;height:37px;min-height:37px;padding:0;justify-self:end;border-radius:50%}.top-nav .nav-account-trigger span{display:none}}@media print{.top-nav .nav-account-trigger{display:none!important}}';
+    document.head.append(authStyle);
+  }
   function setActiveLink() {
     const active = location.pathname.startsWith('/posts/') ? '#articles' : (location.hash || '#home');
     nav.querySelectorAll('.top-links a').forEach(link => {
