@@ -182,7 +182,20 @@ async function loadPublishedPosts(){
     }]]);
     for(const p of editorial)if(p&&typeof p.slug==='string'&&!removedStarterSlugs.has(p.slug))chosen.set(p.slug,p);
     // Approved Admin edits take precedence over the original GitHub editorial.
-    for(const p of remote)if(p&&typeof p.slug==='string'&&!removedStarterSlugs.has(p.slug))chosen.set(p.slug,p);
+    // Supabase mirrors may still reference a retired legacy cover.
+    // Upgrade only those exact default URLs; owner-selected replacements win.
+    const refinedLegacy=new Set([
+      'easy-crochet-scarf-for-beginners','capybara-amigurumi-free-crochet-pattern',
+      'daisy-granny-square-blanket-guide','crochet-plant-hanger-beginners',
+      'crochet-bucket-hat-for-beginners','sunflower-crochet-tote-bag-guide',
+      'easy-crochet-beanie-pattern'
+    ]);
+    for(const p of remote){
+      if(!p||typeof p.slug!=='string'||removedStarterSlugs.has(p.slug))continue;
+      const oldCover='https://cozyloops.site/assets/'+p.slug+'-1.webp';
+      const isOldCover=refinedLegacy.has(p.slug)&&p.image_url===oldCover;
+      chosen.set(p.slug,isOldCover?{...p,image_url:'https://cozyloops.site/assets/legacy-polished/'+p.slug+'-cover.webp'}:p);
+    }
     posts.length=0;
     categories.splice(1,categories.length-1,'Beginner Tutorials','Free Patterns','Amigurumi','Crochet Tips');
     for(const p of chosen.values()){
