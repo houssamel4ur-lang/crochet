@@ -62,6 +62,11 @@ if(url&&publishableKey){
     if(error||!data||!Array.isArray(data.series)){
       msg.textContent='Time-range analytics require the owner-only Supabase setup. Run supabase/page_view_analytics_range.sql in your project SQL Editor after page_view_analytics.sql. '+(error?.message?'('+error.message+')':'');
       msg.className='error';
+      const setupLink=document.createElement('a');
+      setupLink.href='https://github.com/houssamel4ur-lang/crochet/blob/main/supabase/page_view_analytics_range.sql';
+      setupLink.target='_blank';setupLink.rel='noopener noreferrer';
+      setupLink.textContent='Open analytics SQL ↗';
+      msg.append(document.createTextNode(' '),setupLink);
       const p=document.createElement('p');p.className='muted';
       p.textContent='No chart data available. Existing recorded views are not deleted.';
       chart.append(p);
