@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' https://esm.sh; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://yqmrunstyhrhnvxoyrap.supabase.co; frame-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex,follow">
+<meta name="theme-color" content="#4f694c">
+<title>Member Sign In | CozyLoops</title>
+<meta name="description" content="Sign in or create a CozyLoops account to enjoy more crochet inspiration.">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<style>
+:root{color-scheme:light;--green:#4f694c;--dark:#263c2d;--muted:#637266;--line:#dbe4d9;--cream:#fbf8f2}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--dark);background:radial-gradient(circle at 0% 10%,#eaf0e5 0,transparent 38%),radial-gradient(circle at 100% 100%,#f9e8df 0,transparent 47%),var(--cream)}
+a{color:var(--green)}button,input{font:inherit}button{cursor:pointer}
+.top{max-width:1040px;padding:22px 24px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font:700 clamp(23px,4vw,30px) Georgia,serif;color:var(--green);text-decoration:none}
+.back{font-weight:700;font-size:14px;text-decoration:none}
+.wrap{min-height:calc(100vh - 110px);display:grid;place-items:center;padding:24px}
+.panel{width:min(100%,440px);padding:clamp(25px,5vw,44px);background:#fff;border:1px solid #e2e8df;border-radius:24px;box-shadow:0 20px 65px #263c2d13}
+.center{text-align:center}.kicker{font-size:11px;text-transform:uppercase;color:var(--green);letter-spacing:2px;font-weight:800}
+h1{font:700 clamp(29px,5vw,36px)/1.2 Georgia,serif;margin:8px 0 10px;color:#33372f}
+.sub{font-size:14px;color:var(--muted);margin:0 0 24px}
+label{display:block;margin:0 0 7px;font-size:13px;font-weight:700}
+input{width:100%;min-height:48px;padding:11px 14px;border:1px solid #d9e2d7;border-radius:11px;background:#fcfdfb;color:var(--dark)}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #b79463;outline-offset:2px}
+.field{margin-bottom:17px}.inline{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tiny{font-size:13px}.as-link{border:0;background:none;color:var(--green);font-weight:700;padding:2px;text-decoration:underline;text-underline-offset:3px}
+.action{width:100%;min-height:48px;padding:12px 15px;border:0;border-radius:12px;background:var(--green);color:#fff;font-weight:800}
+.action:hover{background:#3d5943}.action:disabled,.google:disabled{opacity:.62;cursor:wait}
+.google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:48px;border:1px solid #dce4da;border-radius:12px;background:#fff;color:var(--dark);font-weight:750}
+.google:hover{background:#f5f8f3}.google-icon{font:bold 22px Arial,sans-serif;color:#4285f4}
+.divider{display:flex;align-items:center;gap:12px;margin:21px 0;color:#7c887d;font-size:12px}
+.divider:before,.divider:after{content:"";height:1px;flex:1;background:#e0e6dd}
+.foot{margin:20px 0 0;text-align:center;font-size:14px;color:var(--muted)}
+.status{margin-top:18px;padding:12px 14px;border-radius:10px;font-size:14px;line-height:1.55;background:#eef5ec;color:#264630}
+.status.error{background:#fff0eb;color:#8d302b}.status[hidden],[data-view][hidden]{display:none!important}
+.profile-email{padding:13px 15px;margin:15px 0 22px;background:#f5f8f3;border-radius:12px;overflow-wrap:anywhere}
+.note{font-size:12px;color:var(--muted);margin:16px 0 0}
+@media(max-width:480px){.top{padding:16px}.wrap{padding:14px;min-height:calc(100vh - 80px)}.panel{padding:25px 20px;border-radius:19px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="../">CozyLoops ♡</a><a class="back" href="../#articles">Explore articles ↗</a></header>
+<main class="wrap"><div class="panel">
+<section data-view="login">
+<div class="center"><span class="kicker">A cozy place for makers</span><h1>Welcome Back!</h1><p class="sub">Sign in to your CozyLoops account.</p></div>
+<button type="button" class="google" data-google><span class="google-icon" aria-hidden="true">G</span> Continue with Google</button>
+<div class="divider">or continue with email</div>
+<form id="login-form">
+<div class="field"><label for="login-email">Email address</label><input id="login-email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+<div class="field"><div class="inline"><label for="login-password">Password</label><button class="as-link tiny" type="button" data-switch="recover">Forgot password?</button></div><input id="login-password" name="password" type="password" autocomplete="current-password" required></div>
+<button class="action" type="submit">Sign In</button>
+</form>
+<p class="foot">New here? <button class="as-link" type="button" data-switch="register">Create an account</button></p>
+</section>
+<section data-view="register" hidden>
+<div class="center"><span class="kicker">Join the cozy corner</span><h1>Create an account</h1><p class="sub">Join CozyLoops in just a few steps.</p></div>
+<button type="button" class="google" data-google><span class="google-icon" aria-hidden="true">G</span> Continue with Google</button>
+<div class="divider">or sign up with email</div>
+<form id="register-form">
+<div class="field"><label for="register-email">Email address</label><input id="register-email" type="email" autocomplete="email" maxlength="254" required></div>
+<div class="field"><label for="register-password">Password (8 characters minimum)</label><input id="register-password" type="password" minlength="8" autocomplete="new-password" required></div>
+<div class="field"><label for="register-confirm">Confirm password</label><input id="register-confirm" type="password" minlength="8" autocomplete="new-password" required></div>
+<button class="action" type="submit">Create Account</button>
+</form>
+<p class="foot">Already a member? <button class="as-link" type="button" data-switch="login">Sign In</button></p>
+</section>
+<section data-view="recover" hidden>
+<div class="center"><span class="kicker">Account recovery</span><h1>Forgot password?</h1><p class="sub">Enter your email and we'll send you a secure password reset link.</p></div>
+<form id="recover-form"><div class="field"><label for="recover-email">Email address</label><input id="recover-email" type="email" autocomplete="email" maxlength="254" required></div><button class="action" type="submit">Send Reset Link</button></form>
+<p class="foot"><button class="as-link" type="button" data-switch="login">Back to Sign In</button></p>
+</section>
+<section data-view="update" hidden>
+<div class="center"><span class="kicker">Account recovery</span><h1>Set a new password</h1><p class="sub">Choose a new password to protect your account.</p></div>
+<form id="update-form">
+<div class="field"><label for="update-password">New password</label><input id="update-password" type="password" minlength="8" autocomplete="new-password" required></div>
+<div class="field"><label for="update-confirm">Confirm new password</label><input id="update-confirm" type="password" minlength="8" autocomplete="new-password" required></div>
+<button class="action" type="submit">Update Password</button>
+</form>
+<p class="foot"><button class="as-link" type="button" data-switch="login">Back to Sign In</button></p>
+</section>
+<section data-view="profile" hidden>
+<div class="center"><span class="kicker">Your crochet corner</span><h1>You're signed in!</h1><p class="sub">Welcome to your CozyLoops account.</p></div>
+<div id="profile-email" class="profile-email"></div>
+<a href="../#articles" class="action" style="display:block;text-align:center;text-decoration:none">Explore Crochet Articles</a>
+<p class="foot"><button class="as-link" id="logout" type="button">Sign Out</button></p>
+</section>
+<p id="auth-status" class="status" role="status" aria-live="polite" hidden></p>
+<p class="note center">Reading articles is always free. Creating an account is optional. <a href="../#privacy">Privacy policy</a></p>
+</div></main>
+<script type="module" src="./auth.js"></script>
+</body>
+</html>
