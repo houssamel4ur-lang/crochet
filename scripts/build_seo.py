@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 from urllib.parse import quote, urlsplit
+from hb_placements import inject_hb_ads
 from urllib.request import Request, urlopen
 from datetime import datetime, timezone
 
@@ -185,7 +186,7 @@ def render_page(article, css, articles=None):
     image_html = f'<img class="article-cover" src="{esc(cover)}" alt="{esc(article.get("image_alt") or title)}" width="{cover_width}" height="{cover_height}" fetchpriority="high" decoding="async">' if cover else ""
     structured_json = json.dumps(structured, ensure_ascii=False).replace("<", "\\u003c")
     social_image = f'<meta property="og:image" content="{esc(cover)}">' if cover else ""
-    return f'''<!doctype html>
+    return inject_hb_ads(f'''<!doctype html>
 <html lang="en">
 <head>
 <script src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js" async></script>
@@ -245,7 +246,7 @@ def render_page(article, css, articles=None):
 <aside id="privacy-choice" class="privacy-choice" aria-label="Optional article analytics" hidden><strong>Help us improve CozyLoops?</strong><p>With your permission, we count this article view once per browser per day. We store no names, emails or IP addresses in our analytics table. You can decline and keep reading.</p><div class="actions"><button type="button" id="privacy-decline">No thanks</button><button type="button" class="accept" id="privacy-accept">Allow analytics</button></div></aside>
 <footer><div class="footer-inner"><div><a class="brand" href="{BASE}">CozyLoops ♡</a><p>Slow down, pick up your yarn, and create something lovely.</p></div><div><a href="{BASE}#about">About</a><a href="{BASE}#contact">Contact</a><a href="{BASE}#privacy">Privacy</a></div></div></footer>
 </body></html>
-'''
+''')
 
 def main():
     source = (ROOT / "index.html").read_text(encoding="utf-8")
