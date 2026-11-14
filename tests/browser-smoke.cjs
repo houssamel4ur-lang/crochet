@@ -168,7 +168,7 @@ const failures = [];
     // Simulate an authenticated but unauthorized account without using real credentials.
     const denied = await browser.newPage();
     denied.on('pageerror', error => failures.push('denied admin: ' + error.message));
-    await denied.route('https://esm.sh/@supabase/supabase-js@2', route => route.fulfill({
+    await denied.route('https://esm.sh/@supabase/supabase-js@2.119.0', route => route.fulfill({
       status: 200, contentType: 'application/javascript',
       headers: {'access-control-allow-origin': '*'},
       body: [
@@ -195,7 +195,7 @@ const failures = [];
     const owner = await browser.newPage({viewport:{width:1365,height:900}});
     owner.on('pageerror', error => failures.push('owner admin: '+error.message));
     const mockSource=fs.readFileSync('tests/mock-admin-supabase.mjs','utf8');
-    await owner.route('https://esm.sh/@supabase/supabase-js@2', route => route.fulfill({
+    await owner.route('https://esm.sh/@supabase/supabase-js@2.119.0', route => route.fulfill({
       status:200,contentType:'application/javascript',
       headers:{'access-control-allow-origin':'*'},body:mockSource
     }));
