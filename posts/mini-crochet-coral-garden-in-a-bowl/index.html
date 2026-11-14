@@ -7,8 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <!-- cozy-security:end -->
 
-<link rel="preconnect" href="https://d3u598arehftfk.cloudfront.net" crossorigin>
-<script defer fetchpriority="high" src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js"></script>
+<script defer fetchpriority="low" src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mini Crochet Coral Garden in a Bowl | CozyLoops</title>
 <meta name="description" content="Make a mini coral garden in a bowl with a component plan, counted crochet instructions, assembly notes and practical finishing checks.">
@@ -89,6 +88,12 @@ header{position:relative;top:auto}
 /* Skip layout and paint for offscreen cards; keep their scroll space reserved. */
 .card{content-visibility:auto;contain-intrinsic-size:auto 470px}.load-more-wrap{grid-column:1/-1;text-align:center;padding:16px 0 4px}
 @media print{.card{content-visibility:visible}}
+.article img.dynamic-concept-cover{width:min(100%,340px);height:340px;max-height:340px;object-fit:cover;object-position:left center;margin:20px auto;box-shadow:0 8px 25px #27392a12}
+.article-toc{padding:0 18px}.article-toc summary{padding:15px 4px;cursor:pointer;min-height:44px;font-weight:700;color:#294332}.article-toc nav{border-top:1px solid #e5e7df;max-height:280px;overflow:auto}.article-toc ol{margin:10px 0;padding-left:22px}
+.article-toc .toc-jump{display:inline-flex;align-items:center;min-height:40px;color:#24432d}
+.article-disclosure{margin:34px 0 18px;padding:0 18px;border:1px solid #e1e6dd;border-radius:14px;background:#f8faf5}.article-disclosure summary{padding:14px 0;cursor:pointer;min-height:44px}.article-disclosure p{font-size:14px}
+@media(max-width:640px){.article img.dynamic-concept-cover{width:min(100%,310px);height:min(82vw,310px)}}
+@media print{.article-toc,.article-disclosure summary{display:none!important}}
 /* High-contrast actions and generous touch targets on phones. */
 .card .text-link{display:inline-flex;align-items:center;min-height:44px;color:#24432d}
 @media(max-width:650px){
@@ -102,7 +107,8 @@ header{position:relative;top:auto}
 .article-hero{margin:22px 0 24px}.article-hero img{display:block;margin:0 auto}
 .article-hero figcaption{font:12px/1.6 system-ui,sans-serif;text-align:center;color:#536153;margin:7px auto 0}
 .concept-hero{display:flex;flex-direction:column;align-items:center}
-.concept-hero .article-cover{width:min(100%,520px);height:auto;aspect-ratio:1;object-fit:cover;object-position:left center;max-height:none;box-shadow:0 10px 28px #2b352b12}
+.concept-hero .article-cover{width:min(100%,340px);height:340px;aspect-ratio:1;object-fit:cover;object-position:left center;max-height:340px;box-shadow:0 10px 28px #2b352b12}
+@media(max-width:640px){.concept-hero .article-cover{width:min(100%,310px);height:min(82vw,310px)}}
 .article figure:not(.article-hero) img{max-width:min(100%,650px);display:block;margin:0 auto}
 .article figure:not(.article-hero){margin:24px 0}
 .article-toc{margin:16px 0 28px;padding:0 18px;background:#fff;border:1px solid #e3e8df;border-radius:14px}
