@@ -53,6 +53,22 @@ class SiteQualityTests(unittest.TestCase):
         cls.manifest = json.loads((ROOT / "posts/manifest.json").read_text(encoding="utf-8"))
         cls.sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
 
+    def test_hb_agency_ad_script_starts_fetching_early_without_blocking_html(self):
+        """Homepage and future generated posts prioritize the provider script."""
+        provider = 'https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js'
+        for name, content in [
+            ('homepage', self.home),
+            ('SEO article builder', (ROOT / 'scripts/build_seo.py').read_text(encoding='utf-8')),
+        ]:
+            with self.subTest(page=name):
+                self.assertIn('<link rel="preconnect" href="https://d3u598arehftfk.cloudfront.net" crossorigin>', content)
+                self.assertIn(f'<script defer fetchpriority="high" src="{provider}"></script>', content)
+                self.assertNotIn(f'fetchpriority="low" src="{provider}"', content)
+        for slug in self.manifest:
+            content = (ROOT / 'posts' / slug / 'index.html').read_text(encoding='utf-8')
+            # Old generated pages update in the SEO build triggered by index.html.
+            self.assertIn(provider, content)
+
     def test_home_has_metadata(self):
         scan = Scan()
         scan.feed(self.home)
