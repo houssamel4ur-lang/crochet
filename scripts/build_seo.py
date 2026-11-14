@@ -144,8 +144,9 @@ def load_articles():
         if not isinstance(remote, list):
             raise RuntimeError("Expected JSON list from Supabase")
     except (OSError, ValueError) as error:
-        print(f"Supabase unavailable; using GitHub editorial catalog: {error}")
-        remote = []
+        # Never republish a partial catalog: that would delete existing Supabase-only
+        # pages from the generated manifest/sitemap when the REST API is briefly down.
+        raise RuntimeError("Supabase article export unavailable; preserving the last published site") from error
     articles = {}
     # Supabase wins over GitHub editorial, so edits saved in Posts propagate.
     for item in editorials + remote:
