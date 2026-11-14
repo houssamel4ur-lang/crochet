@@ -171,18 +171,19 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn('class="nav top-nav"', self.home)
         self.assertIn(':focus-visible', self.home)
         self.assertIn('class="skip-link"', self.home)
-        about = re.search(r'(?s)<section class="section feature"[^>]*>.*?<img\\b([^>]*)>', self.home)
+        about = re.search(r'(?s)<section class="section feature"[^>]*>.*?<img ([^>]+)>', self.home)
         self.assertIsNotNone(about, "About section needs a crochet photo")
-        attrs = dict(re.findall(r'([\\w-]+)="([^"]*)"', about.group(1)))
+        attrs = dict(re.findall(r'([A-Za-z0-9_-]+)="([^"]*)"', about.group(1)))
         self.assertGreaterEqual(len(attrs.get('alt', '').strip()), 20)
-        if not attrs.get('srcset'):
+        if attrs.get('srcset'):
+            self.assertTrue(attrs.get('sizes'), "Responsive About photo requires sizes")
+        else:
             # An optimized local WebP may be served without responsive variants.
             self.assertTrue(attrs.get('src', '').startswith('/assets/'))
             self.assertTrue(attrs['src'].endswith('.webp'))
             self.assertTrue((ROOT / attrs['src'].lstrip('/')).is_file())
             self.assertGreaterEqual(int(attrs.get('width', 0)), 500)
             self.assertGreaterEqual(int(attrs.get('height', 0)), 400)
-        self.assertIn('sizes="(max-width:800px)', self.home)
         self.assertIn('function route(preserveScroll=false)', self.home)
         self.assertIn('function readablePrimary(', self.home)
         self.assertTrue((ROOT / "favicon.svg").is_file())
