@@ -67,6 +67,17 @@ class SiteQualityTests(unittest.TestCase):
             content = (ROOT / 'posts' / slug / 'index.html').read_text(encoding='utf-8')
             self.assertIn(provider, content)
 
+    def test_mobile_navigation_and_article_touch_targets(self):
+        home = self.home
+        self.assertIn('.top-links a{grid-column:auto;min-width:0;width:100%;min-height:44px;', home)
+        self.assertIn('grid-template-columns:minmax(0,1fr) 44px', home)
+        self.assertIn('.top-nav .nav-search-trigger{grid-area:search;justify-self:end;width:44px;height:44px}', home)
+        self.assertIn('.article-share-button{min-height:44px;', home)
+        self.assertIn('.article-print-button{min-height:44px;', home)
+        builder = (ROOT / 'scripts/build_seo.py').read_text(encoding='utf-8')
+        self.assertIn('.article-share-button{{min-height:44px;', builder)
+        self.assertIn('.article-print-button{{min-height:44px;', builder)
+
     def test_home_has_metadata(self):
         scan = Scan()
         scan.feed(self.home)
