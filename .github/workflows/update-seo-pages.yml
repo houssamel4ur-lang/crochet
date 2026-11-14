@@ -57,6 +57,7 @@ jobs:
             python scripts/refine_legacy_images.py
             python scripts/build_seo.py
             python scripts/build_card_thumbnails.py
+            python scripts/security_policy.py
             git add -A posts/ sitemap.xml assets/ content/github_articles.json admin/index.html
             if git diff --cached --quiet; then
               echo "SEO pages already up to date."
