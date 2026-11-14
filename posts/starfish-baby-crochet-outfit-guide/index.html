@@ -55,29 +55,26 @@ footer .brand{color:#f2f6ec}
 .back-to-top{position:fixed;z-index:65;right:18px;bottom:20px;padding:12px 17px;border:1px solid var(--line);border-radius:999px;box-shadow:0 4px 18px #29342d22;background:var(--white);color:var(--green);font:700 14px system-ui,sans-serif;cursor:pointer}.back-to-top:hover,.back-to-top:focus-visible{background:var(--green);color:#fff}.back-to-top[hidden]{display:none!important}@media(max-width:600px){.back-to-top{bottom:12px;right:12px}}
 
 
-/* CozyLoops saved-original appearance preserved; responsive sliding side navigation. */
-.nav{flex-wrap:nowrap;gap:12px}
-.nav>.links,.nav>.mobile-menu{display:none!important}
-.nav-search-trigger,.nav-menu-toggle{width:43px;height:43px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:#fff;border:1px solid var(--line);border-radius:999px;color:var(--green);cursor:pointer;transition:background .18s,color .18s}
-.nav-search-trigger{margin-left:auto}
-.nav-search-trigger:hover,.nav-menu-toggle:hover{background:var(--green);color:white}
-.nav-search-trigger:focus-visible,.nav-menu-toggle:focus-visible,.drawer-close:focus-visible,.drawer-links a:focus-visible{outline:3px solid #bd946e;outline-offset:3px}
-.site-drawer{position:fixed;inset:0;overflow:visible;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:transparent}
-.site-drawer::backdrop{background:rgba(20,29,23,.55)}
-.site-drawer:not([open]){display:none}
-.site-drawer .drawer-panel{position:absolute;right:0;top:0;bottom:0;display:flex;flex-direction:column;width:min(390px,88vw);max-height:100dvh;overflow-y:auto;overscroll-behavior:contain;background:#fcf8f2;color:var(--ink);box-shadow:-20px 0 50px #1c2f2533;padding:25px clamp(20px,4vw,34px);animation:drawer-slide-in .28s cubic-bezier(.2,.8,.2,1) both}
-@keyframes drawer-slide-in{from{transform:translateX(105%)}to{transform:translateX(0)}}
-.drawer-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:22px;border-bottom:1px solid var(--line)}
-.drawer-heading span{font:700 27px Georgia,serif;color:var(--green)}
-.drawer-close{width:42px;height:42px;border:1px solid var(--line);border-radius:100%;background:white;color:var(--ink);font-size:28px;line-height:1}
-.drawer-links{display:flex;flex-direction:column;gap:5px;margin-top:24px}
-.drawer-links a{display:block;padding:15px 16px;border-radius:12px;font-weight:700;font-size:18px;line-height:1.4;color:var(--ink);transition:background .16s,transform .16s}
-.drawer-links a:hover{background:#e5eee1;color:var(--green);transform:translateX(-3px)}
-.drawer-links .drawer-search-link{margin-top:12px;background:#eaf0e6;color:var(--green)}
-.drawer-foot{margin-top:auto;padding-top:28px;color:var(--muted);font-size:14px}
-@media(max-width:560px){.nav{gap:8px;padding:12px 18px}.brand{font-size:25px}.nav-search-trigger,.nav-menu-toggle{width:40px;height:40px}}
-@media(prefers-reduced-motion:reduce){.site-drawer .drawer-panel{animation:none!important}.drawer-links a,.nav-search-trigger,.nav-menu-toggle{transition:none!important}}
-@media print{.nav-search-trigger,.nav-menu-toggle,.site-drawer{display:none!important}}
+/* CozyLoops: every destination visible in the top header, even on narrow phones. */
+.nav.top-nav{max-width:1200px;min-height:75px;margin:auto;padding:13px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:clamp(10px,1.5vw,22px)}
+.top-nav .brand{flex:none;white-space:nowrap;font-size:clamp(24px,2.3vw,29px)}
+.top-links{display:flex;align-items:center;justify-content:center;gap:clamp(2px,.65vw,10px);min-width:0;margin-left:auto}
+.top-links a{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;min-height:42px;padding:9px 11px;border-radius:999px;font:650 14px/1.3 system-ui,-apple-system,Segoe UI,sans-serif;color:#3a4d40;text-align:center;transition:color .2s,background .2s}
+.top-links a:hover,.top-links a:focus-visible,.top-links a[aria-current="page"]{background:#edf3e9;color:var(--green,#4f694c)}
+.top-nav .nav-search-trigger{display:inline-flex;align-items:center;justify-content:center;flex:none;margin-left:0;width:43px;height:43px;border:1px solid var(--line,#e5e7df);border-radius:999px;background:#fff;color:var(--green,#4f694c);transition:background .18s,color .18s}
+.top-nav .nav-search-trigger:hover{background:var(--green,#4f694c);color:#fff}
+.top-links a:focus-visible,.top-nav .nav-search-trigger:focus-visible{outline:3px solid #bd946e;outline-offset:3px}
+@media(max-width:760px){
+ .nav.top-nav{display:grid;grid-template-columns:minmax(0,1fr) 44px;grid-template-areas:"brand search" "links links";align-items:center;gap:8px 10px;padding:10px 16px 11px;min-height:0}
+ .top-nav .brand{grid-area:brand;font-size:25px;overflow:hidden;text-overflow:ellipsis}
+ .top-nav .nav-search-trigger{grid-area:search;justify-self:end;width:42px;height:42px}
+ .top-links{grid-area:links;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:100%;margin:0;padding-top:8px;border-top:1px solid var(--line,#e5e7df);gap:6px}
+ .top-links a{grid-column:span 2;width:100%;min-height:37px;padding:7px 3px;font-size:13px}
+ .top-links a:nth-child(4),.top-links a:nth-child(5){grid-column:span 3}
+}
+@media(max-width:370px){.top-nav .brand{font-size:23px}.top-links a{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.top-links a,.top-nav .nav-search-trigger{transition:none!important}}
+@media print{.top-nav .nav-search-trigger{display:none!important}}
 /* Keep text readable on the feature and newsletter panels. */
 .feature p{color:#48554a}.newsletter{color:#29342d}.newsletter p,.newsletter .eyebrow{color:#29342d}
 /* Skip layout and paint for offscreen cards and lower-page sections. */
@@ -112,7 +109,7 @@ footer .brand{color:#f2f6ec}
 </head>
 <body>
 <a class="skip-link" href="#content">Skip to content</a>
-<header><nav class="nav"><a class="brand" href="https://cozyloops.site/">CozyLoops ♡</a><a class="nav-search-trigger" href="https://cozyloops.site/#search-articles" aria-label="Search crochet articles" title="Search articles"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></a><button class="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-haspopup="dialog" aria-controls="site-drawer" aria-expanded="false"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></nav></header><dialog class="site-drawer" id="site-drawer" aria-label="Site navigation"><div class="drawer-panel"><div class="drawer-heading"><span>CozyLoops ♡</span><button type="button" class="drawer-close" aria-label="Close navigation menu">×</button></div><nav class="drawer-links" aria-label="Site pages"><a href="https://cozyloops.site/#home">Home</a><a href="https://cozyloops.site/#articles">Articles</a><a href="https://cozyloops.site/#categories">Categories</a><a href="https://cozyloops.site/#about">About</a><a href="https://cozyloops.site/#contact">Contact</a><a href="https://cozyloops.site/#search-articles" class="drawer-search-link">⌕ Search articles</a></nav><p class="drawer-foot">Free patterns, gentle inspiration & handmade joy.</p></div></dialog>
+<header><nav class="nav top-nav" aria-label="Main navigation"><a class="brand" href="https://cozyloops.site/">CozyLoops ♡</a><div class="top-links" aria-label="Site pages"><a href="https://cozyloops.site/#home">Home</a><a href="https://cozyloops.site/#articles">Articles</a><a href="https://cozyloops.site/#categories">Categories</a><a href="https://cozyloops.site/#about">About</a><a href="https://cozyloops.site/#contact">Contact</a></div><a class="nav-search-trigger" href="https://cozyloops.site/#search-articles" aria-label="Search crochet articles" title="Search articles"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></a></nav></header>
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-label="Article reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
 <button type="button" id="back-to-top" class="back-to-top" aria-label="Back to top" hidden>↑ Top</button>
 <main id="content"><article class="article starfish-featured">
