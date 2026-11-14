@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = "https://cozyloops.site"
 MANIFEST = ROOT / "posts" / "manifest.json"
 CATALOG = ROOT / "content" / "github_articles.json"
-OUTPUT = ROOT / "reports" / "editorial-quality-audit.md"
+OUTPUT = ROOT / ".github" / "editorial-quality-audit.md"
 
 class Page(HTMLParser):
     def __init__(self):
