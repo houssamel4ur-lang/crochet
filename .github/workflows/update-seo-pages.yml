@@ -13,6 +13,8 @@ on:
       - 'scripts/build_card_thumbnails.py'
       - 'scripts/make_starfish_art.py'
       - 'scripts/generate_new15_assets.py'
+      - 'scripts/rasterize_editorial_covers.py'
+      - 'assets/editorial-illustrations/**'
       - 'scripts/new15_article_data.py'
       - 'editorial_sources_new15/**'
       - 'content/github_articles.json'
@@ -52,10 +54,11 @@ jobs:
           for attempt in 1 2 3 4; do
             git fetch origin main
             git reset --hard origin/main
-            python -m pip install --disable-pip-version-check Pillow==12.0.0
+            python -m pip install --disable-pip-version-check Pillow==12.0.0 CairoSVG==2.8.2
             python scripts/make_starfish_art.py
             python scripts/generate_new15_assets.py --images-only
             python scripts/refine_legacy_images.py
+            python scripts/rasterize_editorial_covers.py
             python scripts/build_seo.py
             python scripts/build_card_thumbnails.py
             python scripts/security_policy.py
