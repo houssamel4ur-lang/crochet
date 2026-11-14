@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - 'tests/public_api_security.py'
+      - 'admin/index.html'
+      - 'scripts/security_policy.py'
       - '.github/workflows/public-api-security.yml'
   workflow_dispatch:
   schedule:
-    - cron: '17 7 * * 1'
+    - cron: '17 7 * * *'
 
 permissions:
   contents: read
