@@ -60,7 +60,7 @@ jobs:
             python scripts/build_card_thumbnails.py
             python scripts/security_policy.py
             python scripts/audit_editorial.py
-            git add -A posts/ sitemap.xml assets/ content/github_articles.json admin/index.html reports/editorial-quality-audit.md
+            git add -A posts/ sitemap.xml assets/ content/github_articles.json admin/index.html .github/editorial-quality-audit.md
             if git diff --cached --quiet; then
               echo "SEO pages already up to date."
               exit 0
