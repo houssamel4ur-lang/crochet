@@ -37,7 +37,9 @@ jobs:
           PY
       - name: Validate SEO, structure and article integrity
         run: python -m unittest discover -s tests -p 'test_*.py' -v
-      - name: Validate optional Cloudflare edge protections\n        run: node --test tests/security-edge.test.cjs\n      - name: Validate public JavaScript syntax
+      - name: Validate optional Cloudflare edge protections
+        run: node --test tests/security-edge.test.cjs
+      - name: Validate public JavaScript syntax
         run: |
           node - <<'NODE'
           const fs = require('fs');
