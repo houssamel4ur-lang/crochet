@@ -70,6 +70,12 @@ const failures = [];
       const mainLinks=page.locator('header .top-links a');
       assert.deepEqual(await mainLinks.allTextContents(),['Home','Articles','Categories','About','Contact']);
       for (const link of await mainLinks.all()) assert.equal(await link.isVisible(),true,'all navigation links visible');
+      assert.equal(await page.locator('header').evaluate(el => getComputedStyle(el).position),'relative','header scrolls away rather than sticking to the screen');
+      if (viewport.width <= 760) {
+        const rects=await mainLinks.evaluateAll(els=>els.map(el=>({top:el.getBoundingClientRect().top,right:el.getBoundingClientRect().right})));
+        assert.ok(rects.every(r=>Math.abs(r.top-rects[0].top)<2),'all five mobile navigation links occupy one line');
+        assert.ok(rects.every(r=>r.right <= viewport.width + 1),'all navigation links fit within the mobile viewport');
+      }
       await page.locator('header .top-links a[href="#about"]').click();
       await page.waitForURL('**/#about');
       await page.goto(base + '/#post/' + post.slug);
@@ -96,6 +102,7 @@ const failures = [];
       const staticLinks=articlePage.locator('header .top-links a');
       assert.equal(await staticLinks.count(),5,'all five destinations available on static article');
       for (const link of await staticLinks.all()) assert.equal(await link.isVisible(),true,'static navigation link visible');
+      assert.equal(await articlePage.locator('header').evaluate(el=>getComputedStyle(el).position),'relative','article header is not sticky');
       const articleSearch = articlePage.locator('.nav-search-trigger');
       assert.equal(await articleSearch.isVisible(), true, 'static article search icon visible');
       assert.equal(await articleSearch.getAttribute('href'), 'https://cozyloops.site/#search-articles');
