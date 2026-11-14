@@ -42,6 +42,31 @@ class EditorialQualityTests(unittest.TestCase):
             self.assertIn(f"guide-{number}.webp", result)
         self.assertEqual(images.count("!["), 9)
 
+    def test_incomplete_supabase_export_cannot_remove_indexed_article(self):
+        with self.assertRaisesRegex(RuntimeError, "Refusing to remove published article URLs"):
+            build.protect_published_urls(
+                ["existing-pattern", "published-admin-pattern"],
+                ["existing-pattern"],
+            )
+
+    def test_explicitly_approved_retraction_and_new_articles_are_allowed(self):
+        self.assertIsNone(build.protect_published_urls(
+            ["existing-pattern", "approved-old-pattern"],
+            ["existing-pattern", "new-pattern"],
+            ["approved-old-pattern"],
+        ))
+
+    def test_invalid_manifests_and_empty_exports_fail_closed(self):
+        for previous, current, approved in [
+            (["one", "one"], ["one"], []),
+            (["invalid path"], ["one"], []),
+            (["one"], [], []),
+            (["one"], ["one"], ["../escape"]),
+        ]:
+            with self.subTest(previous=previous, current=current, approved=approved):
+                with self.assertRaises(RuntimeError):
+                    build.protect_published_urls(previous, current, approved)
+
     def test_security_pipeline_applies_csp_after_rebuild(self):
         workflow = (ROOT / ".github/workflows/update-seo-pages.yml").read_text()
         self.assertLess(workflow.index("python scripts/build_seo.py"),
