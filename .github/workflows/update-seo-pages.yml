@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'index.html'
       - 'scripts/build_seo.py'
       - 'scripts/refine_legacy_images.py'
       - 'scripts/build_card_thumbnails.py'
