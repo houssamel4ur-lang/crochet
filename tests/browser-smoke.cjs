@@ -209,13 +209,14 @@ const failures = [];
     await owner.locator('#traffic-chart svg.traffic-chart-svg').waitFor({timeout:12000});
     assert.equal(await owner.locator('[data-analytics-range]').count(),5,'five analytics periods are available');
     assert.equal(await owner.locator('#traffic-chart .traffic-chart-dot').count(),30,'30-day chart has 30 daily buckets');
-    assert.match(await owner.locator('#visitor-stats').innerText(),/Page views[\\s\\S]*10/);
+    assert.equal(await owner.locator('#visitor-stats .stat-box').first().locator('strong').innerText(),'10','range KPI is computed from mocked visit data');
     for(const [range,expected] of [['15d',15],['7d',7],['1d',24],['1h',12],['30d',30]]){
       await owner.locator('[data-analytics-range="'+range+'"]').click();
       await owner.waitForFunction(n=>document.querySelectorAll('#traffic-chart .traffic-chart-dot').length===n,expected);
       assert.equal(await owner.locator('[data-analytics-range="'+range+'"]').getAttribute('aria-pressed'),'true');
     }
     await owner.locator('[data-analytics-range="1h"]').click();
+    await owner.waitForFunction(()=>document.querySelectorAll('#traffic-chart .traffic-chart-dot').length===12);
     await owner.locator('#traffic-chart rect[role="button"]').first().focus();
     assert.match(await owner.locator('.traffic-chart-selection').innerText(),/tracked page views/);
     await owner.setViewportSize({width:390,height:844});
