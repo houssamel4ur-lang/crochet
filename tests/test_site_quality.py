@@ -53,6 +53,18 @@ class SiteQualityTests(unittest.TestCase):
         cls.manifest = json.loads((ROOT / "posts/manifest.json").read_text(encoding="utf-8"))
         cls.sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
 
+    def test_public_member_signin_removed_without_affecting_admin(self):
+        """The optional visitor account is retired; owner admin authentication remains."""
+        nav = (ROOT / "scripts/site_navigation.js").read_text(encoding="utf-8")
+        self.assertNotIn("nav-account-trigger", nav)
+        self.assertNotIn("/account/", nav)
+        self.assertNotIn("/account/", self.home)
+        self.assertNotIn("optional member accounts", self.home)
+        self.assertFalse((ROOT / "account/index.html").exists())
+        self.assertFalse((ROOT / "account/auth.js").exists())
+        self.assertIn('id="login"', self.admin)
+        self.assertIn("is_super_admin", self.admin)
+
     def test_hb_agency_ad_script_preserves_original_loading_setup(self):
         """Keep the provider's original nonblocking script in home and future posts."""
         provider = 'https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js'
