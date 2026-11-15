@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **49**. Missing generated articles: **0**.
+Articles checked: **50**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -20,6 +20,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-dollhouse-bolster-cushion`](https://cozyloops.site/posts/crochet-dollhouse-bolster-cushion/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-picnic-blanket`](https://cozyloops.site/posts/crochet-dollhouse-picnic-blanket/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-reading-rug`](https://cozyloops.site/posts/crochet-dollhouse-reading-rug/) | 6 | yes | No automated issues found |
+| [`crochet-dollhouse-round-pouf`](https://cozyloops.site/posts/crochet-dollhouse-round-pouf/) | 6 | yes | No automated issues found |
 | [`crochet-eucalyptus-place-setting-sprig`](https://cozyloops.site/posts/crochet-eucalyptus-place-setting-sprig/) | 6 | yes | No automated issues found |
 | [`crochet-fan-palm-for-a-bookshelf`](https://cozyloops.site/posts/crochet-fan-palm-for-a-bookshelf/) | 6 | yes | No automated issues found |
 | [`crochet-fern-frond-bookmark`](https://cozyloops.site/posts/crochet-fern-frond-bookmark/) | 6 | yes | No automated issues found |
