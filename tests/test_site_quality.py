@@ -73,7 +73,8 @@ class SiteQualityTests(unittest.TestCase):
             ('SEO article builder', (ROOT / 'scripts/build_seo.py').read_text(encoding='utf-8')),
         ]:
             with self.subTest(page=name):
-                self.assertIn(f'<script defer fetchpriority="low" src="{provider}"></script>', content)
+                self.assertIn(f'<script src="{provider}" async></script>', content)
+                self.assertNotIn(f'fetchpriority="low" src="{provider}"', content)
                 self.assertNotIn(f'fetchpriority="high" src="{provider}"', content)
         for slug in self.manifest:
             content = (ROOT / 'posts' / slug / 'index.html').read_text(encoding='utf-8')
