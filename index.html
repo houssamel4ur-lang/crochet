@@ -2,14 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<script>
-// Recovery fallback: some Supabase projects still redirect to the Site URL.
-// Send only real recovery callbacks to the account UI; leave normal page routing alone.
-(()=>{const fragment=location.hash;if(!fragment||fragment.length<12)return;
-const params=new URLSearchParams(fragment.slice(1));
-if(params.get('type')==='recovery')location.replace('/account/?mode=update'+fragment);
-})();
-</script>
 <!-- cozy-security:start -->
 <meta http-equiv="Content-Security-Policy" content="base-uri 'none'; object-src 'none'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -548,7 +540,7 @@ async function recordCurrentView(){
   }catch(error){console.warn('Analytics unavailable:',error.message);}
 }
 function privacyPage(){
- simplePage('Privacy Policy','<p>CozyLoops offers optional member accounts for visitors. You can browse crochet articles without an account. If you register with email or Google, Supabase Auth processes your email address and account authentication details for sign-in, email verification and password recovery. Your account email is not included in optional page-view analytics. CozyLoops does not currently process payments or collect newsletter subscriptions. Images are loaded from an external image provider, which may receive technical request information. Optional page analytics run only after you select Allow analytics and are disabled when your browser sends a Do Not Track signal. We store a pseudonymous daily browser identifier hash for each page viewed, plus the date and page identifier in Supabase. We do not store names, emails or IP addresses in our analytics table. Withdrawing consent stops future analytics collection in this browser; it does not erase previously recorded aggregated counts. This policy must be reviewed before adding other services.</p><h2>Analytics preferences</h2><p id="privacy-consent-status" role="status"></p><button type="button" class="btn" id="privacy-opt-out">Disable optional analytics</button><p>For privacy questions, please use the published contact information.</p>');
+ simplePage('Privacy Policy','<p>Visitors can browse CozyLoops crochet articles without creating an account. CozyLoops does not currently process payments or collect newsletter subscriptions. Images are loaded from an external image provider, which may receive technical request information. Optional page analytics run only after you select Allow analytics and are disabled when your browser sends a Do Not Track signal. We store a pseudonymous daily browser identifier hash for each page viewed, plus the date and page identifier in Supabase. We do not store names, emails or IP addresses in our analytics table. Withdrawing consent stops future analytics collection in this browser; it does not erase previously recorded aggregated counts. This policy must be reviewed before adding other services.</p><h2>Analytics preferences</h2><p id="privacy-consent-status" role="status"></p><button type="button" class="btn" id="privacy-opt-out">Disable optional analytics</button><p>For privacy questions, please use the published contact information.</p>');
  const status=document.getElementById('privacy-consent-status');
  status.textContent=analyticsConsent()==='yes'?'Optional analytics: enabled.':'Optional analytics: disabled.';
  document.getElementById('privacy-opt-out').addEventListener('click',()=>{
