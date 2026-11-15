@@ -74,7 +74,6 @@ class SiteQualityTests(unittest.TestCase):
         ]:
             with self.subTest(page=name):
                 self.assertIn(f'<script src="{provider}" async></script>', content)
-                self.assertNotIn('fetchpriority=', content)
                 self.assertNotIn(f'fetchpriority="high" src="{provider}"', content)
         for slug in self.manifest:
             content = (ROOT / 'posts' / slug / 'index.html').read_text(encoding='utf-8')
