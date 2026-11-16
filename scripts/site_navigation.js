@@ -30,6 +30,26 @@
     document.getElementById('site-drawer')?.remove();
   }
 
+  // Keep existing static article URLs, while directing legal links to standalone pages.
+  const directoryLinks = {About:'/about/',Contact:'/contact/'};
+  nav.querySelectorAll('.top-links a').forEach(link => {
+    const destination = directoryLinks[link.textContent.trim()];
+    if (destination) link.href = destination;
+  });
+  const footerLinks = document.querySelector('footer .footer-inner > div:last-child');
+  if (footerLinks) {
+    const legalPages = [
+      ['About','/about/'],['Contact','/contact/'],['Privacy Policy','/privacy-policy/'],
+      ['Terms','/terms/'],['Disclosure','/disclosure/'],['Cookie Policy','/cookie-policy/'],
+      ['Sitemap','/sitemap/'],['XML Sitemap','/sitemap.xml']
+    ];
+    for (const [label, path] of legalPages) {
+      const found = [...footerLinks.querySelectorAll('a')].find(link => link.pathname === path || link.textContent.trim() === label || (label === 'Privacy Policy' && link.textContent.trim() === 'Privacy'));
+      if (found) { found.href = path; found.textContent = label; }
+      else { const link = document.createElement('a'); link.href = path; link.textContent = label; footerLinks.appendChild(link); }
+    }
+  }
+
   function setActiveLink() {
     const active = location.pathname.startsWith('/posts/') ? '#articles' : (location.hash || '#home');
     nav.querySelectorAll('.top-links a').forEach(link => {

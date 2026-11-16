@@ -5,6 +5,17 @@ on:
     branches: [main]
     paths:
       - 'tests/live_site_smoke.py'
+      - 'index.html'
+      - 'sitemap.xml'
+      - 'about/**'
+      - 'contact/**'
+      - 'privacy-policy/**'
+      - 'terms/**'
+      - 'disclosure/**'
+      - 'cookie-policy/**'
+      - 'sitemap/**'
+      - 'posts/**'
+      - 'scripts/legal_consent.js'
       - 'tests/live_headers_audit.py'
       - '.github/workflows/live-release-checks.yml'
   workflow_dispatch:

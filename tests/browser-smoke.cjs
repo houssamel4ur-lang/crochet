@@ -80,20 +80,51 @@ const failures = [];
         assert.ok(rects.every(r=>Math.abs(r.top-rects[0].top)<2),'all five mobile navigation links occupy one line');
         assert.ok(rects.every(r=>r.right <= viewport.width + 1),'all navigation links fit within the mobile viewport');
       }
-      await page.locator('header .top-links a[href="#about"]').click();
-      await page.waitForURL('**/#about');
+      await page.locator('header .top-links a[href="/about/"]').click();
+      await page.waitForURL('**/about/');
+      assert.match(await page.locator('main h1').innerText(), /About CozyLoops/);
       await page.goto(base + '/#post/' + post.slug);
       await page.locator('main article h1').waitFor({ timeout: 12000 });
       assert.equal(await page.locator('main article h1').innerText(), post.title);
       assert.equal(await page.locator('main article h2').first().innerText(), 'Test Pattern');
       await page.goto(base + '/#privacy');
-      await page.locator('main h1').waitFor();
+      await page.waitForURL('**/privacy-policy/');
       assert.match(await page.locator('main h1').innerText(), /Privacy Policy/);
-      await page.locator('#privacy-opt-out').click();
-      assert.match(await page.locator('#privacy-consent-status').innerText(), /disabled/);
+      await page.locator('#opt-no').click();
+      assert.match(await page.locator('#opt-status').innerText(), /disabled/);
       assert.equal(await page.evaluate(() => localStorage.getItem('cozyloops_analytics_consent')), 'no');
       await page.close();
       console.log('OK public browser smoke:', viewport.width + 'px');
+    }
+    // Check each standalone page at the requested 360/768/1024px breakpoints.
+    for (const width of [360, 768, 1024]) {
+      const legalPage = await browser.newPage({viewport:{width,height:800},reducedMotion:'reduce'});
+      legalPage.on('pageerror', error => failures.push('legal '+width+'px: '+error.message));
+      for (const slug of ['about','contact','privacy-policy','terms','disclosure','cookie-policy','sitemap']) {
+        const response = await legalPage.goto(base+'/'+slug+'/', {waitUntil:'domcontentloaded'});
+        if (slug === 'about') {
+          assert.equal(await legalPage.locator('#cookie-consent').isVisible(), true, 'analytics consent banner displayed before choice');
+          await legalPage.locator('#cookie-decline').click();
+          assert.equal(await legalPage.evaluate(() => localStorage.getItem('cozyloops_analytics_consent')), 'no', 'analytics declined');
+        }
+        if (slug === 'contact') {
+          assert.equal(await legalPage.locator('#contact-form').getAttribute('method'), 'POST', 'contact form is a real POST');
+          assert.match(await legalPage.locator('#contact-form').getAttribute('action'), /^https:\/\/formsubmit\.co\//);
+          for (const field of ['name','email','subject','message']) {
+            assert.equal(await legalPage.locator('#contact-form [name="'+field+'"]').count(),1,field+' is sent to mail provider');
+          }
+        }
+        if (slug === 'sitemap') {
+          assert.ok(await legalPage.locator('.sitemap-articles a').count() >= 53, 'human sitemap lists published posts');
+        }
+        assert.equal(response.status(), 200, slug+' has a real standalone page');
+        assert.equal(await legalPage.locator('main h1').count(),1,slug+' has one main heading');
+        const overflowing = await legalPage.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
+        assert.equal(overflowing,false,slug+' has no horizontal overflow at '+width+'px');
+        assert.equal(await legalPage.locator('footer a[href="/sitemap.xml"]').count(),1,'sitemap link in footer');
+      }
+      await legalPage.close();
+      console.log('OK standalone pages without overflow:',width+'px');
     }
     // Guard article reading progress and Back to Top against regressions.
     for (const viewport of [{width:1365,height:900},{width:390,height:844}]) {

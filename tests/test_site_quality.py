@@ -267,7 +267,15 @@ class SiteQualityTests(unittest.TestCase):
         namespace = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
         urls = [e.text for e in root.findall(f"{namespace}url/{namespace}loc")]
         self.assertEqual(len(urls), len(set(urls)))
-        self.assertEqual(set(urls), {PUBLIC_BASE} | {PUBLIC_BASE + "posts/" + slug + "/" for slug in self.manifest})
+        legal_pages = {"about", "contact", "privacy-policy", "terms", "disclosure", "cookie-policy", "sitemap"}
+        self.assertEqual(set(urls),
+            {PUBLIC_BASE} | {PUBLIC_BASE + "posts/" + slug + "/" for slug in self.manifest}
+            | {PUBLIC_BASE + page + "/" for page in legal_pages})
+        for page in legal_pages:
+            content = (ROOT / page / "index.html").read_text(encoding="utf-8")
+            self.assertIn('<link rel="canonical" href="' + PUBLIC_BASE + page + '/"', content)
+            if page != "sitemap":
+                self.assertIn('Houssam.el.8ur@gmail.com', content)
         self.assertNotIn("/admin/", self.sitemap)
 
 if __name__ == "__main__":

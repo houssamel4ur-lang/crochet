@@ -11,9 +11,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MARKER = re.compile(r'\n?<!-- cozy-security:start -->.*?<!-- cozy-security:end -->\n?', re.S)
 
-def protect(source, admin=False):
+def protect(source, admin=False, external_contact_form=False):
     source = MARKER.sub('', source)
-    policy = "base-uri 'none'; object-src 'none'; form-action 'self'; upgrade-insecure-requests"
+    form_destinations = "form-action 'self' https://formsubmit.co" if external_contact_form else "form-action 'self'"
+    policy = "base-uri 'none'; object-src 'none'; " + form_destinations + "; upgrade-insecure-requests"
     if admin:
         hashes = []
         for attrs, body in re.findall(r'<script\b([^>]*)>(.*?)</script>', source, re.S | re.I):
@@ -33,10 +34,12 @@ def protect(source, admin=False):
     return re.sub(r'(<meta charset="utf-8"\s*/?>)', lambda m: m.group(1) + block, source, count=1, flags=re.I)
 
 def main():
-    paths = [ROOT / 'index.html', ROOT / 'admin/index.html', ROOT / '404.html', *sorted((ROOT / 'posts').glob('*/index.html'))]
+    legal_slugs = ('about', 'contact', 'privacy-policy', 'terms', 'disclosure', 'cookie-policy', 'sitemap')
+    legal_paths = [ROOT / slug / 'index.html' for slug in legal_slugs if (ROOT / slug / 'index.html').is_file()]
+    paths = [ROOT / 'index.html', ROOT / 'admin/index.html', ROOT / '404.html', *sorted((ROOT / 'posts').glob('*/index.html')), *legal_paths]
     for path in paths:
         text = path.read_text()
-        path.write_text(protect(text, path.parent.name == 'admin'))
+        path.write_text(protect(text, path.parent.name == 'admin', path.parent.name == 'contact'))
     print(f'Applied static security policy to {len(paths)} pages')
 
 if __name__ == '__main__':

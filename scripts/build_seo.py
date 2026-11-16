@@ -285,6 +285,17 @@ def seo_description(article):
         return source
     return source[:158].rsplit(" ", 1)[0].rstrip(".,;:") + "…"
 
+def real_date_label(value):
+    """Use actual CMS date values; never display a made-up date."""
+    if not value:
+        return ""
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return ""
+    return f"{parsed.strftime('%B')} {parsed.day}, {parsed.year}"
+
+
 def render_page(article, css, articles=None):
     slug = article["slug"]
     title = str(article["title"])
@@ -297,9 +308,30 @@ def render_page(article, css, articles=None):
     if visual_note:
         article_content = concise_editorial_illustrations(article_content)
         article_content = crisp_concept_panels(article_content, slug)
+    # Move verbose, unverified pattern-status notes below the guide, not out of it.
+    # To mark a future pattern Tested: physically make it, check instructions,
+    # add a genuine photo, then set pattern_tested=True and tested_photo_url in its CMS record.
+    status_match = re.search(r"(?m)^\*\*Pattern status:\*\*[^\n]*", article_content)
+    original_status = status_match.group(0) if status_match else ""
+    if status_match:
+        article_content = (article_content[:status_match.start()] + article_content[status_match.end():]).strip()
+    physically_tested = article.get("pattern_tested") is True and bool(safe_image(article.get("tested_photo_url")))
+    is_draft = bool(visual_note or original_status) and not physically_tested
     toc_html = table_of_contents(article_content)
     published = str(article.get("published_at") or article.get("created_at") or "")
     modified = str(article.get("updated_at") or published)
+    published_label, modified_label = real_date_label(published), real_date_label(modified)
+    body_words = len(re.findall(r"\b[\w'-]+\b", article_content))
+    read_minutes = max(1, (body_words + 199) // 200)
+    byline_parts = ["By Houssal El Ouardy"]
+    if published_label:
+        byline_parts.append("Published " + published_label)
+    if modified_label and modified_label != published_label:
+        byline_parts.append("Updated " + modified_label)
+    byline_parts.append(str(read_minutes) + " min read")
+    byline = " · ".join(byline_parts)
+    draft_label = '<p class="pattern-status">Original pattern draft — not yet physically tested. Read the project notes before making.</p>' if is_draft else ""
+    original_status_html = ('<details class="article-disclosure"><summary>Pattern testing and accuracy</summary><p>' + inline(original_status) + '</p></details>') if original_status and is_draft else ""
     structured = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
@@ -308,8 +340,9 @@ def render_page(article, css, articles=None):
         "mainEntityOfPage": canonical,
         "url": canonical,
         "publisher": {"@type": "Organization", "name": "CozyLoops"},
-        "datePublished": published,
-        "dateModified": modified,
+        "author": {"@type": "Person", "name": "Houssal El Ouardy", "url": BASE + "about/"},
+        **({"datePublished": published} if published_label else {}),
+        **({"dateModified": modified} if modified_label else {}),
         "articleSection": category,
     }
     if cover:
@@ -321,7 +354,7 @@ def render_page(article, css, articles=None):
     article_class = "article starfish-featured" if is_starfish else "article"
     cover_alt = str(article.get("image_alt") or title)
     # The 2026 editorial collection uses concept images, not verified stitch photos.
-    image_disclosure = '<figcaption>Illustrative crochet concept — follow the written stitch instructions.</figcaption>' if visual_note else ''
+    image_disclosure = '<figcaption>AI-generated concept image — not a photograph of a physically made sample.</figcaption>' if visual_note else ''
     is_illustration = "/assets/editorial-illustrations/" in cover
     hero_variant = " illustration-hero" if is_illustration else (" concept-hero" if visual_note else "")
     image_html = (f'<figure class="article-hero{hero_variant}"><img class="article-cover" src="{esc(cover)}" '
@@ -374,6 +407,10 @@ def render_page(article, css, articles=None):
 .article-disclosure summary{{cursor:pointer;padding:15px 2px;min-height:48px;font-weight:650}}
 .article-disclosure p{{font-size:14px;line-height:1.7;color:#35463b}}
 .article>h1{{line-height:1.12;text-wrap:balance;overflow-wrap:break-word}}
+.pattern-status{{font:600 13px/1.6 system-ui,sans-serif;padding:10px 14px;background:#f4f8f0;border-left:3px solid #6f906e;border-radius:8px}}
+.author-bio{{display:flex;gap:16px;align-items:center;margin:30px 0;padding:18px;border:1px solid #dce7d6;border-radius:15px;background:#f8faf5}}
+.author-initials{{display:grid;place-items:center;border-radius:50%;width:60px;height:60px;flex-shrink:0;background:#dce9d8;color:#345238;font-weight:750}}
+.author-bio p{{margin:5px 0}}
 @media(max-width:640px){{.article>h1{{font-size:clamp(30px,7.2vw,42px);line-height:1.13;letter-spacing:-.015em}}.article-hero{{margin:16px 0 20px}}.article-toc{{margin-bottom:20px}}.article-share{{gap:8px}}}}
 
 .starfish-featured .article-cover{{width:min(100%,640px);max-height:none;height:auto;aspect-ratio:auto;object-fit:contain;margin:24px auto 34px;box-shadow:0 12px 40px #29342d0d}}
@@ -392,20 +429,23 @@ def render_page(article, css, articles=None):
 </head>
 <body>
 <a class="skip-link" href="#content">Skip to content</a>
-<header><nav class="nav top-nav" aria-label="Main navigation"><a class="brand" href="{BASE}">CozyLoops ♡</a><div class="top-links" aria-label="Site pages"><a href="{BASE}#home">Home</a><a href="{BASE}#articles">Articles</a><a href="{BASE}#categories">Categories</a><a href="{BASE}#about">About</a><a href="{BASE}#contact">Contact</a></div><a class="nav-search-trigger" href="{BASE}#search-articles" aria-label="Search crochet articles" title="Search articles"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></a></nav></header>
+<header><nav class="nav top-nav" aria-label="Main navigation"><a class="brand" href="{BASE}">CozyLoops ♡</a><div class="top-links" aria-label="Site pages"><a href="{BASE}#home">Home</a><a href="{BASE}#articles">Articles</a><a href="{BASE}#categories">Categories</a><a href="{BASE}about/">About</a><a href="{BASE}contact/">Contact</a></div><a class="nav-search-trigger" href="{BASE}#search-articles" aria-label="Search crochet articles" title="Search articles"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></a></nav></header>
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-label="Article reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
 <button type="button" id="back-to-top" class="back-to-top" aria-label="Back to top" hidden>↑ Top</button>
 <main id="content"><article class="{article_class}">
 <a class="back" href="{BASE}#articles">← Back to all articles</a>
 <div class="tag">{esc(category)}</div>
 <h1>{esc(title)}</h1>
-<p class="meta">By CozyLoops</p>
+<p class="meta">{esc(byline)}</p>
 <div class="article-share"><button type="button" id="article-share-button" class="article-share-button">Share this article</button><button type="button" id="article-print-button" class="article-print-button">Print / Save PDF</button><span id="article-share-status" role="status" aria-live="polite"></span></div>
 <p>{esc(description)}</p>
+{draft_label}
 {image_html}
 {toc_html}
 {markdown(article_content)}
-{('<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>' + linked_text(visual_note) + '</p></details>') if visual_note else ''}
+{('<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>' + linked_text(visual_note) + '</p></details>') if visual_note and is_draft else ''}
+{original_status_html}
+<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssal El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies draft patterns and concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
 {related_html}
 <h2>Keep Creating</h2>
 <p>Explore more crochet articles and patterns at CozyLoops.</p>
@@ -413,7 +453,7 @@ def render_page(article, css, articles=None):
 <section class="article-privacy" aria-label="Analytics preferences"><h2>Analytics preferences</h2><p id="article-consent-status" role="status">You can disable optional analytics for this browser at any time.</p><button type="button" id="article-privacy-opt-out" class="btn">Disable optional analytics</button></section>
 </article></main>
 <aside id="privacy-choice" class="privacy-choice" aria-label="Optional article analytics" hidden><strong>Help us improve CozyLoops?</strong><p>With your permission, we count this article view once per browser per day. We store no names, emails or IP addresses in our analytics table. You can decline and keep reading.</p><div class="actions"><button type="button" id="privacy-decline">No thanks</button><button type="button" class="accept" id="privacy-accept">Allow analytics</button></div></aside>
-<footer><div class="footer-inner"><div><a class="brand" href="{BASE}">CozyLoops ♡</a><p>Slow down, pick up your yarn, and create something lovely.</p></div><div><a href="{BASE}#about">About</a><a href="{BASE}#contact">Contact</a><a href="{BASE}#privacy">Privacy</a></div></div></footer>
+<footer><div class="footer-inner"><div><a class="brand" href="{BASE}">CozyLoops ♡</a><p>Slow down, pick up your yarn, and create something lovely.</p></div><div><a href="{BASE}about/">About</a><a href="{BASE}contact/">Contact</a><a href="{BASE}privacy-policy/">Privacy Policy</a><a href="{BASE}terms/">Terms</a><a href="{BASE}disclosure/">Disclosure</a><a href="{BASE}cookie-policy/">Cookie Policy</a><a href="{BASE}sitemap/">Sitemap</a><a href="{BASE}sitemap.xml">XML Sitemap</a></div></div></footer>
 </body></html>
 ''')
 
@@ -470,7 +510,7 @@ def main():
     approved_removals = json.loads(approval_file.read_text(encoding="utf-8")) if approval_file.exists() else []
     current = [item["slug"] for item in articles]
     protect_published_urls(previous, current, approved_removals)
-    sitemap = [BASE]
+    sitemap = [BASE] + [BASE + section + "/" for section in ("about", "contact", "privacy-policy", "terms", "disclosure", "cookie-policy", "sitemap")]
     for item in articles:
         slug = item["slug"]
         page_dir = output_root / slug
@@ -491,6 +531,25 @@ def main():
     xml += "".join("  <url><loc>" + esc(url) + "</loc></url>\n" for url in sitemap)
     xml += "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(xml, encoding="utf-8")
+    # Keep human-readable sitemap in sync with real published catalog titles/URLs.
+    html_sitemap = ROOT / "sitemap" / "index.html"
+    if html_sitemap.is_file():
+        current_markup = html_sitemap.read_text(encoding="utf-8")
+        start_marker, end_marker = "<!-- cozy-article-list:start -->", "<!-- cozy-article-list:end -->"
+        if start_marker not in current_markup or end_marker not in current_markup:
+            raise RuntimeError("Human sitemap article list markers missing")
+        entries = "".join(
+            '<li><a href="' + BASE + 'posts/' + quote(item["slug"]) + '/">' +
+            esc(item["title"]) + '</a></li>' for item in articles
+        )
+        updated_list = (start_marker + '<h2>All crochet articles (' + str(len(articles)) +
+                        ')</h2><ol class="sitemap-articles">' + entries +
+                        '</ol>' + end_marker)
+        current_markup = re.sub(
+            re.escape(start_marker) + r".*?" + re.escape(end_marker),
+            lambda _: updated_list, current_markup, count=1, flags=re.S
+        )
+        html_sitemap.write_text(current_markup, encoding="utf-8")
     from security_policy import main as apply_security_policy
     apply_security_policy()
     print(f"Generated {len(current)} SEO article pages and sitemap entries")
