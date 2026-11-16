@@ -1,5 +1,6 @@
 """Ensure the 15 former low-res crop articles have honest, scalable inline diagrams."""
 from pathlib import Path
+from PIL import Image
 from xml.etree import ElementTree as ET
 import unittest
 
@@ -23,6 +24,12 @@ class CrispEditorialPanelTests(unittest.TestCase):
                 self.assertIn("FOLLOW THE WRITTEN INSTRUCTIONS", source)
                 self.assertNotIn("data:image/", source)
                 self.assertNotIn("<image", source)
+                raster = path.with_suffix(".webp")
+                self.assertTrue(raster.is_file(), f"Missing WebP {raster.name}")
+                with Image.open(raster) as image:
+                    self.assertEqual(image.format, "WEBP")
+                    self.assertEqual(image.size, (1440, 1792))
+                self.assertLess(raster.stat().st_size, 650_000)
 
 if __name__ == "__main__":
     unittest.main()
