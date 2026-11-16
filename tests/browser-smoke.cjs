@@ -96,6 +96,21 @@ const failures = [];
       await page.close();
       console.log('OK public browser smoke:', viewport.width + 'px');
     }
+    // Check each standalone page at the requested 360/768/1024px breakpoints.
+    for (const width of [360, 768, 1024]) {
+      const legalPage = await browser.newPage({viewport:{width,height:800},reducedMotion:'reduce'});
+      legalPage.on('pageerror', error => failures.push('legal '+width+'px: '+error.message));
+      for (const slug of ['about','contact','privacy-policy','terms','disclosure','cookie-policy','sitemap']) {
+        const response = await legalPage.goto(base+'/'+slug+'/', {waitUntil:'domcontentloaded'});
+        assert.equal(response.status(), 200, slug+' has a real standalone page');
+        assert.equal(await legalPage.locator('main h1').count(),1,slug+' has one main heading');
+        const overflowing = await legalPage.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
+        assert.equal(overflowing,false,slug+' has no horizontal overflow at '+width+'px');
+        assert.equal(await legalPage.locator('footer a[href="/sitemap.xml"]').count(),1,'sitemap link in footer');
+      }
+      await legalPage.close();
+      console.log('OK standalone pages without overflow:',width+'px');
+    }
     // Guard article reading progress and Back to Top against regressions.
     for (const viewport of [{width:1365,height:900},{width:390,height:844}]) {
       const articlePage = await browser.newPage({viewport,reducedMotion:'reduce'});
