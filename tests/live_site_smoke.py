@@ -89,7 +89,10 @@ class LiveSiteTests(unittest.TestCase):
         ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
         urls = [e.text for e in root.findall(f"{ns}url/{ns}loc")]
         self.assertEqual(len(urls), len(set(urls)))
-        self.assertEqual(set(urls), {BASE} | {BASE + "posts/" + slug + "/" for slug in self.manifest})
+        legal = {"about", "contact", "privacy-policy", "terms", "disclosure", "cookie-policy", "sitemap"}
+        self.assertEqual(set(urls),
+            {BASE} | {BASE + "posts/" + slug + "/" for slug in self.manifest}
+            | {BASE + slug + "/" for slug in legal})
 
     def test_all_live_articles_are_crawlable(self):
         self.assertGreater(len(self.manifest), 0)
@@ -122,7 +125,10 @@ class LiveSiteTests(unittest.TestCase):
                     split = urlsplit(absolute)
                     self.assertIn(split.scheme, ("https",), "Insecure article link: " + absolute)
                     if split.hostname == EXPECTED_HOST:
-                        self.assertTrue(split.path == "/" or split.path.startswith("/posts/"), "Unexpected site route: " + absolute)
+                        self.assertTrue(split.path == "/" or split.path.startswith("/posts/")
+                                        or split.path in {"/about/", "/contact/", "/privacy-policy/", "/terms/",
+                                                          "/disclosure/", "/cookie-policy/", "/sitemap/", "/sitemap.xml"},
+                                        "Unexpected site route: " + absolute)
 
 
     def test_navigation_assets_and_internal_destinations(self):
@@ -135,8 +141,29 @@ class LiveSiteTests(unittest.TestCase):
                 self.assertGreater(len(body), 0, path + " is unexpectedly empty")
         # Public navigation links from the built homepage should target the
         # app's real section IDs or supported hash routes.
-        for link in ("#home", "#articles", "#categories", "#about", "#contact"):
+        for link in ("#home", "#articles", "#categories", "/about/", "/contact/"):
             self.assertIn('href="' + link + '"', self.home)
+
+    def test_live_standalone_legal_routes_and_old_terms_placeholder(self):
+        pages = ("about", "contact", "privacy-policy", "terms", "disclosure", "cookie-policy", "sitemap")
+        for slug in pages:
+            with self.subTest(slug=slug):
+                # Direct no-slash URLs must redirect/load successfully on GitHub Pages.
+                body = fetch(slug, attempts=9)
+                self.assertIn("<h1>", body)
+                self.assertIn('rel="canonical" href="' + BASE + slug + '/"', body)
+                self.assertNotIn("should be finalized before public launch", body.lower())
+                self.assertIn("Cookie Policy", body)
+                print("LIVE OK https://cozyloops.site/" + slug)
+        contact = fetch("contact/")
+        self.assertIn('method="POST"', contact)
+        self.assertIn('action="https://formsubmit.co/', contact)
+        self.assertIn('name="_honey"', contact)
+        human_sitemap = fetch("sitemap/")
+        self.assertGreaterEqual(human_sitemap.count('<li><a href="/posts/'), len(self.manifest))
+        script = fetch("scripts/legal_consent.js")
+        self.assertIn("cozyloops_analytics_consent", script)
+        print("LIVE OK https://cozyloops.site/")
 
     def test_custom_404_page_and_robots(self):
         html = fetch("404.html")
