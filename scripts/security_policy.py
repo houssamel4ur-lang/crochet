@@ -33,7 +33,9 @@ def protect(source, admin=False):
     return re.sub(r'(<meta charset="utf-8"\s*/?>)', lambda m: m.group(1) + block, source, count=1, flags=re.I)
 
 def main():
-    paths = [ROOT / 'index.html', ROOT / 'admin/index.html', ROOT / '404.html', *sorted((ROOT / 'posts').glob('*/index.html'))]
+    legal_slugs = ('about', 'contact', 'privacy-policy', 'terms', 'disclosure', 'cookie-policy', 'sitemap')
+    legal_paths = [ROOT / slug / 'index.html' for slug in legal_slugs if (ROOT / slug / 'index.html').is_file()]
+    paths = [ROOT / 'index.html', ROOT / 'admin/index.html', ROOT / '404.html', *sorted((ROOT / 'posts').glob('*/index.html')), *legal_paths]
     for path in paths:
         text = path.read_text()
         path.write_text(protect(text, path.parent.name == 'admin'))
