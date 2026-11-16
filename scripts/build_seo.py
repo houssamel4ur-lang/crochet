@@ -326,7 +326,7 @@ def render_page(article, css, articles=None):
     byline_parts = ["By Houssal El Ouardy"]
     if published_label:
         byline_parts.append("Published " + published_label)
-    if modified_label and modified_label != published_label:
+    if modified_label:
         byline_parts.append("Updated " + modified_label)
     byline_parts.append(str(read_minutes) + " min read")
     byline = " · ".join(byline_parts)
