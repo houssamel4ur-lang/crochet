@@ -7,6 +7,9 @@ and cannot verify physical stitch shapes, fit, or the accuracy of a pattern.
 Legacy photo assets and the original article content remain untouched.
 """
 from copy import deepcopy
+from io import BytesIO
+import cairosvg
+from PIL import Image
 from html import escape
 import json
 from pathlib import Path
@@ -100,8 +103,18 @@ CONCEPT VISUAL · FOLLOW THE WRITTEN INSTRUCTIONS</text>
             target = COVERS / f"{slug}-panel-{number}.svg"
             if not target.is_file() or target.read_text(encoding="utf-8") != body:
                 target.write_text(body, encoding="utf-8")
+            # Export the original vector source at retina resolution as a true WebP.
+            # This is still an illustration, never an actual photographed or tested sample.
+            png = cairosvg.svg2png(
+                bytestring=body.encode("utf-8"), output_width=1440, output_height=1792
+            )
+            raster = target.with_suffix(".webp")
+            with Image.open(BytesIO(png)) as art:
+                art.convert("RGB").save(raster, "WEBP", quality=91, method=6)
+            if raster.stat().st_size > 650_000:
+                raise RuntimeError(f"Overlarge WebP panel: {raster.name}")
             count += 1
-    print(f"Prepared {count} crisp original vector step panels for {len(source_covers)} articles.")
+    print(f"Prepared {count} original SVG + 1440x1792 WebP illustrated step panels for {len(source_covers)} articles.")
 
 
 if __name__ == "__main__":
