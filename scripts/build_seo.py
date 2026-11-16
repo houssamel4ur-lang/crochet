@@ -531,6 +531,25 @@ def main():
     xml += "".join("  <url><loc>" + esc(url) + "</loc></url>\n" for url in sitemap)
     xml += "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(xml, encoding="utf-8")
+    # Keep human-readable sitemap in sync with real published catalog titles/URLs.
+    html_sitemap = ROOT / "sitemap" / "index.html"
+    if html_sitemap.is_file():
+        current_markup = html_sitemap.read_text(encoding="utf-8")
+        start_marker, end_marker = "<!-- cozy-article-list:start -->", "<!-- cozy-article-list:end -->"
+        if start_marker not in current_markup or end_marker not in current_markup:
+            raise RuntimeError("Human sitemap article list markers missing")
+        entries = "".join(
+            '<li><a href="' + BASE + 'posts/' + quote(item["slug"]) + '/">' +
+            esc(item["title"]) + '</a></li>' for item in articles
+        )
+        updated_list = (start_marker + '<h2>All crochet articles (' + str(len(articles)) +
+                        ')</h2><ol class="sitemap-articles">' + entries +
+                        '</ol>' + end_marker)
+        current_markup = re.sub(
+            re.escape(start_marker) + r".*?" + re.escape(end_marker),
+            lambda _: updated_list, current_markup, count=1, flags=re.S
+        )
+        html_sitemap.write_text(current_markup, encoding="utf-8")
     from security_policy import main as apply_security_policy
     apply_security_policy()
     print(f"Generated {len(current)} SEO article pages and sitemap entries")
