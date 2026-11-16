@@ -311,7 +311,7 @@ def render_page(article, css, articles=None):
     # Move verbose, unverified pattern-status notes below the guide, not out of it.
     # To mark a future pattern Tested: physically make it, check instructions,
     # add a genuine photo, then set pattern_tested=True and tested_photo_url in its CMS record.
-    status_match = re.search(r"(?m)^\\*\\*Pattern status:\\*\\*[^\\n]*", article_content)
+    status_match = re.search(r"(?m)^\*\*Pattern status:\*\*[^\n]*", article_content)
     original_status = status_match.group(0) if status_match else ""
     if status_match:
         article_content = (article_content[:status_match.start()] + article_content[status_match.end():]).strip()
@@ -321,7 +321,7 @@ def render_page(article, css, articles=None):
     published = str(article.get("published_at") or article.get("created_at") or "")
     modified = str(article.get("updated_at") or published)
     published_label, modified_label = real_date_label(published), real_date_label(modified)
-    body_words = len(re.findall(r"\\b[\\w'-]+\\b", article_content))
+    body_words = len(re.findall(r"\b[\w'-]+\b", article_content))
     read_minutes = max(1, (body_words + 199) // 200)
     byline_parts = ["By Houssal El Ouardy"]
     if published_label:
