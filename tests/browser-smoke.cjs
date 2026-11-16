@@ -102,6 +102,21 @@ const failures = [];
       legalPage.on('pageerror', error => failures.push('legal '+width+'px: '+error.message));
       for (const slug of ['about','contact','privacy-policy','terms','disclosure','cookie-policy','sitemap']) {
         const response = await legalPage.goto(base+'/'+slug+'/', {waitUntil:'domcontentloaded'});
+        if (slug === 'about') {
+          assert.equal(await legalPage.locator('#cookie-consent').isVisible(), true, 'analytics consent banner displayed before choice');
+          await legalPage.locator('#cookie-decline').click();
+          assert.equal(await legalPage.evaluate(() => localStorage.getItem('cozyloops_analytics_consent')), 'no', 'analytics declined');
+        }
+        if (slug === 'contact') {
+          assert.equal(await legalPage.locator('#contact-form').getAttribute('method'), 'POST', 'contact form is a real POST');
+          assert.match(await legalPage.locator('#contact-form').getAttribute('action'), /^https:\/\/formsubmit\.co\//);
+          for (const field of ['name','email','subject','message']) {
+            assert.equal(await legalPage.locator('#contact-form [name="'+field+'"]').count(),1,field+' is sent to mail provider');
+          }
+        }
+        if (slug === 'sitemap') {
+          assert.ok(await legalPage.locator('.sitemap-articles a').count() >= 53, 'human sitemap lists published posts');
+        }
         assert.equal(response.status(), 200, slug+' has a real standalone page');
         assert.equal(await legalPage.locator('main h1').count(),1,slug+' has one main heading');
         const overflowing = await legalPage.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
