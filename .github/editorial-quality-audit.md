@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **50**. Missing generated articles: **0**.
+Articles checked: **51**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -18,6 +18,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-clam-shell-ring-presentation-pad`](https://cozyloops.site/posts/crochet-clam-shell-ring-presentation-pad/) | 6 | yes | No automated issues found |
 | [`crochet-daisy-flower-bookmark-free-pattern`](https://cozyloops.site/posts/crochet-daisy-flower-bookmark-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-dollhouse-bolster-cushion`](https://cozyloops.site/posts/crochet-dollhouse-bolster-cushion/) | 6 | yes | No automated issues found |
+| [`crochet-dollhouse-cafe-awning`](https://cozyloops.site/posts/crochet-dollhouse-cafe-awning/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-picnic-blanket`](https://cozyloops.site/posts/crochet-dollhouse-picnic-blanket/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-reading-rug`](https://cozyloops.site/posts/crochet-dollhouse-reading-rug/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-round-pouf`](https://cozyloops.site/posts/crochet-dollhouse-round-pouf/) | 6 | yes | No automated issues found |
