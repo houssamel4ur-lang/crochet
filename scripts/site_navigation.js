@@ -44,7 +44,7 @@
       ['Sitemap','/sitemap/'],['XML Sitemap','/sitemap.xml']
     ];
     for (const [label, path] of legalPages) {
-      const found = [...footerLinks.querySelectorAll('a')].find(link => link.pathname === path || link.textContent.trim() === label);
+      const found = [...footerLinks.querySelectorAll('a')].find(link => link.pathname === path || link.textContent.trim() === label || (label === 'Privacy Policy' && link.textContent.trim() === 'Privacy'));
       if (found) { found.href = path; found.textContent = label; }
       else { const link = document.createElement('a'); link.href = path; link.textContent = label; footerLinks.appendChild(link); }
     }
