@@ -263,13 +263,13 @@ def crisp_concept_panels(content, slug):
         return content
     stage_names = {"02": "materials", "04": "construction", "09": "finishing"}
     for number, label in stage_names.items():
-        visual = ROOT / "assets" / "editorial-illustrations" / (slug + "-panel-" + number + ".svg")
+        visual = ROOT / "assets" / "editorial-illustrations" / (slug + "-panel-" + number + ".webp")
         if not visual.is_file():
             continue
         old = re.compile(
             r"!\[[^\]]*\]\(" + re.escape(BASE + "assets/" + slug + "-" + number + ".webp") + r"\)"
         )
-        new_alt = f"Scalable illustrated {label} reference for {slug.replace('-', ' ')}; not a real project photograph"
+        new_alt = f"High-resolution illustrated {label} reference for {slug.replace('-', ' ')}; not a real project photograph"
         replacement = f"![{new_alt}]({BASE}assets/editorial-illustrations/{visual.name})"
         content = old.sub(lambda _m: replacement, content)
     return content

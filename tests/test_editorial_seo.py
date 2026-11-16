@@ -78,10 +78,10 @@ class EditorialSeoQuality(unittest.TestCase):
                 self.assertEqual(page.count("<figure"), 4)
                 self.assertEqual(page.count('class="article-cover"'), 1)
                 self.assertIn('content="summary_large_image"', page)
-                self.assertIn("-panel-02.svg", page)
-                self.assertIn("-panel-04.svg", page)
-                self.assertIn("-panel-09.svg", page)
-                self.assertNotIn("-02.webp", page)
+                self.assertIn("-panel-02.webp", page)
+                self.assertIn("-panel-04.webp", page)
+                self.assertIn("-panel-09.webp", page)
+                self.assertNotIn(f"/assets/{post['slug']}-02.webp", page)
                 self.assertIn("not a real project photograph", page)
 
 
