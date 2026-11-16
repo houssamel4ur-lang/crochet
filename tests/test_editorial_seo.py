@@ -81,7 +81,7 @@ class EditorialSeoQuality(unittest.TestCase):
                 self.assertIn("-panel-02.webp", page)
                 self.assertIn("-panel-04.webp", page)
                 self.assertIn("-panel-09.webp", page)
-                self.assertNotIn("-02.webp", page)
+                self.assertNotIn(f"/assets/{post['slug']}-02.webp", page)
                 self.assertIn("not a real project photograph", page)
 
 
