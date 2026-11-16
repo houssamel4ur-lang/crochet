@@ -274,7 +274,8 @@ class SiteQualityTests(unittest.TestCase):
         for page in legal_pages:
             content = (ROOT / page / "index.html").read_text(encoding="utf-8")
             self.assertIn('<link rel="canonical" href="' + PUBLIC_BASE + page + '/"', content)
-            self.assertIn('Houssam.el.8ur@gmail.com', content if page != "sitemap" else content + 'Houssam.el.8ur@gmail.com')
+            if page != "sitemap":
+                self.assertIn('Houssam.el.8ur@gmail.com', content)
         self.assertNotIn("/admin/", self.sitemap)
 
 if __name__ == "__main__":
