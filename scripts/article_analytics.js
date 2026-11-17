@@ -42,7 +42,24 @@
   }
 
   const printButton = document.getElementById("article-print-button");
-  if (printButton) printButton.addEventListener("click", () => window.print());
+  if (printButton) printButton.addEventListener("click", () => {
+    let dialog = document.getElementById("article-pdf-ad-dialog");
+    if (!dialog) {
+      dialog = document.createElement("dialog");
+      dialog.id = "article-pdf-ad-dialog";
+      dialog.setAttribute("aria-labelledby", "article-pdf-ad-title");
+      dialog.style.cssText = "width:min(92vw,560px);border:1px solid #e5e7df;border-radius:16px;padding:24px;color:#29342d;box-shadow:0 16px 48px #0003";
+      dialog.innerHTML = '<h2 id="article-pdf-ad-title">Before you save this article</h2><p>A quick ad helps support free crochet guides.</p><div id="hbagency_space_351114"></div><button type="button" id="article-pdf-continue" style="min-height:44px;margin-top:16px;padding:10px 18px;border:0;border-radius:24px;background:#4f694c;color:#fff;font:600 15px system-ui,sans-serif;cursor:pointer">Continue to PDF</button>';
+      document.body.appendChild(dialog);
+      dialog.addEventListener("click", event => { if (event.target === dialog) dialog.close(); });
+      dialog.querySelector("#article-pdf-continue").addEventListener("click", () => {
+        dialog.close();
+        window.setTimeout(() => window.print(), 300);
+      });
+    }
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else { dialog.setAttribute("open", ""); }
+  });
   const shareButton = document.getElementById("article-share-button");
   if (shareButton) shareButton.addEventListener("click", async () => {
     const status = document.getElementById("article-share-status");
