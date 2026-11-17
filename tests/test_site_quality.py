@@ -261,6 +261,33 @@ class SiteQualityTests(unittest.TestCase):
             self.assertIn('class="nav-search-trigger"', content)
             self.assertIn(PUBLIC_BASE + "#search-articles", content)
 
+    def test_owner_identity_and_email_match_confirmed_details_everywhere(self):
+        name = "Houssam El Ouardy"
+        email = "Houssam.el.4ur@gmail.com"
+        self.assertIn(name, self.home)
+        self.assertNotIn("Houssal El Ouardy", self.home)
+        self.assertNotIn("Houssam.el.8ur@gmail.com", self.home)
+        generator = (ROOT / "scripts/build_seo.py").read_text(encoding="utf-8")
+        self.assertIn(name, generator)
+        self.assertNotIn("Houssal El Ouardy", generator)
+        legal_paths = ["about", "contact", "privacy-policy", "terms",
+                       "disclosure", "cookie-policy", "sitemap", "contact/thanks"]
+        for legal in legal_paths:
+            with self.subTest(page=legal):
+                html = (ROOT / legal / "index.html").read_text(encoding="utf-8")
+                self.assertNotIn("Houssal El Ouardy", html)
+                self.assertNotIn("Houssam.el.8ur@gmail.com", html)
+        self.assertIn(email, (ROOT / "contact/index.html").read_text(encoding="utf-8"))
+        self.assertIn('action="https://formsubmit.co/' + email + '"',
+                      (ROOT / "contact/index.html").read_text(encoding="utf-8"))
+        for slug in self.manifest:
+            with self.subTest(article=slug):
+                html = (ROOT / "posts" / slug / "index.html").read_text(encoding="utf-8")
+                self.assertIn("By " + name, html)
+                self.assertIn('"name": "' + name + '"', html)
+                self.assertNotIn("Houssal El Ouardy", html)
+                self.assertNotIn("Houssam.el.8ur@gmail.com", html)
+
     def test_contact_form_has_real_server_endpoint_and_post_submit_page(self):
         contact = (ROOT / "contact" / "index.html").read_text(encoding="utf-8")
         success = (ROOT / "contact" / "thanks" / "index.html").read_text(encoding="utf-8")
