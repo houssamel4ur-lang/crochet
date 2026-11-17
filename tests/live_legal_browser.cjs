@@ -38,7 +38,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             assert.equal(overflow,false,route+' no horizontal overflow at '+width+'px');
             assert.ok(await page.locator('footer').count(),route+' has a footer');
             if(route === '/about') {
-              assert.match(await page.locator('main').innerText(),/Houssal El Ouardy/);
+              assert.match(await page.locator('main').innerText(),/Houssam El Ouardy/);
               assert.equal(await page.locator('#cookie-consent').count(),1);
             }
             if(route === '/terms') {
@@ -66,7 +66,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             }
             if(route.startsWith('/posts/')) {
               const author=await page.locator('.article .meta').innerText();
-              assert.match(author,/By Houssal El Ouardy/);
+              assert.match(author,/By Houssam El Ouardy/);
               assert.match(author,/Published [A-Z][a-z]+ \d{1,2}, 2026/);
               assert.match(author,/Updated [A-Z][a-z]+ \d{1,2}, 2026/);
               assert.match(author,/\d+ min read/);
