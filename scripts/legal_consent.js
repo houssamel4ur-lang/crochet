@@ -3,6 +3,12 @@
   'use strict';
   const banner = document.getElementById('cookie-consent');
   if (!banner) return;
+  const footer = document.querySelector('footer nav') || document.querySelector('footer');
+  const manage = document.createElement('button');
+  manage.type = 'button'; manage.textContent = 'Cookie settings'; manage.className = 'secondary';
+  manage.style.cssText = 'min-height:44px;margin:8px;border-radius:10px;padding:8px 12px';
+  manage.addEventListener('click', () => { banner.hidden = false; });
+  footer?.appendChild(manage);
   const key = 'cozyloops_analytics_consent';
   const consent = () => { try { return localStorage.getItem(key) || ''; } catch { return ''; } };
   const status = document.getElementById('opt-status');
@@ -18,5 +24,5 @@
   }
   banner.querySelector('#cookie-accept')?.addEventListener('click', () => choose('yes'));
   banner.querySelector('#cookie-decline')?.addEventListener('click', () => choose('no'));
-  banner.hidden = Boolean(consent()) || navigator.doNotTrack === '1';
+  banner.hidden = Boolean(consent());
 })();

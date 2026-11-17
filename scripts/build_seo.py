@@ -372,7 +372,7 @@ def render_page(article, css, articles=None):
         byline_parts.append("Updated " + modified_label)
     byline_parts.append(str(read_minutes) + " min read")
     byline = " · ".join(byline_parts)
-    draft_label = '<p class="pattern-status">Original pattern draft — not yet physically tested. Read the project notes before making.</p>' if is_draft else ""
+    draft_label = '<p class="pattern-status">Pattern note: This concept is not yet physically tested as a finished sample. Check your gauge, construction, and safety before use.</p>' if is_draft else ""
     original_status_html = ('<details class="article-disclosure"><summary>Pattern testing and accuracy</summary><p>' + inline(original_status) + '</p></details>') if original_status and is_draft else ""
     structured = {
         "@context": "https://schema.org",
@@ -481,12 +481,12 @@ def render_page(article, css, articles=None):
 <p class="meta">{esc(byline)}</p>
 <div class="article-share"><button type="button" id="article-share-button" class="article-share-button">Share this article</button><button type="button" id="article-print-button" class="article-print-button">Print / Save PDF</button><span id="article-share-status" role="status" aria-live="polite"></span></div>
 <p>{esc(description)}</p>
-{draft_label}
 {image_html}
 {toc_html}
 {markdown(article_content)}
 {('<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>' + linked_text(visual_note) + '</p></details>') if visual_note and is_draft else ''}
 {original_status_html}
+{draft_label}
 <section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssam El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies draft patterns and concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
 {related_html}
 <h2>Keep Creating</h2>
@@ -494,7 +494,7 @@ def render_page(article, css, articles=None):
 <a class="btn" href="{BASE}#articles">Browse all articles</a>
 <section class="article-privacy" aria-label="Analytics preferences"><h2>Analytics preferences</h2><p id="article-consent-status" role="status">You can disable optional analytics for this browser at any time.</p><button type="button" id="article-privacy-opt-out" class="btn">Disable optional analytics</button></section>
 </article></main>
-<aside id="privacy-choice" class="privacy-choice" aria-label="Optional article analytics" hidden><strong>Help us improve CozyLoops?</strong><p>With your permission, we count this article view once per browser per day. We store no names, emails or IP addresses in our analytics table. You can decline and keep reading.</p><div class="actions"><button type="button" id="privacy-decline">No thanks</button><button type="button" class="accept" id="privacy-accept">Allow analytics</button></div></aside>
+<aside id="privacy-choice" class="privacy-choice" aria-label="Optional article analytics" hidden><strong>Help us improve CozyLoops?</strong><p>With your permission, we count this article view once per browser per day. We store no names, emails or IP addresses in our analytics table. You can decline and keep reading.</p><div class="actions"><button type="button" id="privacy-decline">Reject optional analytics</button><button type="button" class="accept" id="privacy-accept">Accept optional analytics</button></div></aside>
 <footer><div class="footer-inner"><div><a class="brand" href="{BASE}">CozyLoops ♡</a><p>Slow down, pick up your yarn, and create something lovely.</p></div><div><a href="{BASE}about/">About</a><a href="{BASE}contact/">Contact</a><a href="{BASE}privacy-policy/">Privacy Policy</a><a href="{BASE}terms/">Terms</a><a href="{BASE}disclosure/">Disclosure</a><a href="{BASE}cookie-policy/">Cookie Policy</a><a href="{BASE}sitemap/">Sitemap</a><a href="{BASE}sitemap.xml">XML Sitemap</a></div></div></footer>
 </body></html>
 ''')

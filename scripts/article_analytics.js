@@ -60,6 +60,11 @@
   });
   const banner = document.getElementById("privacy-choice");
   if (!banner) return;
+  const manage = document.createElement("button");
+  manage.type = "button"; manage.textContent = "Cookie settings";
+  manage.style.cssText = "min-height:44px;padding:9px 13px;margin:10px;border-radius:10px";
+  manage.addEventListener("click", () => { banner.hidden = false; });
+  document.querySelector("footer")?.appendChild(manage);
   const consent = () => { try { return localStorage.getItem("cozyloops_analytics_consent") || ""; } catch { return ""; } };
   const visitorId = () => {
     const day = new Date().toISOString().slice(0,10);
@@ -100,7 +105,7 @@
     banner.hidden = true;
     if (status) status.textContent = "Optional analytics: disabled. No further visits will be counted from this browser.";
   });
-  if (!consent() && navigator.doNotTrack !== "1") banner.hidden = false;
+  if (!consent()) banner.hidden = false;
   document.getElementById("privacy-accept")?.addEventListener("click", () => {
     try { localStorage.setItem("cozyloops_analytics_consent","yes"); } catch {}
     banner.hidden = true;
