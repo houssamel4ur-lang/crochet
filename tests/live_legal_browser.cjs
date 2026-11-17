@@ -37,6 +37,12 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             const overflow = await page.evaluate(()=>document.documentElement.scrollWidth > innerWidth+1);
             assert.equal(overflow,false,route+' no horizontal overflow at '+width+'px');
             assert.ok(await page.locator('footer').count(),route+' has a footer');
+            if(route === '/') {
+              assert.equal(await page.locator('#ad-privacy').count(),1,
+                'homepage must expose advertising provider preference controls');
+              assert.equal(await page.locator('#ad-consent-settings').count(),1);
+              assert.equal(await page.locator('#us-privacy-settings').count(),1);
+            }
             if(route === '/about') {
               assert.match(await page.locator('main').innerText(),/Houssam El Ouardy/);
               assert.equal(await page.locator('#cookie-consent').count(),1);
