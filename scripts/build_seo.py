@@ -302,7 +302,7 @@ def crisp_concept_panels(content, slug):
         if not photo and not visual.is_file():
             continue
         old = re.compile(
-            r"!\\[[^\\]]*\\]\\(" + re.escape(BASE + "assets/" + slug + "-" + number + ".webp") + r"\\)"
+            r"!\[[^\]]*\]\(" + re.escape(BASE + "assets/" + slug + "-" + number + ".webp") + r"\)"
         )
         if photo:
             new_alt = f"High-resolution AI-generated {label} concept for {slug.replace('-', ' ')}; not a tested project photograph"
