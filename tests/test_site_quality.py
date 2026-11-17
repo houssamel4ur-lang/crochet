@@ -244,7 +244,8 @@ class SiteQualityTests(unittest.TestCase):
             self.assertRegex(article["slug"], r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
             self.assertTrue(article["image_url"].startswith("https://"))
             self.assertGreaterEqual(article["content"].count("![") + 1, 3)
-            self.assertIn("## Frequently Asked Questions", article["content"])
+            self.assertRegex(article["content"].lower(), r"(?m)^## .*?(?:questions|faq)")
+            self.assertGreaterEqual(article["content"].count("### "), 3)
 
     def test_removed_seed_posts_never_reappear(self):
         retired = {"crochet-for-absolute-beginners", "how-to-read-crochet-patterns",
