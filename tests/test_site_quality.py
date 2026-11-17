@@ -261,6 +261,17 @@ class SiteQualityTests(unittest.TestCase):
             self.assertIn('class="nav-search-trigger"', content)
             self.assertIn(PUBLIC_BASE + "#search-articles", content)
 
+    def test_contact_form_has_real_server_endpoint_and_post_submit_page(self):
+        contact = (ROOT / "contact" / "index.html").read_text(encoding="utf-8")
+        success = (ROOT / "contact" / "thanks" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('method="POST"', contact)
+        self.assertIn('action="https://formsubmit.co/Houssam.el.8ur@gmail.com"', contact)
+        self.assertIn('name="_next" value="https://cozyloops.site/contact/thanks/"', contact)
+        self.assertIn('name="_captcha" value="true"', contact)
+        self.assertIn('name="_honey"', contact)
+        self.assertIn('<meta name="robots" content="noindex,follow">', success)
+        self.assertIn("not proof that the message was delivered", success)
+
     def test_sitemap_contains_only_valid_public_urls(self):
         from xml.etree import ElementTree as ET
         root = ET.fromstring(self.sitemap)
