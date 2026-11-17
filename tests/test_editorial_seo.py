@@ -85,6 +85,20 @@ class EditorialSeoQuality(unittest.TestCase):
                 self.assertIn("not a real project photograph", page)
 
 
+    def test_project_specific_excerpts_replace_repetitive_seo_boilerplate(self):
+        curated = json.loads((ROOT / "content" / "unique_excerpts.json").read_text(encoding="utf-8"))
+        manifest = set(json.loads((ROOT / "posts" / "manifest.json").read_text(encoding="utf-8")))
+        self.assertEqual(len(curated), 27)
+        self.assertEqual(len(set(curated.values())), len(curated))
+        self.assertTrue(set(curated) <= manifest)
+        for slug, summary in curated.items():
+            with self.subTest(slug=slug):
+                self.assertGreaterEqual(len(summary), 70)
+                self.assertLessEqual(len(summary), 160)
+                self.assertNotIn("component plan, counted crochet instructions", summary)
+                sample = {"slug": slug, "excerpt": "Make a project with a component plan, counted crochet instructions"}
+                self.assertEqual(seo_description(sample), summary)
+
     def test_homepage_article_fallback_matches_static_editorial_rules(self):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn("function editorialViewContent(source)", html)
