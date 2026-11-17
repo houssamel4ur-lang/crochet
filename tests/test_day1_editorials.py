@@ -37,14 +37,14 @@ class DayOneEditorialTests(unittest.TestCase):
                 a = next(a for a in self.editorials if a["slug"] == slug)
                 self.assertEqual(a["status"], "published")
                 self.assertTrue(a["updated_at"].startswith(DAY))
-                self.assertGreaterEqual(len(re.findall(r"\\b[\\w'-]+\\b", a["content"])), 700)
-                self.assertGreater(len(set(re.findall(r"(?m)^## [^\\n]+", a["content"]))), 5)
+                self.assertGreaterEqual(len(re.findall(r"\b[\w'-]+\b", a["content"])), 700)
+                self.assertGreater(len(set(re.findall(r"(?m)^## [^\n]+", a["content"]))), 5)
                 self.assertIn("##", a["content"])
                 self.assertIn("Frequently asked questions" if slug == SLUGS[0] else "Questions before making a gift", a["content"])
                 self.assertIn("**Editorial note:**", a["content"])
                 self.assertIn("not a photograph", a["content"].lower())
                 asset_dir = ROOT / "assets/day1-20261117"
-                urls = [a["image_url"]] + re.findall(r"!\\[[^]]*\\]\\((https://[^)]+)\\)", a["content"])
+                urls = [a["image_url"]] + re.findall(r"!\[[^]]*\]\((https://[^)]+)\)", a["content"])
                 self.assertEqual(len(urls), 3)
                 self.assertEqual(len(set(urls)), 3)
                 self.assertEqual({v.split("/")[-1] for v in urls}, set(ARTWORK[slug]))
@@ -63,8 +63,8 @@ class DayOneEditorialTests(unittest.TestCase):
         self.assertIn("Round 16", wrap)
         self.assertIn("12 single crochets", wrap)
         self.assertIn("chain 4", wrap.lower())
-        goose_minutes = (len(re.findall(r"\\b[\\w'-]+\\b", goose))+199)//200
-        wrap_minutes = (len(re.findall(r"\\b[\\w'-]+\\b", wrap))+199)//200
+        goose_minutes = (len(re.findall(r"\b[\w'-]+\b", goose))+199)//200
+        wrap_minutes = (len(re.findall(r"\b[\w'-]+\b", wrap))+199)//200
         self.assertNotEqual(goose_minutes, wrap_minutes)
 
     def test_generated_pages_have_verified_metadata_not_fake_testing(self):
