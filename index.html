@@ -203,7 +203,15 @@ async function loadPublishedPosts(){
       return rows.filter(p=>p&&p.status==='published');
     }catch(error){console.warn('GitHub article source unavailable:',error.message);return [];}
   };
-  const editorial=await readEditorial();
+  const readUniqueExcerpts=async()=>{
+    try{
+      const response=await fetch('content/unique_excerpts.json',{cache:'no-store'});
+      if(!response.ok)return {};
+      const data=await response.json();
+      return data&&typeof data==='object'&&!Array.isArray(data)?data:{};
+    }catch{return {};}
+  };
+  const [editorial,uniqueExcerpts]=await Promise.all([readEditorial(),readUniqueExcerpts()]);
   const renderAll=remote=>{
     const chosen=new Map([[featuredEditorial.slug,{
       slug:featuredEditorial.slug,title:featuredEditorial.title,category:featuredEditorial.category,
@@ -232,7 +240,9 @@ async function loadPublishedPosts(){
          ||removedStarterSlugs.has(p.slug)||typeof p.title!=='string'||!p.title.trim())continue;
       const body=typeof p.content==='string'?p.content:'';
       const category=typeof p.category==='string'&&p.category.trim()?p.category.slice(0,100):'Crochet Tips';
-      const excerpt=typeof p.excerpt==='string'?p.excerpt:'';
+      const editorialSummary=uniqueExcerpts[p.slug];
+      const excerpt=typeof editorialSummary==='string'&&editorialSummary.length>=40&&editorialSummary.length<=160
+        ?editorialSummary:(typeof p.excerpt==='string'?p.excerpt:'');
       const created=(p.published_at||p.created_at)?new Date(p.published_at||p.created_at):null;
       const publishedAt=created&&!Number.isNaN(created.getTime())?created.getTime():0;
       const date=publishedAt?created.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'';
