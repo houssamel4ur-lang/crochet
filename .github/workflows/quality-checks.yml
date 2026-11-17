@@ -47,7 +47,7 @@ jobs:
       - name: Audit every published article for broken local media and SEO links
         run: python scripts/audit_editorial.py
       - name: Validate optional Cloudflare edge protections
-        run: node --test tests/security-edge.test.cjs
+        run: node --test tests/security-edge.test.cjs tests/ad-consent-reopen.test.cjs
       - name: Validate public JavaScript syntax
         run: |
           node - <<'NODE'

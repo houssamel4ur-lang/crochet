@@ -79,6 +79,22 @@ class SiteQualityTests(unittest.TestCase):
             content = (ROOT / 'posts' / slug / 'index.html').read_text(encoding='utf-8')
             self.assertIn(provider, content)
 
+    def test_advertising_provider_choices_exist_where_cmp_is_loaded(self):
+        self.assertIn('id="ad-privacy"', self.home)
+        self.assertIn('id="ad-consent-settings"', self.home)
+        self.assertIn('id="us-privacy-settings"', self.home)
+        self.assertIn('<script defer src="scripts/ad_consent_reopen.js"></script>', self.home)
+        self.assertIn("'ad-privacy'", self.home)
+        legal = (ROOT / "cookie-policy/index.html").read_text(encoding="utf-8")
+        self.assertIn('href="/#ad-privacy"', legal)
+        self.assertIn('id="ad-consent-settings"', legal)
+        self.assertIn('id="us-privacy-settings"', legal)
+
+    def test_mobile_card_title_touch_targets_match_lighthouse_findings(self):
+        # Lighthouse 2026-11-17 identified six tiny card-title link safe areas.
+        # Ensure the anchor itself (not just its parent card) is a generous target.
+        self.assertIn("@media(max-width:650px){.card .card-body h3 a{display:block;min-height:48px;padding:10px 0;line-height:1.35}}", self.home)
+
     def test_mobile_navigation_and_article_touch_targets(self):
         home = self.home
         self.assertIn('.top-links a{grid-column:auto;min-width:0;width:100%;min-height:44px;', home)

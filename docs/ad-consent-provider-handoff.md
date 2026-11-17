@@ -5,8 +5,16 @@
 ## Safeguards already applied
 - Original `prebid_hb_40300_44798.js` script, placements, `ads.txt`, and advertising load order were not edited.
 - The Cookie Policy separates optional Supabase analytics from third-party advertising technologies.
-- The advertising-preferences button can reopen a **pre-existing** Google Privacy & messaging consent UI when `googlefc.showRevocationMessage` is available; it does not create a consent record.
+- The advertising-preferences buttons can request the pre-existing InMobi TCF/USP privacy UI, or Google Privacy & messaging as a fallback. They do not create a consent record.
 - We have NOT generated fake `__tcfapi` or `__gpp` signals.
+
+## New direct-production evidence (2026-11-17)
+- Lighthouse loaded an **InMobi Choice CMP** script from `cmp.inmobi.com/tcfv2/cmp2.js?referer=hbagency.it` within the HB Agency advertising chain. The browser logged `TypeError: Cannot read properties of undefined (reading 'consents')` from this third-party CMP on both the homepage and a crochet article.
+- **InMobi Choice CMP is Google-certified (TCF CMP ID 10)** on Google's current publisher CMP list, but we have *not* verified whether this site has a working, correctly mapped, compliant consent configuration. A loaded script alone is not proof that consent is collected, stored, transmitted, or honored.
+- The Cookie Policy's provider-preferences buttons now call genuine `__tcfapi('displayConsentUi',2,...)` and `__uspapi('displayUspUi',1,...)` when supplied by the existing InMobi integration. They do not generate artificial TCF/GPP signals or modify original HB tags. The old `googlefc.showRevocationMessage` fallback remains when present.
+- On standalone legal pages, the original HB ad loader is intentionally absent. The Cookie Policy therefore links to `/#ad-privacy` on the homepage, where a user may explicitly request the installed consent UI via the same safe provider APIs. No consent flow is auto-triggered on navigation.
+- Ask HB Agency / InMobi to confirm that `cozyloops.site` (not just the `hbagency.it` referer used in the CMP URL) is a correctly configured publisher property, that the `ping` and regional notice work, that an actual valid TC string is available where required, and that the runtime `consents` exception is resolved in vendor code. Don't patch the third-party minified script locally.
+- The Google-certified vendor listing and InMobi API details are documented here: https://support.google.com/adsense/answer/13554116 and https://support.inmobi.com/choice/how-to-guide/callbacks/web-callbacks.
 
 ## Required from ad provider / owner before claiming CMP readiness
 1. Confirm which advertising platform is actually used by the HB Agency stack (GAM/AdX/Prebid/AdSense etc.).

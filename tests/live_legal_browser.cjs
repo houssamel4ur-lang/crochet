@@ -37,6 +37,12 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             const overflow = await page.evaluate(()=>document.documentElement.scrollWidth > innerWidth+1);
             assert.equal(overflow,false,route+' no horizontal overflow at '+width+'px');
             assert.ok(await page.locator('footer').count(),route+' has a footer');
+            if(route === '/') {
+              assert.equal(await page.locator('#ad-privacy').count(),1,
+                'homepage must expose advertising provider preference controls');
+              assert.equal(await page.locator('#ad-consent-settings').count(),1);
+              assert.equal(await page.locator('#us-privacy-settings').count(),1);
+            }
             if(route === '/about') {
               assert.match(await page.locator('main').innerText(),/Houssam El Ouardy/);
               assert.equal(await page.locator('#cookie-consent').count(),1);
@@ -59,7 +65,11 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             if(route === '/cookie-policy') {
               await page.locator('#ad-consent-settings').click();
               assert.match(await page.locator('#ad-consent-status').innerText(),
-                /consent manager is not currently available|Requested the advertising privacy settings/);
+                /Asked the advertising provider|Advertising consent settings are unavailable/);
+              assert.equal(await page.locator('#us-privacy-settings').count(), 1,
+                'Cookie Policy includes U.S. privacy option');
+              // Do not force a second click over a real provider dialog; the
+              // separate no-network unit test covers its actual callback.
             }
             if(route === '/sitemap') {
               assert.ok(await page.locator('.sitemap-articles a').count()>=53,'Sitemap shows all published articles');
