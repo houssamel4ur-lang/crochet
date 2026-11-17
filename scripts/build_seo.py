@@ -525,6 +525,7 @@ def render_page(article, css, articles=None):
 <h1>{esc(title)}</h1>
 <p class="meta">{esc(byline)}</p>
 <div class="article-share"><button type="button" id="article-share-button" class="article-share-button">Share this article</button><button type="button" id="article-print-button" class="article-print-button">Print / Save PDF</button><span id="article-share-status" role="status" aria-live="polite"></span></div>
+<dialog id="article-pdf-ad-dialog" aria-labelledby="article-pdf-ad-title" style="width:min(92vw,560px);border:1px solid #e5e7df;border-radius:16px;padding:24px;color:#29342d;box-shadow:0 16px 48px #0003"><h2 id="article-pdf-ad-title">Before you save this article</h2><p>A quick ad helps support free crochet guides.</p><div id="hbagency_space_351114"></div><button type="button" id="article-pdf-continue" style="min-height:44px;margin-top:16px;padding:10px 18px;border:0;border-radius:24px;background:#4f694c;color:#fff;font:600 15px system-ui,sans-serif;cursor:pointer">Continue to PDF</button></dialog>
 <p>{esc(description)}</p>
 {image_html}
 {toc_html}
