@@ -18,7 +18,7 @@ const sharedCsp = [
 function cspForPath(pathname) {
   // Keep FormSubmit reachable without relaxing form submissions site-wide.
   // GitHub Pages accepts both /contact and /contact/ URLs.
-  const isContactForm = /^\\/contact(?:\\/index\\.html|\\/)?$/.test(pathname);
+  const isContactForm = pathname === '/contact' || pathname === '/contact/' || pathname === '/contact/index.html';
   const action = isContactForm ? "form-action 'self' https://formsubmit.co" : "form-action 'self'";
   return [...sharedCsp, action].join('; ');
 }
