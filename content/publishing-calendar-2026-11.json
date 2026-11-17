@@ -1,0 +1,408 @@
+{
+  "start_date": "2026-11-17",
+  "end_date": "2026-12-11",
+  "timezone": "America/Los_Angeles",
+  "limit_per_day": 2,
+  "articles": [
+    {
+      "date": "2026-11-17",
+      "slot": 1,
+      "title": "Mini Crochet Goose Bag Charm with Embroidered Face",
+      "slug": "mini-crochet-goose-bag-charm-with-embroidered-face",
+      "micro_niche": "Tiny charms and tech accessories",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-17",
+      "slot": 2,
+      "title": "Crochet Earbud Cord Wrap with a Buttonhole",
+      "slug": "crochet-earbud-cord-wrap-with-a-buttonhole",
+      "micro_niche": "Tiny charms and tech accessories",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-18",
+      "slot": 1,
+      "title": "Crochet Patch Pocket for a Denim Jacket",
+      "slug": "crochet-patch-pocket-for-a-denim-jacket",
+      "micro_niche": "Crochet clothing upcycles",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-18",
+      "slot": 2,
+      "title": "Crochet Lace Cuff Trim for a Thrifted Shirt",
+      "slug": "crochet-lace-cuff-trim-for-a-thrifted-shirt",
+      "micro_niche": "Crochet clothing upcycles",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-19",
+      "slot": 1,
+      "title": "Crochet Mushroom Corner Bookmark",
+      "slug": "crochet-mushroom-corner-bookmark",
+      "micro_niche": "Bookish crochet",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-19",
+      "slot": 2,
+      "title": "Crochet Library Card Book Sleeve Pocket",
+      "slug": "crochet-library-card-book-sleeve-pocket",
+      "micro_niche": "Bookish crochet",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-20",
+      "slot": 1,
+      "title": "Crochet Miniature Bakery Bread Basket",
+      "slug": "crochet-miniature-bakery-bread-basket",
+      "micro_niche": "Dollhouse bakery miniatures",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-20",
+      "slot": 2,
+      "title": "Crochet Dollhouse Cinnamon Bun Display Mat",
+      "slug": "crochet-dollhouse-cinnamon-bun-display-mat",
+      "micro_niche": "Dollhouse bakery miniatures",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-21",
+      "slot": 1,
+      "title": "Crochet Lemon Slice Mug Rug",
+      "slug": "crochet-lemon-slice-mug-rug",
+      "micro_niche": "Citrus kitchen gifts",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-21",
+      "slot": 2,
+      "title": "Crochet Orange Slice Jar Lid Cover",
+      "slug": "crochet-orange-slice-jar-lid-cover",
+      "micro_niche": "Citrus kitchen gifts",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-22",
+      "slot": 1,
+      "title": "Crochet Ribbed Ear Warmer with a Side Bow",
+      "slug": "crochet-ribbed-ear-warmer-with-a-side-bow",
+      "micro_niche": "Winter hair accessories",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-22",
+      "slot": 2,
+      "title": "Crochet Mini Velvet Look Hair Bow Clip",
+      "slug": "crochet-mini-velvet-look-hair-bow-clip",
+      "micro_niche": "Winter hair accessories",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-23",
+      "slot": 1,
+      "title": "Crochet Textured Coffee Cup Sleeve",
+      "slug": "crochet-textured-coffee-cup-sleeve",
+      "micro_niche": "Home cafe crochet",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-23",
+      "slot": 2,
+      "title": "Crochet Cinnamon Roll Mug Mat",
+      "slug": "crochet-cinnamon-roll-mug-mat",
+      "micro_niche": "Home cafe crochet",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-24",
+      "slot": 1,
+      "title": "Crochet Tiny Avocado Bag Charm",
+      "slug": "crochet-tiny-avocado-bag-charm",
+      "micro_niche": "Fruit inspired bag charms",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-24",
+      "slot": 2,
+      "title": "Crochet Double Cherry Keychain",
+      "slug": "crochet-double-cherry-keychain",
+      "micro_niche": "Fruit inspired bag charms",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-25",
+      "slot": 1,
+      "title": "Crochet Daisy Curtain Tieback",
+      "slug": "crochet-daisy-curtain-tieback",
+      "micro_niche": "Botanical home accents",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-25",
+      "slot": 2,
+      "title": "Crochet Cactus Shaped Bookmark",
+      "slug": "crochet-cactus-shaped-bookmark",
+      "micro_niche": "Botanical home accents",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-26",
+      "slot": 1,
+      "title": "Crochet Frog Pencil Topper",
+      "slug": "crochet-frog-pencil-topper",
+      "micro_niche": "Stationery mascots",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-26",
+      "slot": 2,
+      "title": "Crochet Cloud Planner Clip Cover",
+      "slug": "crochet-cloud-planner-clip-cover",
+      "micro_niche": "Stationery mascots",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-27",
+      "slot": 1,
+      "title": "Crochet Mini Moss Stepping Stone Mat",
+      "slug": "crochet-mini-moss-stepping-stone-mat",
+      "micro_niche": "Tiny terrarium scenes",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-27",
+      "slot": 2,
+      "title": "Crochet Desert Cactus Pebble Pot",
+      "slug": "crochet-desert-cactus-pebble-pot",
+      "micro_niche": "Tiny terrarium scenes",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-28",
+      "slot": 1,
+      "title": "Crochet Dachshund Bag Charm",
+      "slug": "crochet-dachshund-bag-charm",
+      "micro_niche": "Pet inspired miniatures",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-28",
+      "slot": 2,
+      "title": "Crochet Sleepy Orange Cat Key Fob",
+      "slug": "crochet-sleepy-orange-cat-key-fob",
+      "micro_niche": "Pet inspired miniatures",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-29",
+      "slot": 1,
+      "title": "Crochet Ribbon Bow Gift Topper",
+      "slug": "crochet-ribbon-bow-gift-topper",
+      "micro_niche": "Zero waste gift wrapping",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-29",
+      "slot": 2,
+      "title": "Crochet Heart Gift Tag Ornament",
+      "slug": "crochet-heart-gift-tag-ornament",
+      "micro_niche": "Zero waste gift wrapping",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-30",
+      "slot": 1,
+      "title": "Crochet Gingerbread Cookie Garland",
+      "slug": "crochet-gingerbread-cookie-garland",
+      "micro_niche": "Mini Christmas kitchen",
+      "status": "planned"
+    },
+    {
+      "date": "2026-11-30",
+      "slot": 2,
+      "title": "Crochet Candy Cane Napkin Ring",
+      "slug": "crochet-candy-cane-napkin-ring",
+      "micro_niche": "Mini Christmas kitchen",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-01",
+      "slot": 1,
+      "title": "Crochet Six Point Snowflake Coaster",
+      "slug": "crochet-six-point-snowflake-coaster",
+      "micro_niche": "Winter table setting",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-01",
+      "slot": 2,
+      "title": "Crochet Pinecone Placemat Applique",
+      "slug": "crochet-pinecone-placemat-applique",
+      "micro_niche": "Winter table setting",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-02",
+      "slot": 1,
+      "title": "Crochet Breakfast Waffle Keychain",
+      "slug": "crochet-breakfast-waffle-keychain",
+      "micro_niche": "Miniature food amigurumi",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-02",
+      "slot": 2,
+      "title": "Crochet Bubble Tea Plush Charm",
+      "slug": "crochet-bubble-tea-plush-charm",
+      "micro_niche": "Miniature food amigurumi",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-03",
+      "slot": 1,
+      "title": "Crochet Granny Patch Pocket for Tote Bags",
+      "slug": "crochet-granny-patch-pocket-for-tote-bags",
+      "micro_niche": "Granny square upcycling",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-03",
+      "slot": 2,
+      "title": "Crochet Granny Square Earbud Pouch",
+      "slug": "crochet-granny-square-earbud-pouch",
+      "micro_niche": "Granny square upcycling",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-04",
+      "slot": 1,
+      "title": "Crochet Moon and Star Wall Hanging",
+      "slug": "crochet-moon-and-star-wall-hanging",
+      "micro_niche": "Nursery wall decor",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-04",
+      "slot": 2,
+      "title": "Crochet Cloud Mobile Decorations for Display",
+      "slug": "crochet-cloud-mobile-decorations-for-display",
+      "micro_niche": "Nursery wall decor",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-05",
+      "slot": 1,
+      "title": "Crochet Teacup Page Weight",
+      "slug": "crochet-teacup-page-weight",
+      "micro_niche": "Cozy reading nook",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-05",
+      "slot": 2,
+      "title": "Crochet Crescent Moon Page Marker",
+      "slug": "crochet-crescent-moon-page-marker",
+      "micro_niche": "Cozy reading nook",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-06",
+      "slot": 1,
+      "title": "Crochet Checkerboard Card Holder",
+      "slug": "crochet-checkerboard-card-holder",
+      "micro_niche": "Small gift accessories",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-06",
+      "slot": 2,
+      "title": "Crochet Reusable Gift Card Envelope",
+      "slug": "crochet-reusable-gift-card-envelope",
+      "micro_niche": "Small gift accessories",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-07",
+      "slot": 1,
+      "title": "Crochet Seashell Desk Trinket Tray",
+      "slug": "crochet-seashell-desk-trinket-tray",
+      "micro_niche": "Coastal mini decor",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-07",
+      "slot": 2,
+      "title": "Crochet Tiny Blue Crab Keychain",
+      "slug": "crochet-tiny-blue-crab-keychain",
+      "micro_niche": "Coastal mini decor",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-08",
+      "slot": 1,
+      "title": "Crochet Windowsill Pot Sleeve",
+      "slug": "crochet-windowsill-pot-sleeve",
+      "micro_niche": "Miniature home details",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-08",
+      "slot": 2,
+      "title": "Crochet Flameless Lantern Cover for LED Lights",
+      "slug": "crochet-flameless-lantern-cover-for-led-lights",
+      "micro_niche": "Miniature home details",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-09",
+      "slot": 1,
+      "title": "Crochet Tiny Snowman Bag Charm",
+      "slug": "crochet-tiny-snowman-bag-charm",
+      "micro_niche": "Winter amigurumi gifts",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-09",
+      "slot": 2,
+      "title": "Crochet Mini Mitten Tree Decoration",
+      "slug": "crochet-mini-mitten-tree-decoration",
+      "micro_niche": "Winter amigurumi gifts",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-10",
+      "slot": 1,
+      "title": "Crochet Mini Toast Bag Charm",
+      "slug": "crochet-mini-toast-bag-charm",
+      "micro_niche": "Breakfast themed accessories",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-10",
+      "slot": 2,
+      "title": "Crochet Apple Slice Bookmark",
+      "slug": "crochet-apple-slice-bookmark",
+      "micro_niche": "Breakfast themed accessories",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-11",
+      "slot": 1,
+      "title": "Crochet Floral Parandi Braid Tassel",
+      "slug": "crochet-floral-parandi-braid-tassel",
+      "micro_niche": "Decorative hair craft",
+      "status": "planned"
+    },
+    {
+      "date": "2026-12-11",
+      "slot": 2,
+      "title": "Crochet Ribbon Barrette Cover",
+      "slug": "crochet-ribbon-barrette-cover",
+      "micro_niche": "Decorative hair craft",
+      "status": "planned"
+    }
+  ]
+}
