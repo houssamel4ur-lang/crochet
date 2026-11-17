@@ -1,0 +1,34 @@
+{
+  "crochet-flower-coasters-free-pattern": {
+    "cover": "assets/editorial-photography/crochet-flower-coasters-free-pattern-cover.webp",
+    "alt": "AI-generated concept of flat crocheted flower coasters in cream, sage and dusty pink on a light craft table",
+    "replacements": {
+      "https://cozyloops.site/assets/editorial-illustrations/crochet-flower-coasters-free-pattern-panel-02.webp": {
+        "path": "assets/editorial-photography/crochet-flower-coasters-free-pattern-materials.webp",
+        "alt": "AI-generated inspiration photo of several flower-shaped cotton crochet coasters, yarn and a mug"
+      }
+    }
+  },
+  "crochet-tulip-bouquet-stems-guide": {
+    "cover": "assets/editorial-photography/crochet-tulip-bouquet-stems-guide-cover.webp",
+    "alt": "AI-generated crochet tulip bouquet in pink, red, cream and yellow with realistic stitched petal cups and green leaves"
+  },
+  "crochet-phone-pouch-crossbody-size-guide": {
+    "cover": "assets/editorial-photography/crochet-phone-pouch-crossbody-size-guide-cover.webp",
+    "alt": "AI-generated cream and sage crochet crossbody phone pouch with stitched daisy and adjustable yarn strap"
+  },
+  "daisy-granny-square-blanket-guide": {
+    "cover": "assets/editorial-photography/daisy-granny-square-blanket-guide-cover.webp",
+    "alt": "AI-generated concept of handmade daisy granny square motifs in cream, sage, pink and lavender cotton",
+    "replacements": {
+      "https://cozyloops.site/assets/daisy-granny-square-blanket-guide-2.webp": {
+        "path": "assets/editorial-photography/daisy-granny-square-blanket-guide-construction.webp",
+        "alt": "AI-generated concept close-up of hands working a pastel daisy granny square with a crochet hook"
+      }
+    }
+  },
+  "crochet-patterns-for-beginners-guide": {
+    "cover": "assets/editorial-photography/crochet-patterns-for-beginners-guide-cover.webp",
+    "alt": "AI-generated beginner crochet inspiration with a cream, blush and sage striped blanket and a small crochet bunny"
+  }
+}
