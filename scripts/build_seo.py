@@ -365,7 +365,7 @@ def render_page(article, css, articles=None):
     published_label, modified_label = real_date_label(published), real_date_label(modified)
     body_words = len(re.findall(r"\b[\w'-]+\b", article_content))
     read_minutes = max(1, (body_words + 199) // 200)
-    byline_parts = ["By Houssal El Ouardy"]
+    byline_parts = ["By Houssam El Ouardy"]
     if published_label:
         byline_parts.append("Published " + published_label)
     if modified_label:
@@ -382,7 +382,7 @@ def render_page(article, css, articles=None):
         "mainEntityOfPage": canonical,
         "url": canonical,
         "publisher": {"@type": "Organization", "name": "CozyLoops"},
-        "author": {"@type": "Person", "name": "Houssal El Ouardy", "url": BASE + "about/"},
+        "author": {"@type": "Person", "name": "Houssam El Ouardy", "url": BASE + "about/"},
         **({"datePublished": published} if published_label else {}),
         **({"dateModified": modified} if modified_label else {}),
         "articleSection": category,
@@ -487,7 +487,7 @@ def render_page(article, css, articles=None):
 {markdown(article_content)}
 {('<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>' + linked_text(visual_note) + '</p></details>') if visual_note and is_draft else ''}
 {original_status_html}
-<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssal El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies draft patterns and concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
+<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssam El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies draft patterns and concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
 {related_html}
 <h2>Keep Creating</h2>
 <p>Explore more crochet articles and patterns at CozyLoops.</p>

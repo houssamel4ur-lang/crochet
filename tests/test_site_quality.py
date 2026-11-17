@@ -265,7 +265,7 @@ class SiteQualityTests(unittest.TestCase):
         contact = (ROOT / "contact" / "index.html").read_text(encoding="utf-8")
         success = (ROOT / "contact" / "thanks" / "index.html").read_text(encoding="utf-8")
         self.assertIn('method="POST"', contact)
-        self.assertIn('action="https://formsubmit.co/Houssam.el.8ur@gmail.com"', contact)
+        self.assertIn('action="https://formsubmit.co/Houssam.el.4ur@gmail.com"', contact)
         self.assertIn('name="_next" value="https://cozyloops.site/contact/thanks/"', contact)
         self.assertIn('name="_captcha" value="true"', contact)
         self.assertIn('name="_honey"', contact)
@@ -286,7 +286,7 @@ class SiteQualityTests(unittest.TestCase):
             content = (ROOT / page / "index.html").read_text(encoding="utf-8")
             self.assertIn('<link rel="canonical" href="' + PUBLIC_BASE + page + '/"', content)
             if page != "sitemap":
-                self.assertIn('Houssam.el.8ur@gmail.com', content)
+                self.assertIn('Houssam.el.4ur@gmail.com', content)
         self.assertNotIn("/admin/", self.sitemap)
 
 if __name__ == "__main__":
