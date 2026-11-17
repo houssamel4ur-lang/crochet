@@ -59,7 +59,10 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             if(route === '/cookie-policy') {
               await page.locator('#ad-consent-settings').click();
               assert.match(await page.locator('#ad-consent-status').innerText(),
-                /consent manager is not currently available|Requested the advertising privacy settings/);
+                /Asked the advertising provider|Advertising consent settings are unavailable/);
+              await page.locator('#us-privacy-settings').click();
+              assert.match(await page.locator('#ad-consent-status').innerText(),
+                /Asked the provider|U.S. advertising privacy controls are not available/);
             }
             if(route === '/sitemap') {
               assert.ok(await page.locator('.sitemap-articles a').count()>=53,'Sitemap shows all published articles');
