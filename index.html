@@ -203,7 +203,15 @@ async function loadPublishedPosts(){
       return rows.filter(p=>p&&p.status==='published');
     }catch(error){console.warn('GitHub article source unavailable:',error.message);return [];}
   };
-  const editorial=await readEditorial();
+  const readUniqueExcerpts=async()=>{
+    try{
+      const response=await fetch('content/unique_excerpts.json',{cache:'no-store'});
+      if(!response.ok)return {};
+      const data=await response.json();
+      return data&&typeof data==='object'&&!Array.isArray(data)?data:{};
+    }catch{return {};}
+  };
+  const [editorial,uniqueExcerpts]=await Promise.all([readEditorial(),readUniqueExcerpts()]);
   const renderAll=remote=>{
     const chosen=new Map([[featuredEditorial.slug,{
       slug:featuredEditorial.slug,title:featuredEditorial.title,category:featuredEditorial.category,
@@ -232,7 +240,9 @@ async function loadPublishedPosts(){
          ||removedStarterSlugs.has(p.slug)||typeof p.title!=='string'||!p.title.trim())continue;
       const body=typeof p.content==='string'?p.content:'';
       const category=typeof p.category==='string'&&p.category.trim()?p.category.slice(0,100):'Crochet Tips';
-      const excerpt=typeof p.excerpt==='string'?p.excerpt:'';
+      const editorialSummary=uniqueExcerpts[p.slug];
+      const excerpt=typeof editorialSummary==='string'&&editorialSummary.length>=40&&editorialSummary.length<=160
+        ?editorialSummary:(typeof p.excerpt==='string'?p.excerpt:'');
       const created=(p.published_at||p.created_at)?new Date(p.published_at||p.created_at):null;
       const publishedAt=created&&!Number.isNaN(created.getTime())?created.getTime():0;
       const date=publishedAt?created.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'';
@@ -470,9 +480,9 @@ async function shareArticle(url,title,status){
    if(status)status.textContent='Copy this article URL from your address bar.';
  }
 }
-function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}const bylineParts=['By Houssal El Ouardy'];if(p.date)bylineParts.push('Published '+p.date);if(p.updatedDate)bylineParts.push('Updated '+p.updatedDate);bylineParts.push(p.minutes+' min read');const display=editorialViewContent(p.markdown);document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${esc(bylineParts.join(' · '))}</p><div class="article-share"><button type="button" class="article-share-button">Share this article</button><button type="button" class="article-print-button">Print / Save PDF</button><span class="article-share-status" role="status" aria-live="polite"></span></div><p>${esc(p.excerpt)}</p><img class="${display.note?(p.image.includes('/assets/editorial-illustrations/')?'dynamic-illustration-cover':'dynamic-concept-cover'):''}" src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div><div id='hbagency_space_349628'></div>${display.body?articleTableOfContents(display.body):""}<div class="hb-ad-inpage">
+function article(slug){const p=posts.find(x=>x.slug===slug);if(!p){notFound();return}const bylineParts=['By Houssam El Ouardy'];if(p.date)bylineParts.push('Published '+p.date);if(p.updatedDate)bylineParts.push('Updated '+p.updatedDate);bylineParts.push(p.minutes+' min read');const display=editorialViewContent(p.markdown);document.title=p.title+" | "+siteTheme.site_name;document.querySelector('meta[name="description"]').content=p.excerpt;document.getElementById("app").innerHTML=`<article class="article"><a class="back" href="#articles">← Back to all articles</a><div class="tag">${esc(p.category)}</div><h1>${esc(p.title)}</h1><p class="meta">${esc(bylineParts.join(' · '))}</p><div class="article-share"><button type="button" class="article-share-button">Share this article</button><button type="button" class="article-print-button">Print / Save PDF</button><span class="article-share-status" role="status" aria-live="polite"></span></div><p>${esc(p.excerpt)}</p><img class="${display.note?(p.image.includes('/assets/editorial-illustrations/')?'dynamic-illustration-cover':'dynamic-concept-cover'):''}" src="${esc(safeHttps(p.image)||imageBase+'photo-1606761568499-6d2451b23c66?w=1000')}" alt="${esc(p.title)}" width="1000" height="625" decoding="async"><div class="disclaimer">A friendly learning guide. Always check yarn labels and adapt instructions to your project.</div><div id='hbagency_space_349628'></div>${display.body?articleTableOfContents(display.body):""}<div class="hb-ad-inpage">
     <div class="hb-ad-inner"> 
-    <div class="hbagency_cls hbagency_space_349630"></div></div> </div>${display.body?renderArticleMarkdown(display.body,p.slug):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${display.note?'<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>'+esc(display.note)+'</p></details>':''}<div id='hbagency_space_349629'></div><section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="/about/">Houssal El Ouardy</a></strong><p>CozyLoops editor and site operator. For questions or corrections, <a href="/contact/">contact the editor</a>.</p></div></section>${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`;
+    <div class="hbagency_cls hbagency_space_349630"></div></div> </div>${display.body?renderArticleMarkdown(display.body,p.slug):p.sections.map(s=>`<h2>${esc(s[0])}</h2><p>${esc(s[1])}</p>`).join("")}${display.note?'<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>'+esc(display.note)+'</p></details>':''}<div id='hbagency_space_349629'></div><section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="/about/">Houssam El Ouardy</a></strong><p>CozyLoops editor and site operator. For questions or corrections, <a href="/contact/">contact the editor</a>.</p></div></section>${relatedArticleLinks(p)}<h2>Keep Creating</h2><p>Every project is a chance to learn. Explore more beginner-friendly ideas and keep practicing at your own pace.</p><a class="btn" href="#articles">Browse More Articles</a></article>`;
  updateCardLinks();
  requestAnimationFrame(scheduleReadingProgress);
  const printButton=document.querySelector('.article-print-button');

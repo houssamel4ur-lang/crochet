@@ -276,8 +276,18 @@ def crisp_concept_panels(content, slug):
 
 
 def seo_description(article):
-    """Unique, descriptive, concise snippet; avoid cutting a word in half."""
-    source = re.sub(r"\s+", " ", str(article.get("excerpt") or "").strip())
+    """Unique, descriptive, concise snippet; avoid cutting a word in half.
+
+    Curated project snippets reflect the actual published introduction.
+    They are presentational overrides, never changes to the owner's CMS data.
+    """
+    override_path = ROOT / "content" / "unique_excerpts.json"
+    overrides = json.loads(override_path.read_text(encoding="utf-8")) if override_path.is_file() else {}
+    slug = str(article.get("slug") or "")
+    summary = overrides.get(slug) if isinstance(overrides, dict) else None
+    if not isinstance(summary, str) or not 40 <= len(summary.strip()) <= 160:
+        summary = article.get("excerpt") or ""
+    source = re.sub(r"\s+", " ", str(summary).strip())
     if not source:
         source = str(article.get("content") or "").split("\n", 1)[0]
     source = re.sub(r"\*\*", "", source).strip()
@@ -294,6 +304,38 @@ def real_date_label(value):
     except (TypeError, ValueError):
         return ""
     return f"{parsed.strftime('%B')} {parsed.day}, {parsed.year}"
+
+
+def has_physical_test_evidence(article):
+    """Do not hide an untested warning based on a bare checkbox or image URL.
+
+    A confirmed record requires physically completed work and a locally
+    supplied finished-object photograph. No records are pre-approved.
+    """
+    slug = str(article.get("slug") or "")
+    if not SLUG.fullmatch(slug):
+        return False
+    registry_path = ROOT / "content" / "pattern_testing_records.json"
+    if not registry_path.is_file():
+        return False
+    try:
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        record = registry.get("verified_patterns", {}).get(slug)
+    except (ValueError, TypeError, AttributeError):
+        return False
+    if not isinstance(record, dict) or record.get("status") != "tested":
+        return False
+    required_text = ("tested_by", "tested_at", "materials_used", "finished_measurements", "test_notes")
+    if any(not isinstance(record.get(key), str) or len(record[key].strip()) < 8 for key in required_text):
+        return False
+    if record.get("stitch_counts_checked") is not True or record.get("physical_sample_completed") is not True:
+        return False
+    try:
+        datetime.fromisoformat(record["tested_at"])
+    except ValueError:
+        return False
+    sample = ROOT / "assets" / "verified-samples" / (slug + "-finished.webp")
+    return sample.is_file() and sample.stat().st_size > 25_000
 
 
 def render_page(article, css, articles=None):
@@ -315,7 +357,7 @@ def render_page(article, css, articles=None):
     original_status = status_match.group(0) if status_match else ""
     if status_match:
         article_content = (article_content[:status_match.start()] + article_content[status_match.end():]).strip()
-    physically_tested = article.get("pattern_tested") is True and bool(safe_image(article.get("tested_photo_url")))
+    physically_tested = has_physical_test_evidence(article)
     is_draft = bool(visual_note or original_status) and not physically_tested
     toc_html = table_of_contents(article_content)
     published = str(article.get("published_at") or article.get("created_at") or "")
@@ -323,7 +365,7 @@ def render_page(article, css, articles=None):
     published_label, modified_label = real_date_label(published), real_date_label(modified)
     body_words = len(re.findall(r"\b[\w'-]+\b", article_content))
     read_minutes = max(1, (body_words + 199) // 200)
-    byline_parts = ["By Houssal El Ouardy"]
+    byline_parts = ["By Houssam El Ouardy"]
     if published_label:
         byline_parts.append("Published " + published_label)
     if modified_label:
@@ -340,7 +382,7 @@ def render_page(article, css, articles=None):
         "mainEntityOfPage": canonical,
         "url": canonical,
         "publisher": {"@type": "Organization", "name": "CozyLoops"},
-        "author": {"@type": "Person", "name": "Houssal El Ouardy", "url": BASE + "about/"},
+        "author": {"@type": "Person", "name": "Houssam El Ouardy", "url": BASE + "about/"},
         **({"datePublished": published} if published_label else {}),
         **({"dateModified": modified} if modified_label else {}),
         "articleSection": category,
@@ -445,7 +487,7 @@ def render_page(article, css, articles=None):
 {markdown(article_content)}
 {('<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>' + linked_text(visual_note) + '</p></details>') if visual_note and is_draft else ''}
 {original_status_html}
-<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssal El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies draft patterns and concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
+<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssam El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies draft patterns and concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
 {related_html}
 <h2>Keep Creating</h2>
 <p>Explore more crochet articles and patterns at CozyLoops.</p>

@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from scripts.build_seo import (
     ROOT, IMAGE, normalize_article_content, concise_editorial_illustrations,
-    render_page, seo_description, table_of_contents,
+    render_page, seo_description, table_of_contents, has_physical_test_evidence,
 )
 
 class EditorialSeoQuality(unittest.TestCase):
@@ -84,6 +84,37 @@ class EditorialSeoQuality(unittest.TestCase):
                 self.assertNotIn(f"/assets/{post['slug']}-02.webp", page)
                 self.assertIn("not a real project photograph", page)
 
+
+    def test_no_fabricated_physical_pattern_testing(self):
+        registry = json.loads((ROOT / "content" / "pattern_testing_records.json").read_text(encoding="utf-8"))
+        self.assertEqual(registry["verified_patterns"], {})
+        self.assertFalse(has_physical_test_evidence({
+            "slug": "crochet-dollhouse-bed-runner",
+            "pattern_tested": True,
+            "tested_photo_url": "https://cozyloops.site/assets/illustration.webp",
+        }))
+        sample = {
+            "slug": "crochet-dollhouse-bed-runner",
+            "title": "Dollhouse Bed Runner",
+            "content": "**Pattern status:** Original, untested construction draft.\n\n## Materials\n\nUse cotton yarn.",
+            "excerpt": "A miniature crochet bed runner."
+        }
+        page = render_page(sample, "body{color:#29342d}", [])
+        self.assertIn("not yet physically tested", page)
+
+    def test_project_specific_excerpts_replace_repetitive_seo_boilerplate(self):
+        curated = json.loads((ROOT / "content" / "unique_excerpts.json").read_text(encoding="utf-8"))
+        manifest = set(json.loads((ROOT / "posts" / "manifest.json").read_text(encoding="utf-8")))
+        self.assertEqual(len(curated), 27)
+        self.assertEqual(len(set(curated.values())), len(curated))
+        self.assertTrue(set(curated) <= manifest)
+        for slug, summary in curated.items():
+            with self.subTest(slug=slug):
+                self.assertGreaterEqual(len(summary), 70)
+                self.assertLessEqual(len(summary), 160)
+                self.assertNotIn("component plan, counted crochet instructions", summary)
+                sample = {"slug": slug, "excerpt": "Make a project with a component plan, counted crochet instructions"}
+                self.assertEqual(seo_description(sample), summary)
 
     def test_homepage_article_fallback_matches_static_editorial_rules(self):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
