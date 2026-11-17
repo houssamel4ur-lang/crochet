@@ -44,10 +44,15 @@ def main():
     if not manifest:
         raise RuntimeError('No live articles found')
     sources={}
+    covers={}
     for slug in manifest:
         html=fetch(BASE+'posts/'+slug+'/')
         parser=ImageParser()
         parser.feed(html)
+        # First image is the editorial hero on the generated static article.
+        if parser.images:
+            cover=urljoin(BASE+'posts/'+slug+'/', parser.images[0][0])
+            covers.setdefault(cover,[]).append(slug)
         for url,alt in parser.images:
             full=urljoin(BASE+'posts/'+slug+'/',url)
             sources.setdefault(full,[]).append((slug,alt))
@@ -70,6 +75,10 @@ def main():
         else:
             failures.append((url,'HTTP '+str(status)+' / '+(kind or error)))
             print('  BROKEN:',status,kind or error)
+    reused={url:posts for url,posts in covers.items() if len(posts)>1}
+    print('Unique article hero images:',len(covers),'of',len(manifest),'published posts')
+    for url,posts in sorted(reused.items(),key=lambda entry:-len(entry[1])):
+        print('EDITORIAL REVIEW: same cover used for multiple articles:', url, 'posts:', ','.join(posts))
     print('Image URLs:',len(sources),'broken:',len(failures),'transient:',len(skipped))
     for url,problem in failures:
         print('FAIL:',problem,url)
