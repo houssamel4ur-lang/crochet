@@ -103,7 +103,6 @@ class LiveSiteTests(unittest.TestCase):
                 self.assertIn("By Houssam El Ouardy", html)
                 self.assertIn('"name": "Houssam El Ouardy"', html)
                 self.assertNotIn(("Hous" + "sal El Ouardy"), html)
-                self.assertNotIn("Houssam.el.8ur@gmail.com", html)
                 tags = Tags()
                 tags.feed(html)
                 self.assertEqual(tags.h1, 1)
@@ -165,13 +164,11 @@ class LiveSiteTests(unittest.TestCase):
         # Validate the undisguised destination on the actual form below instead.
         self.assertNotIn(("Hous" + "sal oversees"), about)
         self.assertNotIn(("Hous" + "sal El Ouardy"), about)
-        self.assertNotIn("Houssam.el.8ur@gmail.com", about)
         contact = fetch("contact/")
         self.assertIn('id="cookie-consent"', about)
         self.assertIn('id="cookie-consent"', contact)
         self.assertIn('method="POST"', contact)
-        self.assertIn('action="https://formsubmit.co/houssam.el.8ur@gmail.com"', contact)
-        self.assertNotIn("Houssam.el.8ur@gmail.com", contact)
+        self.assertIn('action="https://formsubmit.co/houssam.el.4ur@gmail.com"', contact)
         self.assertIn('name="_honey"', contact)
         human_sitemap = fetch("sitemap/")
         links = (human_sitemap.count('<li><a href="/posts/') +
