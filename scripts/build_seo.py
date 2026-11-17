@@ -276,8 +276,18 @@ def crisp_concept_panels(content, slug):
 
 
 def seo_description(article):
-    """Unique, descriptive, concise snippet; avoid cutting a word in half."""
-    source = re.sub(r"\s+", " ", str(article.get("excerpt") or "").strip())
+    """Unique, descriptive, concise snippet; avoid cutting a word in half.
+
+    Curated project snippets reflect the actual published introduction.
+    They are presentational overrides, never changes to the owner's CMS data.
+    """
+    override_path = ROOT / "content" / "unique_excerpts.json"
+    overrides = json.loads(override_path.read_text(encoding="utf-8")) if override_path.is_file() else {}
+    slug = str(article.get("slug") or "")
+    summary = overrides.get(slug) if isinstance(overrides, dict) else None
+    if not isinstance(summary, str) or not 40 <= len(summary.strip()) <= 160:
+        summary = article.get("excerpt") or ""
+    source = re.sub(r"\s+", " ", str(summary).strip())
     if not source:
         source = str(article.get("content") or "").split("\n", 1)[0]
     source = re.sub(r"\*\*", "", source).strip()
