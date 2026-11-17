@@ -36,6 +36,9 @@ def protect(source, admin=False, external_contact_form=False):
 def main():
     legal_slugs = ('about', 'contact', 'privacy-policy', 'terms', 'disclosure', 'cookie-policy', 'sitemap')
     legal_paths = [ROOT / slug / 'index.html' for slug in legal_slugs if (ROOT / slug / 'index.html').is_file()]
+    receipt_page = ROOT / 'contact' / 'thanks' / 'index.html'
+    if receipt_page.is_file():
+        legal_paths.append(receipt_page)
     paths = [ROOT / 'index.html', ROOT / 'admin/index.html', ROOT / '404.html', *sorted((ROOT / 'posts').glob('*/index.html')), *legal_paths]
     for path in paths:
         text = path.read_text()
