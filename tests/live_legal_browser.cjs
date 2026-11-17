@@ -34,6 +34,11 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             const title = await page.title();
             assert.ok(!/Page Not Found/i.test(title),url+' must not display the custom 404');
             assert.equal(await page.locator('main h1').count(),1,url+' must have one h1');
+            if(width===390) {
+              const bannerSelector = route==='/' || route.startsWith('/posts/') ? '#privacy-choice' : '#cookie-consent';
+              assert.equal(await page.locator(bannerSelector).isVisible(),true,
+                'Fresh visitor must see optional analytics banner on '+route);
+            }
             const overflow = await page.evaluate(()=>document.documentElement.scrollWidth > innerWidth+1);
             assert.equal(overflow,false,route+' no horizontal overflow at '+width+'px');
             assert.ok(await page.locator('footer').count(),route+' has a footer');
@@ -55,7 +60,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             }
             if(route === '/contact') {
               assert.equal(await page.locator('#contact-form').getAttribute('method'),'POST');
-              assert.match(await page.locator('#contact-form').getAttribute('action'),/^https:\/\/formsubmit\.co\//);
+              assert.equal(await page.locator('#contact-form').getAttribute('action'),'https://formsubmit.co/houssam.el.8ur@gmail.com');
               assert.equal(await page.locator('#contact-form [name="message"]').count(),1);
               assert.equal(await page.locator('#contact-form [name="_next"]').getAttribute('value'), base+'/contact/thanks/');
               const confirmation = await page.request.get(base+'/contact/thanks/');

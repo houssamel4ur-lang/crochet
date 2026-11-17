@@ -372,7 +372,7 @@ def render_page(article, css, articles=None):
         byline_parts.append("Updated " + modified_label)
     byline_parts.append(str(read_minutes) + " min read")
     byline = " · ".join(byline_parts)
-    draft_label = '<p class="pattern-status">Pattern note: This project has not yet been physically tested as a finished sample. Check your gauge, construction, and safety before use.</p>' if is_draft else ""
+    draft_label = '<p class="pattern-status">Pattern note: This concept is not yet physically tested as a finished sample. Check your gauge, construction, and safety before use.</p>' if is_draft else ""
     original_status_html = ('<details class="article-disclosure"><summary>Pattern testing and accuracy</summary><p>' + inline(original_status) + '</p></details>') if original_status and is_draft else ""
     structured = {
         "@context": "https://schema.org",
@@ -481,12 +481,12 @@ def render_page(article, css, articles=None):
 <p class="meta">{esc(byline)}</p>
 <div class="article-share"><button type="button" id="article-share-button" class="article-share-button">Share this article</button><button type="button" id="article-print-button" class="article-print-button">Print / Save PDF</button><span id="article-share-status" role="status" aria-live="polite"></span></div>
 <p>{esc(description)}</p>
-{draft_label}
 {image_html}
 {toc_html}
 {markdown(article_content)}
 {('<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>' + linked_text(visual_note) + '</p></details>') if visual_note and is_draft else ''}
 {original_status_html}
+{draft_label}
 <section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssam El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies draft patterns and concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
 {related_html}
 <h2>Keep Creating</h2>
