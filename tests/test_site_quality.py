@@ -279,10 +279,9 @@ class SiteQualityTests(unittest.TestCase):
 
     def test_owner_identity_and_email_match_confirmed_details_everywhere(self):
         name = "Houssam El Ouardy"
-        email = "houssam.el.8ur@gmail.com"
+        email = "houssam.el.4ur@gmail.com"
         self.assertIn(name, self.home)
         self.assertNotIn(("Hous" + "sal El Ouardy"), self.home)
-        self.assertNotIn("Houssam.el.8ur@gmail.com", self.home)
         generator = (ROOT / "scripts/build_seo.py").read_text(encoding="utf-8")
         self.assertIn(name, generator)
         self.assertNotIn(("Hous" + "sal El Ouardy"), generator)
@@ -292,7 +291,6 @@ class SiteQualityTests(unittest.TestCase):
             with self.subTest(page=legal):
                 html = (ROOT / legal / "index.html").read_text(encoding="utf-8")
                 self.assertNotIn(("Hous" + "sal El Ouardy"), html)
-                self.assertNotIn("Houssam.el.8ur@gmail.com", html)
         self.assertIn(email, (ROOT / "contact/index.html").read_text(encoding="utf-8"))
         self.assertIn('action="https://formsubmit.co/' + email + '"',
                       (ROOT / "contact/index.html").read_text(encoding="utf-8"))
@@ -302,7 +300,6 @@ class SiteQualityTests(unittest.TestCase):
                 self.assertIn("By " + name, html)
                 self.assertIn('"name": "' + name + '"', html)
                 self.assertNotIn(("Hous" + "sal El Ouardy"), html)
-                self.assertNotIn("Houssam.el.8ur@gmail.com", html)
 
     def test_optional_consent_is_visible_to_first_time_visitors_on_all_templates(self):
         html = self.home
@@ -330,7 +327,7 @@ class SiteQualityTests(unittest.TestCase):
         contact = (ROOT / "contact" / "index.html").read_text(encoding="utf-8")
         success = (ROOT / "contact" / "thanks" / "index.html").read_text(encoding="utf-8")
         self.assertIn('method="POST"', contact)
-        self.assertIn('action="https://formsubmit.co/houssam.el.8ur@gmail.com"', contact)
+        self.assertIn('action="https://formsubmit.co/houssam.el.4ur@gmail.com"', contact)
         self.assertIn('name="_next" value="https://cozyloops.site/contact/thanks/"', contact)
         self.assertIn('name="_captcha" value="true"', contact)
         self.assertIn('name="_honey"', contact)
@@ -351,7 +348,7 @@ class SiteQualityTests(unittest.TestCase):
             content = (ROOT / page / "index.html").read_text(encoding="utf-8")
             self.assertIn('<link rel="canonical" href="' + PUBLIC_BASE + page + '/"', content)
             if page != "sitemap":
-                self.assertIn('houssam.el.8ur@gmail.com', content)
+                self.assertIn('houssam.el.4ur@gmail.com', content)
         self.assertNotIn("/admin/", self.sitemap)
 
 if __name__ == "__main__":

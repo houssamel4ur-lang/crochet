@@ -48,6 +48,15 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
               assert.equal(await page.locator('#ad-consent-settings').count(),1);
               assert.equal(await page.locator('#us-privacy-settings').count(),1);
             }
+            if(route === '/contact' || route === '/cookie-policy') {
+              const expectedEmail = 'houssam.el.4ur@gmail.com';
+              await page.waitForFunction(email => [...document.querySelectorAll('main a')]
+                .some(a => a.textContent.trim() === email), expectedEmail, {timeout:12000});
+              const visibleEmail = await page.locator('main a').allTextContents();
+              assert.ok(visibleEmail.some(v => v.trim() === expectedEmail),
+                url + ' must visibly display the exact current contact email');
+              console.log('LIVE EMAIL VERIFIED ' + url + ' at ' + width + 'px: ' + expectedEmail);
+            }
             if(route === '/about') {
               assert.match(await page.locator('main').innerText(),/Houssam El Ouardy/);
               assert.equal(await page.locator('#cookie-consent').count(),1);
@@ -60,7 +69,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             }
             if(route === '/contact') {
               assert.equal(await page.locator('#contact-form').getAttribute('method'),'POST');
-              assert.equal(await page.locator('#contact-form').getAttribute('action'),'https://formsubmit.co/houssam.el.8ur@gmail.com');
+              assert.equal(await page.locator('#contact-form').getAttribute('action'),'https://formsubmit.co/houssam.el.4ur@gmail.com');
               assert.equal(await page.locator('#contact-form [name="message"]').count(),1);
               assert.equal(await page.locator('#contact-form [name="_next"]').getAttribute('value'), base+'/contact/thanks/');
               const confirmation = await page.request.get(base+'/contact/thanks/');
