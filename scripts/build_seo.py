@@ -133,12 +133,46 @@ def markdown(source):
 
 REMOVED_STARTER_SLUGS = {'crochet-for-absolute-beginners','how-to-read-crochet-patterns','easy-crochet-scarf-guide','amigurumi-basics','choosing-crochet-yarn','crochet-stitch-counting'}
 
+def staged_photo_url(slug, role):
+    """Accept only large, locally stored WebP assets (never upscaled tiny crops)."""
+    if not isinstance(slug, str) or not SLUG.fullmatch(slug):
+        return ""
+    if role not in ("hero", "materials", "construction", "finishing"):
+        return ""
+    image = ROOT / "assets" / "article-photos-v2" / slug / (role + ".webp")
+    if not image.is_file():
+        return ""
+    try:
+        from PIL import Image
+        with Image.open(image) as picture:
+            if picture.format != "WEBP" or picture.width < 1200 or picture.height < 750:
+                return ""
+    except (OSError, ImportError, ValueError):
+        return ""
+    return BASE + "assets/article-photos-v2/" + slug + "/" + role + ".webp"
+
+
 def improved_editorial_cover(item):
     """Replace only default low-res contact-sheet covers; retain owner Admin choices."""
     slug = item.get("slug", "")
     if not isinstance(slug, str) or not SLUG.fullmatch(slug):
         return item
     default = BASE + "assets/" + slug + "-01.webp"
+    photo = staged_photo_url(slug, "hero")
+    allowed_old_covers = (
+        default,
+        BASE + "assets/editorial-illustrations/" + slug + "-cover.webp",
+        BASE + "assets/legacy-polished/" + slug + "-cover.webp",
+        BASE + "assets/" + slug + "-1.webp",
+    )
+    if photo and item.get("image_url") in allowed_old_covers:
+        return {
+            **item,
+            "image_url": photo,
+            "image_alt": ("High-resolution AI-generated editorial concept of " +
+                          str(item.get("title") or slug) +
+                          "; not a photograph of a physically tested sample"),
+        }
     improved = ROOT / "assets" / "editorial-illustrations" / (slug + "-cover.webp")
     if item.get("image_url") != default or not improved.is_file():
         return item
@@ -251,10 +285,10 @@ def concise_editorial_illustrations(content):
     return "".join(kept).strip()
 
 def crisp_concept_panels(content, slug):
-    """Use original scalable project diagrams rather than upscaled tiny photos.
+    """Prefer validated article photos; keep existing illustrations until replacements exist.
 
-    Only the 15 documented original concept articles are eligible. Supabase
-    custom uploads and every non-matching article image remain unchanged.
+    Never substitute generic icons, enlarge small contact-sheet crops or overwrite
+    images stored under a different/custom URL.
     """
     if not isinstance(slug, str) or not SLUG.fullmatch(slug):
         return content
@@ -263,14 +297,19 @@ def crisp_concept_panels(content, slug):
         return content
     stage_names = {"02": "materials", "04": "construction", "09": "finishing"}
     for number, label in stage_names.items():
+        photo = staged_photo_url(slug, label)
         visual = ROOT / "assets" / "editorial-illustrations" / (slug + "-panel-" + number + ".webp")
-        if not visual.is_file():
+        if not photo and not visual.is_file():
             continue
         old = re.compile(
             r"!\[[^\]]*\]\(" + re.escape(BASE + "assets/" + slug + "-" + number + ".webp") + r"\)"
         )
-        new_alt = f"High-resolution illustrated {label} reference for {slug.replace('-', ' ')}; not a real project photograph"
-        replacement = f"![{new_alt}]({BASE}assets/editorial-illustrations/{visual.name})"
+        if photo:
+            new_alt = f"High-resolution AI-generated {label} concept for {slug.replace('-', ' ')}; not a tested project photograph"
+            replacement = f"![{new_alt}]({photo})"
+        else:
+            new_alt = f"High-resolution illustrated {label} reference for {slug.replace('-', ' ')}; not a real project photograph"
+            replacement = f"![{new_alt}]({BASE}assets/editorial-illustrations/{visual.name})"
         content = old.sub(lambda _m: replacement, content)
     return content
 
@@ -398,7 +437,11 @@ def render_page(article, css, articles=None):
     # The 2026 editorial collection uses concept images, not verified stitch photos.
     image_disclosure = '<figcaption>AI-generated concept image — not a photograph of a physically made sample.</figcaption>' if visual_note else ''
     is_illustration = "/assets/editorial-illustrations/" in cover
-    hero_variant = " illustration-hero" if is_illustration else (" concept-hero" if visual_note else "")
+    is_photo_v2 = "/assets/article-photos-v2/" in cover
+    hero_variant = (" photo-v2-hero" if is_photo_v2 else
+                    (" illustration-hero" if is_illustration else (" concept-hero" if visual_note else "")))
+    if is_photo_v2 and not visual_note:
+        image_disclosure = '<figcaption>AI-generated editorial concept, not a photograph of a tested crochet sample.</figcaption>'
     image_html = (f'<figure class="article-hero{hero_variant}"><img class="article-cover" src="{esc(cover)}" '
                   f'alt="{esc(cover_alt)}" width="{cover_width}" height="{cover_height}" '
                   f'fetchpriority="high" decoding="async">{image_disclosure}</figure>') if cover else ""
@@ -438,7 +481,9 @@ def render_page(article, css, articles=None):
 .concept-hero{{display:flex;flex-direction:column;align-items:center}}
 .concept-hero .article-cover{{width:min(100%,340px);height:340px;aspect-ratio:1;object-fit:cover;object-position:left center;max-height:340px;box-shadow:0 10px 28px #2b352b12}}
 @media(max-width:640px){{.concept-hero .article-cover{{width:min(100%,310px);height:min(82vw,310px)}}}}
-.article figure:not(.article-hero) img{{max-width:min(100%,650px);display:block;margin:0 auto}}
+.photo-v2-hero{{display:flex;flex-direction:column;align-items:center}}
+.photo-v2-hero .article-cover{{display:block;width:100%;max-width:860px;height:auto;max-height:none;aspect-ratio:auto;object-fit:contain;object-position:center;box-shadow:0 10px 28px #2b352b0b}}
+.article figure:not(.article-hero) img{{max-width:min(100%,650px);display:block;margin:0 auto;object-fit:contain;object-position:center}}
 .article figure:not(.article-hero){{margin:24px 0}}
 .article-toc{{margin:16px 0 28px;padding:0 18px;background:#fff;border:1px solid #e3e8df;border-radius:14px}}
 .article-toc summary{{padding:15px 4px;cursor:pointer;font:700 14px/1.5 system-ui,sans-serif;color:#294332;min-height:44px}}
