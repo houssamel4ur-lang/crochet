@@ -8,13 +8,20 @@
  * Keep CSP conservative while third-party advertising scripts are in use.
  * A stricter script-src must first be tested against ads, admin auth and images.
  */
-const CSP = [
+const sharedCsp = [
   "base-uri 'none'",
   "object-src 'none'",
-  "form-action 'self'",
   "frame-ancestors 'none'",
   "upgrade-insecure-requests",
-].join('; ');
+];
+
+function cspForPath(pathname) {
+  // Keep FormSubmit reachable without relaxing form submissions site-wide.
+  // GitHub Pages accepts both /contact and /contact/ URLs.
+  const isContactForm = pathname === '/contact' || pathname === '/contact/' || pathname === '/contact/index.html';
+  const action = isContactForm ? "form-action 'self' https://formsubmit.co" : "form-action 'self'";
+  return [...sharedCsp, action].join('; ');
+}
 
 export default {
   async fetch(request) {
@@ -38,10 +45,12 @@ export default {
     h.set('Strict-Transport-Security', 'max-age=86400');
 
     if (/\btext\/html\b/i.test(h.get('content-type') || '')) {
-      h.set('Content-Security-Policy', CSP);
+      h.set('Content-Security-Policy', cspForPath(url.pathname));
       h.set('X-Frame-Options', 'DENY');
     }
-    if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
+    const privateRoute = url.pathname === '/admin' || url.pathname.startsWith('/admin/');
+    const contactReceipt = url.pathname === '/contact/thanks' || url.pathname.startsWith('/contact/thanks/');
+    if (privateRoute || contactReceipt) {
       h.set('X-Robots-Tag', 'noindex, nofollow');
       h.set('Cache-Control', 'no-store');
     }

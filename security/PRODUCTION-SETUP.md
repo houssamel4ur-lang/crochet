@@ -4,11 +4,11 @@
 
 The code repository cannot set HTTP response headers on GitHub Pages. These steps require the **owner of the Cloudflare zone**. Do not paste DNS credentials or API tokens into a public repository or chat.
 
-## Cloudflare — a single response header transform rule
+## Cloudflare — two scoped response-header transform rules
 
 1. Ensure the domain's DNS record is **Proxied** through Cloudflare and HTTPS is working.
 2. Cloudflare dashboard > choose `cozyloops.site` > **Rules > Overview > Create rule > Response Header Transform Rule**.
-3. Name it `CozyLoops safe response headers`. Choose a filter matching host `cozyloops.site`; do not modify unrelated sites.
+3. Create rule **1**, `CozyLoops safe response headers`, matching `(http.host eq "cozyloops.site")`. Choose **Set static** for the six headers in the table below; do not modify unrelated sites.
 4. Set the headers below using **Set static** operations. Review any existing conflicting rules. Do not simultaneously deploy `security/cloudflare-headers-worker.mjs` and a redundant transform without confirming precedence.
 
 | HTTP response header | Initial safe value | Purpose |
@@ -17,16 +17,27 @@ The code repository cannot set HTTP response headers on GitHub Pages. These step
 | `Referrer-Policy` | `strict-origin-when-cross-origin` | Reduce unintended referrer leakage |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` | Block unused browser permissions |
 | `X-Frame-Options` | `DENY` | Block clickjacking frames |
-| `Content-Security-Policy` | `base-uri 'none'; object-src 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests` | Enforce these rules using an **HTTP** header, including frame-ancestors |
+| `Content-Security-Policy` | `base-uri 'none'; object-src 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests` | Enforce these rules using an **HTTP** header, including frame-ancestors. **Override on the contact form route in a second rule; otherwise real message submission is blocked.** |
 | `Strict-Transport-Security` | `max-age=86400` | Start with a 1-day HSTS rollout; raise only when HTTPS is verified for all necessary hosts |
 
 This conservative CSP intentionally **does not** add a public `script-src` that could disable the five HB Agency placements. It is **not** a full XSS policy; admin keeps its separate stricter meta CSP for script restrictions. Harden the public script policy only after a compatibility test of the actual ad delivery and CMP.
 
-5. Deploy and rerun **Live Production Release Checks** in GitHub Actions. Confirm the resulting `cozyloops-live-security-headers` JSON artifact has the intended values on all three pages.
-6. Verify login, article links, image uploads, ad placements and consent UI still work. Check browsers for new CSP violations.
-7. After at least a day of verified uninterrupted HTTPS, consider increasing HSTS to `max-age=31536000`. Do **not** add `includeSubDomains` or `preload` without checking every subdomain.
+5. Create rule **2**, `CozyLoops contact form CSP`, that runs **after rule 1** and matches:
+   ```text
+   (http.host eq "cozyloops.site" and (http.request.uri.path eq "/contact" or http.request.uri.path eq "/contact/" or http.request.uri.path eq "/contact/index.html"))
+   ```
+   Use **Set static** on `Content-Security-Policy` only, with this exact value:
+   ```text
+   base-uri 'none'; object-src 'none'; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; upgrade-insecure-requests
+   ```
+   **Do not allow `formsubmit.co` on arbitrary unrelated form destinations and do not change the HB Agency tags.** The order matters: the contact-specific rule must override rule 1. The equivalent optional `security/cloudflare-headers-worker.mjs` now makes the same path-specific exception. Choose **one** deployment method, not both.
+6. Deploy and rerun **Live Production Release Checks** in GitHub Actions. Confirm the resulting `cozyloops-live-security-headers` JSON artifact has the intended values on all three pages.
+7. Verify Contact can POST to FormSubmit, plus Admin login, article links, uploads, all five existing HB placements and consent UI. Check browsers for CSP violations. Cloudflare obfuscation can hide a raw mailto address in HTML even when it displays correctly in the browser.
+8. After at least a day of verified uninterrupted HTTPS, consider increasing HSTS to `max-age=31536000`. Do **not** add `includeSubDomains` or `preload` without checking every subdomain.
 
 Official instructions: https://developers.cloudflare.com/rules/transform/response-header-modification/create-dashboard/
+
+**2026-11-17 progress note:** The repository includes corrected path-specific CSP and local regression tests. The actual Cloudflare zone headers have **not** been changed by a GitHub commit. Confirm live headers using `tests/live_headers_audit.py`; do not report Cloudflare activation without a real HTTP observation.
 HSTS caveats: https://developers.cloudflare.com/ssl/edge-certificates/additional-options/http-strict-transport-security/
 
 ## Supabase — owner-only audit

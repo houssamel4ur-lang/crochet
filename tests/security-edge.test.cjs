@@ -49,3 +49,27 @@ test('keeps non-HTML content intact and protects admin', async () => {
     assert.equal(admin.headers.get('cache-control'),'no-store');
   } finally {global.fetch=original}
 });
+
+test('allows FormSubmit only on the contact form, without weakening other pages', async () => {
+  const worker=(await workerModule).default;
+  const original=global.fetch;
+  global.fetch=async()=>new Response('<p>origin</p>',{headers:{'content-type':'text/html'}});
+  try {
+    for(const route of ['/contact','/contact/','/contact/index.html']){
+      const response=await worker.fetch(new Request('https://cozyloops.site'+route));
+      const policy=response.headers.get('content-security-policy');
+      assert.match(policy,/form-action 'self' https:\/\/formsubmit\.co/);
+      assert.match(policy,/frame-ancestors 'none'/);
+      assert.equal(response.headers.get('x-frame-options'),'DENY');
+    }
+    for(const route of ['/','/about/','/posts/pink-axolotl-crochet-amigurumi-guide/','/admin/','/contact/thanks/']){
+      const response=await worker.fetch(new Request('https://cozyloops.site'+route));
+      const policy=response.headers.get('content-security-policy');
+      assert.match(policy,/form-action 'self'(?:;|$)/);
+      assert.doesNotMatch(policy,/https:\/\/formsubmit\.co/);
+    }
+    const receipt=await worker.fetch(new Request('https://cozyloops.site/contact/thanks/'));
+    assert.equal(receipt.headers.get('x-robots-tag'),'noindex, nofollow');
+    assert.equal(receipt.headers.get('cache-control'),'no-store');
+  } finally {global.fetch=original}
+});
