@@ -100,6 +100,15 @@ header{position:relative;top:auto}
  .card .meta{margin-top:10px}
 }
 .author-bio{display:flex;align-items:center;gap:16px;margin:30px 0;padding:18px;border:1px solid #dce7d6;border-radius:15px;background:#f8faf5}.author-bio p{margin:4px 0}.author-initials{width:60px;height:60px;display:grid;place-items:center;flex-shrink:0;border-radius:50%;background:#dce9d8;color:#345238;font-weight:700}
+/* Category/home listing: show project content, not the cut-off cover typography.
+   The legacy 1200x750 editorial artwork reserves the LEFT 60% for project imagery. */
+.card .card-media{display:block;overflow:hidden;aspect-ratio:16/10;height:auto;position:relative;background:#f3efe7}
+.card .card-media img{display:block;width:100%;height:100%;max-width:none;aspect-ratio:auto;object-fit:cover;object-position:center;transition:transform .2s ease}
+.card .card-media--concept img{width:160%;height:100%;object-fit:cover;object-position:left center}
+.card .card-media:focus-visible{outline-offset:-4px}
+@media(hover:hover){.card .card-media:not(.card-media--concept):hover img{transform:scale(1.035)}}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.grid{grid-template-columns:minmax(0,1fr)}.card .card-media{aspect-ratio:16/10}}
 </style>
 </head>
 <body>
@@ -339,7 +348,23 @@ function cardImageAttributes(source){
  const small=cardImageUrl(source,400),medium=cardImageUrl(source,640),large=cardImageUrl(source,960);
  return 'src="'+esc(medium)+'"'+(small!==source?' srcset="'+esc(small)+' 400w, '+esc(medium)+' 640w, '+esc(large)+' 960w" sizes="(max-width:560px) calc(100vw - 44px), (max-width:800px) calc((100vw - 69px) / 2), (max-width:1200px) calc((100vw - 94px) / 3), 368px"':'');
 }
-const card=p=>`<article class="card"><a ${articleLinkAttribute}="${esc(postHref(p.slug))}" data-post-slug="${esc(p.slug)}"><img loading="lazy" ${cardImageAttributes(p.image)} alt="${esc(p.title)}" width="640" height="450" decoding="async"></a><div class="card-body"><span class="tag">${esc(p.category)}</span><h3><a ${articleLinkAttribute}="${esc(postHref(p.slug))}" data-post-slug="${esc(p.slug)}">${esc(p.title)}</a></h3><p>${esc(p.excerpt)}</p><a class="text-link" ${articleLinkAttribute}="${esc(postHref(p.slug))}" data-post-slug="${esc(p.slug)}">Read article →</a><div class="meta">${p.minutes} min read</div></div></article>`;
+// Listing cards show the project photograph crop (not the typographic cover graphic).
+// Never override an image explicitly chosen by the site owner in Admin.
+function cardVisual(p){
+  const defaultIllustration='https://cozyloops.site/assets/editorial-illustrations/'+p.slug+'-cover.webp';
+  const defaultEditorial='https://cozyloops.site/assets/'+p.slug+'-01.webp';
+  const isDefaultConcept=illustratedDefaultSlugs.has(p.slug) &&
+    (p.image===defaultIllustration || p.image===defaultEditorial);
+  return {
+    src:isDefaultConcept?defaultEditorial:p.image,
+    concept:isDefaultConcept
+  };
+}
+function card(p){
+ const visual=cardVisual(p);
+ const imageAlt=(visual.concept?'AI-generated crochet project concept for ':'Crochet article image for ')+p.title;
+ return `<article class="card"><a class="card-media ${visual.concept?'card-media--concept':''}" ${articleLinkAttribute}="${esc(postHref(p.slug))}" data-post-slug="${esc(p.slug)}"><img loading="lazy" ${cardImageAttributes(visual.src)} alt="${esc(imageAlt)}" width="640" height="400" decoding="async"></a><div class="card-body"><span class="tag">${esc(p.category)}</span><h3><a ${articleLinkAttribute}="${esc(postHref(p.slug))}" data-post-slug="${esc(p.slug)}">${esc(p.title)}</a></h3><p>${esc(p.excerpt)}</p><a class="text-link" ${articleLinkAttribute}="${esc(postHref(p.slug))}" data-post-slug="${esc(p.slug)}">Read article →</a><div class="meta">${p.minutes} min read</div></div></article>`;
+}
 function home(){document.title=siteTheme.site_name+" | Free Crochet Patterns, Tutorials & Ideas";document.querySelector('meta[name="description"]').content=siteTheme.site_description;document.getElementById("app").innerHTML=`
 <section class="hero" id="home"><div class="container hero-inner"><div><span class="eyebrow">Your cozy corner of creativity</span><h1>Made with yarn. Shared with love.</h1><p>Explore beginner-friendly crochet tutorials, helpful tips, free project ideas, and the little joys of handmade living.</p><a class="btn" href="#articles">Explore Articles</a></div><img src="https://images.pexels.com/photos/4792079/pexels-photo-4792079.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" srcset="https://images.pexels.com/photos/4792079/pexels-photo-4792079.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=480 480w, https://images.pexels.com/photos/4792079/pexels-photo-4792079.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800 800w, https://images.pexels.com/photos/4792079/pexels-photo-4792079.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200 1200w" sizes="(max-width:800px) 100vw, 45vw" alt="Crochet yarn and hook beside a handmade project in a cozy home" width="1200" height="800" fetchpriority="high" decoding="async"></div></section>
 <div id='hbagency_space_349628'></div>
