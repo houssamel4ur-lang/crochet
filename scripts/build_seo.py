@@ -306,6 +306,38 @@ def real_date_label(value):
     return f"{parsed.strftime('%B')} {parsed.day}, {parsed.year}"
 
 
+def has_physical_test_evidence(article):
+    """Do not hide an untested warning based on a bare checkbox or image URL.
+
+    A confirmed record requires physically completed work and a locally
+    supplied finished-object photograph. No records are pre-approved.
+    """
+    slug = str(article.get("slug") or "")
+    if not SLUG.fullmatch(slug):
+        return False
+    registry_path = ROOT / "content" / "pattern_testing_records.json"
+    if not registry_path.is_file():
+        return False
+    try:
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        record = registry.get("verified_patterns", {}).get(slug)
+    except (ValueError, TypeError, AttributeError):
+        return False
+    if not isinstance(record, dict) or record.get("status") != "tested":
+        return False
+    required_text = ("tested_by", "tested_at", "materials_used", "finished_measurements", "test_notes")
+    if any(not isinstance(record.get(key), str) or len(record[key].strip()) < 8 for key in required_text):
+        return False
+    if record.get("stitch_counts_checked") is not True or record.get("physical_sample_completed") is not True:
+        return False
+    try:
+        datetime.fromisoformat(record["tested_at"])
+    except ValueError:
+        return False
+    sample = ROOT / "assets" / "verified-samples" / (slug + "-finished.webp")
+    return sample.is_file() and sample.stat().st_size > 25_000
+
+
 def render_page(article, css, articles=None):
     slug = article["slug"]
     title = str(article["title"])
@@ -325,7 +357,7 @@ def render_page(article, css, articles=None):
     original_status = status_match.group(0) if status_match else ""
     if status_match:
         article_content = (article_content[:status_match.start()] + article_content[status_match.end():]).strip()
-    physically_tested = article.get("pattern_tested") is True and bool(safe_image(article.get("tested_photo_url")))
+    physically_tested = has_physical_test_evidence(article)
     is_draft = bool(visual_note or original_status) and not physically_tested
     toc_html = table_of_contents(article_content)
     published = str(article.get("published_at") or article.get("created_at") or "")
