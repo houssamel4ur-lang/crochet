@@ -59,8 +59,8 @@ class DayOneEditorialTests(unittest.TestCase):
             self.assertIn(count, goose)
         self.assertIn("Round 8", goose)
         self.assertIn("Round 9", goose)
-        self.assertIn("Round 15", wrap)
-        self.assertIn("Round 16", wrap)
+        self.assertIn("Row 15", wrap)
+        self.assertIn("Row 16", wrap)
         self.assertIn("12 single crochets", wrap)
         self.assertIn("chain 4", wrap.lower())
         goose_minutes = (len(re.findall(r"\b[\w'-]+\b", goose))+199)//200
