@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from scripts.build_seo import (
     ROOT, IMAGE, normalize_article_content, concise_editorial_illustrations,
-    render_page, seo_description, table_of_contents,
+    render_page, seo_description, table_of_contents, has_physical_test_evidence,
 )
 
 class EditorialSeoQuality(unittest.TestCase):
@@ -84,6 +84,23 @@ class EditorialSeoQuality(unittest.TestCase):
                 self.assertNotIn(f"/assets/{post['slug']}-02.webp", page)
                 self.assertIn("not a real project photograph", page)
 
+
+    def test_no_fabricated_physical_pattern_testing(self):
+        registry = json.loads((ROOT / "content" / "pattern_testing_records.json").read_text(encoding="utf-8"))
+        self.assertEqual(registry["verified_patterns"], {})
+        self.assertFalse(has_physical_test_evidence({
+            "slug": "crochet-dollhouse-bed-runner",
+            "pattern_tested": True,
+            "tested_photo_url": "https://cozyloops.site/assets/illustration.webp",
+        }))
+        sample = {
+            "slug": "crochet-dollhouse-bed-runner",
+            "title": "Dollhouse Bed Runner",
+            "content": "**Pattern status:** Original, untested construction draft.\n\n## Materials\n\nUse cotton yarn.",
+            "excerpt": "A miniature crochet bed runner."
+        }
+        page = render_page(sample, "body{color:#29342d}", [])
+        self.assertIn("not yet physically tested", page)
 
     def test_project_specific_excerpts_replace_repetitive_seo_boilerplate(self):
         curated = json.loads((ROOT / "content" / "unique_excerpts.json").read_text(encoding="utf-8"))
