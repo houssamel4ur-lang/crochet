@@ -51,6 +51,15 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
               assert.equal(await page.locator('#contact-form').getAttribute('method'),'POST');
               assert.match(await page.locator('#contact-form').getAttribute('action'),/^https:\/\/formsubmit\.co\//);
               assert.equal(await page.locator('#contact-form [name="message"]').count(),1);
+              assert.equal(await page.locator('#contact-form [name="_next"]').getAttribute('value'), base+'/contact/thanks/');
+              const confirmation = await page.request.get(base+'/contact/thanks/');
+              assert.equal(confirmation.status(), 200, 'contact confirmation page must exist');
+              assert.match(await confirmation.text(), /not proof that the message was delivered/);
+            }
+            if(route === '/cookie-policy') {
+              await page.locator('#ad-consent-settings').click();
+              assert.match(await page.locator('#ad-consent-status').innerText(),
+                /consent manager is not currently available|Requested the advertising privacy settings/);
             }
             if(route === '/sitemap') {
               assert.ok(await page.locator('.sitemap-articles a').count()>=53,'Sitemap shows all published articles');
