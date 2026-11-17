@@ -84,7 +84,8 @@ def inline(value):
         url = safe_image(match.group(2))
         if url:
             width, height = image_size(url)
-            output.append(f'<figure><img loading="lazy" decoding="async" src="{esc(url)}" alt="{esc(match.group(1))}" width="{width}" height="{height}"></figure>')
+            caption = '<figcaption>AI-generated concept image; not a photograph of a physically made sample.</figcaption>' if '/assets/editorial-photography/' in url else ''
+            output.append(f'<figure><img loading="lazy" decoding="async" src="{esc(url)}" alt="{esc(match.group(1))}" width="{width}" height="{height}">{caption}</figure>')
         pos = match.end()
     output.append(linked_text(value[pos:]))
     return "".join(output)
@@ -133,6 +134,57 @@ def markdown(source):
 
 REMOVED_STARTER_SLUGS = {'crochet-for-absolute-beginners','how-to-read-crochet-patterns','easy-crochet-scarf-guide','amigurumi-basics','choosing-crochet-yarn','crochet-stitch-counting'}
 
+PHOTO_OVERRIDES_PATH = ROOT / "content" / "editorial_photo_overrides.json"
+
+def load_photo_overrides():
+    if not PHOTO_OVERRIDES_PATH.is_file():
+        return {}
+    records = json.loads(PHOTO_OVERRIDES_PATH.read_text(encoding="utf-8"))
+    if not isinstance(records, dict):
+        raise ValueError("Photo override catalog must be an object")
+    return records
+
+PHOTO_OVERRIDES = load_photo_overrides()
+
+def generated_photo_url(value):
+    """Publish only verified locally present first-party WebP images."""
+    if not isinstance(value, str) or not re.fullmatch(r"assets/editorial-photography/[a-z0-9-]+\\.webp", value):
+        return ""
+    target = (ROOT / value).resolve()
+    media_root = (ROOT / "assets" / "editorial-photography").resolve()
+    if not target.is_relative_to(media_root) or not target.is_file():
+        return ""
+    return BASE + value
+
+def apply_photo_cover(article):
+    override = PHOTO_OVERRIDES.get(article.get("slug"), {})
+    if not isinstance(override, dict):
+        return article
+    url = generated_photo_url(override.get("cover"))
+    if not url:
+        return article
+    label = override.get("alt")
+    if not isinstance(label, str) or len(label.strip()) < 35:
+        raise ValueError("Photo override missing descriptive alt: " + str(article.get("slug")))
+    return {**article, "image_url": url, "image_alt": label.strip()}
+
+def swap_photo_panels(content, slug):
+    """Replace a specific original image, never every occurrence or whole article."""
+    override = PHOTO_OVERRIDES.get(slug, {})
+    swaps = override.get("replacements", {}) if isinstance(override, dict) else {}
+    if not isinstance(swaps, dict):
+        return content
+    for old_url, record in swaps.items():
+        if not isinstance(record, dict) or not isinstance(old_url, str):
+            continue
+        new_url = generated_photo_url(record.get("path"))
+        new_alt = record.get("alt")
+        if not new_url or not isinstance(new_alt, str) or len(new_alt.strip()) < 35:
+            raise ValueError("Invalid generated inline photo for " + slug)
+        pattern = re.compile(r"!\\[[^\\]]*\\]\\(" + re.escape(old_url) + r"\\)")
+        content = pattern.sub(lambda m: "![" + new_alt.strip() + "](" + new_url + ")", content)
+    return content
+
 def improved_editorial_cover(item):
     """Replace only default low-res contact-sheet covers; retain owner Admin choices."""
     slug = item.get("slug", "")
@@ -180,6 +232,7 @@ def load_articles():
             polished = ROOT / "assets" / "legacy-polished" / (item["slug"] + "-cover.webp")
             if item.get("image_url") == legacy and polished.is_file():
                 item = {**item, "image_url": BASE + "assets/legacy-polished/" + polished.name}
+            item = apply_photo_cover(item)
             articles[item["slug"]] = item
     return sorted(articles.values(), key=lambda p: p.get("published_at") or p.get("created_at") or "", reverse=True)
 
@@ -350,6 +403,7 @@ def render_page(article, css, articles=None):
     if visual_note:
         article_content = concise_editorial_illustrations(article_content)
         article_content = crisp_concept_panels(article_content, slug)
+    article_content = swap_photo_panels(article_content, slug)
     # Move verbose, unverified pattern-status notes below the guide, not out of it.
     # To mark a future pattern Tested: physically make it, check instructions,
     # add a genuine photo, then set pattern_tested=True and tested_photo_url in its CMS record.
@@ -396,9 +450,10 @@ def render_page(article, css, articles=None):
     article_class = "article starfish-featured" if is_starfish else "article"
     cover_alt = str(article.get("image_alt") or title)
     # The 2026 editorial collection uses concept images, not verified stitch photos.
-    image_disclosure = '<figcaption>AI-generated concept image — not a photograph of a physically made sample.</figcaption>' if visual_note else ''
+    is_generated_photo = "/assets/editorial-photography/" in cover
+    image_disclosure = '<figcaption>AI-generated concept image — not a photograph of a physically made sample.</figcaption>' if (visual_note or is_generated_photo) else ''
     is_illustration = "/assets/editorial-illustrations/" in cover
-    hero_variant = " illustration-hero" if is_illustration else (" concept-hero" if visual_note else "")
+    hero_variant = " photo-hero" if is_generated_photo else (" illustration-hero" if is_illustration else (" concept-hero" if visual_note else ""))
     image_html = (f'<figure class="article-hero{hero_variant}"><img class="article-cover" src="{esc(cover)}" '
                   f'alt="{esc(cover_alt)}" width="{cover_width}" height="{cover_height}" '
                   f'fetchpriority="high" decoding="async">{image_disclosure}</figure>') if cover else ""
@@ -435,6 +490,7 @@ def render_page(article, css, articles=None):
 .article-hero figcaption{{font:12px/1.6 system-ui,sans-serif;text-align:center;color:#536153;margin:7px auto 0}}
 .illustration-hero{{display:flex;flex-direction:column;align-items:center}}
 .illustration-hero .article-cover{{width:100%;height:auto;max-width:860px;max-height:none;aspect-ratio:8/5;object-fit:contain;background:#f9f6ef;box-shadow:0 10px 28px #2b352b0b}}
+.photo-hero .article-cover{{width:100%;max-width:860px;height:auto;max-height:540px;aspect-ratio:4/3;object-fit:cover;object-position:center;box-shadow:0 10px 28px #2b352b0b}}
 .concept-hero{{display:flex;flex-direction:column;align-items:center}}
 .concept-hero .article-cover{{width:min(100%,340px);height:340px;aspect-ratio:1;object-fit:cover;object-position:left center;max-height:340px;box-shadow:0 10px 28px #2b352b12}}
 @media(max-width:640px){{.concept-hero .article-cover{{width:min(100%,310px);height:min(82vw,310px)}}}}
