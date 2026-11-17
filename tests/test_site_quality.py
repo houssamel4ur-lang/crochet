@@ -90,6 +90,38 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn('id="ad-consent-settings"', legal)
         self.assertIn('id="us-privacy-settings"', legal)
 
+    def test_new_crochet_webp_photos_are_real_local_files_without_repeats(self):
+        """Every new visual is unique, on-topic and first-party; never an expired link."""
+        entries = json.loads((ROOT / "content/editorial_photo_overrides.json").read_text(encoding="utf-8"))
+        self.assertGreaterEqual(len(entries), 5)
+        image_paths = {"assets/editorial-photography/cozyloops-about-feature.webp"}
+        for slug, record in entries.items():
+            with self.subTest(article=slug):
+                self.assertIn(slug, self.manifest)
+                path = record["cover"]
+                self.assertRegex(path, r"^assets/editorial-photography/[a-z0-9-]+\\.webp$")
+                self.assertNotIn(path, image_paths, "No duplicate cover photo across articles")
+                image_paths.add(path)
+                html = (ROOT / "posts" / slug / "index.html").read_text(encoding="utf-8")
+                self.assertIn("https://cozyloops.site/" + path, html)
+                self.assertIn("AI-generated concept image", html)
+                for old, value in record.get("replacements", {}).items():
+                    new_path = value["path"]
+                    self.assertNotIn(new_path, image_paths, "Each article image must use a different original")
+                    image_paths.add(new_path)
+                    self.assertIn("https://cozyloops.site/" + new_path, html)
+                    self.assertNotIn(old, html)
+                urls = re.findall(r'<img\\b[^>]+src="([^"]+)"', html)
+                self.assertEqual(len(urls), len(set(urls)), "Duplicate photo in same article")
+        self.assertEqual(len(image_paths), 8)
+        for name in image_paths:
+            with self.subTest(photo=name):
+                photo = ROOT / name
+                self.assertTrue(photo.is_file(), "Missing WebP asset")
+                self.assertGreater(photo.stat().st_size, 35_000, "Too small to be a credible large photo")
+        self.assertIn('/assets/editorial-photography/cozyloops-about-feature.webp', self.home)
+        self.assertIn("content/editorial_photo_overrides.json", self.home)
+
     def test_mobile_card_title_touch_targets_match_lighthouse_findings(self):
         # Lighthouse 2026-11-17 identified six tiny card-title link safe areas.
         # Ensure the anchor itself (not just its parent card) is a generous target.
