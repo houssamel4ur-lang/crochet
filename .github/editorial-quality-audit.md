@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **54**. Missing generated articles: **0**.
+Articles checked: **55**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -20,6 +20,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-dollhouse-bed-runner`](https://cozyloops.site/posts/crochet-dollhouse-bed-runner/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-bolster-cushion`](https://cozyloops.site/posts/crochet-dollhouse-bolster-cushion/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-cafe-awning`](https://cozyloops.site/posts/crochet-dollhouse-cafe-awning/) | 6 | yes | No automated issues found |
+| [`crochet-dollhouse-cafe-tablecloth`](https://cozyloops.site/posts/crochet-dollhouse-cafe-tablecloth/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-market-basket`](https://cozyloops.site/posts/crochet-dollhouse-market-basket/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-nursery-cloud-pillow`](https://cozyloops.site/posts/crochet-dollhouse-nursery-cloud-pillow/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-picnic-blanket`](https://cozyloops.site/posts/crochet-dollhouse-picnic-blanket/) | 6 | yes | No automated issues found |
