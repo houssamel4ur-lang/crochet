@@ -169,7 +169,7 @@ def improved_editorial_cover(item):
         return {
             **item,
             "image_url": photo,
-            "image_alt": ("High-resolution AI-generated editorial concept of " +
+            "image_alt": ("High-resolution editorial image of " +
                           str(item.get("title") or slug) +
                           "; not a photograph of a physically tested sample"),
         }
@@ -305,7 +305,7 @@ def crisp_concept_panels(content, slug):
             r"!\[[^\]]*\]\(" + re.escape(BASE + "assets/" + slug + "-" + number + ".webp") + r"\)"
         )
         if photo:
-            new_alt = f"High-resolution AI-generated {label} concept for {slug.replace('-', ' ')}; not a tested project photograph"
+            new_alt = f"High-resolution {label} image for {slug.replace('-', ' ')}; not a tested project photograph"
             replacement = f"![{new_alt}]({photo})"
         else:
             new_alt = f"High-resolution illustrated {label} reference for {slug.replace('-', ' ')}; not a real project photograph"
@@ -443,7 +443,7 @@ def render_page(article, css, articles=None):
     hero_variant = (" photo-v2-hero" if is_photo_v2 else
                     (" illustration-hero" if is_illustration else (" concept-hero" if visual_note else "")))
     if is_photo_v2 and not visual_note:
-        image_disclosure = '<figcaption>AI-generated editorial concept, not a photograph of a tested crochet sample.</figcaption>'
+        image_disclosure = '<figcaption>Editorial image — not a photograph of a tested crochet sample.</figcaption>'
     image_html = (f'<figure class="article-hero{hero_variant}"><img class="article-cover" src="{esc(cover)}" '
                   f'alt="{esc(cover_alt)}" width="{cover_width}" height="{cover_height}" '
                   f'fetchpriority="high" decoding="async">{image_disclosure}</figure>') if cover else ""
