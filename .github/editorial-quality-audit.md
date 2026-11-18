@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **79**. Missing generated articles: **0**.
+Articles checked: **81**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -61,6 +61,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-sea-urchin-desk-ornament`](https://cozyloops.site/posts/crochet-sea-urchin-desk-ornament/) | 6 | yes | No automated issues found |
 | [`crochet-seahorse-silhouette-wall-pennant`](https://cozyloops.site/posts/crochet-seahorse-silhouette-wall-pennant/) | 6 | yes | No automated issues found |
 | [`crochet-snowman-amigurumi-scarf-top-hat`](https://cozyloops.site/posts/crochet-snowman-amigurumi-scarf-top-hat/) | 3 | yes | No automated issues found |
+| [`crochet-star-garland-mantel-pattern`](https://cozyloops.site/posts/crochet-star-garland-mantel-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-strawberry-crossbody-bag-guide`](https://cozyloops.site/posts/crochet-strawberry-crossbody-bag-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-string-of-hearts-desk-planter`](https://cozyloops.site/posts/crochet-string-of-hearts-desk-planter/) | 6 | yes | No automated issues found |
 | [`crochet-tide-pool-limpets-on-a-pebble-mat`](https://cozyloops.site/posts/crochet-tide-pool-limpets-on-a-pebble-mat/) | 6 | yes | No automated issues found |
@@ -79,6 +80,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`mini-ocean-amigurumi-keychains-free-patterns`](https://cozyloops.site/posts/mini-ocean-amigurumi-keychains-free-patterns/) | 10 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`mini-woodland-amigurumi-animal-ideas`](https://cozyloops.site/posts/mini-woodland-amigurumi-animal-ideas/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`nutcracker-amigurumi-crochet-pattern`](https://cozyloops.site/posts/nutcracker-amigurumi-crochet-pattern/) | 3 | yes | No automated issues found |
+| [`pinecone-stitch-christmas-table-runner`](https://cozyloops.site/posts/pinecone-stitch-christmas-table-runner/) | 3 | yes | No automated issues found |
 | [`pink-axolotl-crochet-amigurumi-guide`](https://cozyloops.site/posts/pink-axolotl-crochet-amigurumi-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`polar-bear-amigurumi-santa-hat-pattern`](https://cozyloops.site/posts/polar-bear-amigurumi-santa-hat-pattern/) | 3 | yes | No automated issues found |
 | [`red-robin-amigurumi-christmas-bird-pattern`](https://cozyloops.site/posts/red-robin-amigurumi-christmas-bird-pattern/) | 3 | yes | No automated issues found |
