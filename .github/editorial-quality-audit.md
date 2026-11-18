@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **89**. Missing generated articles: **0**.
+Articles checked: **91**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -21,6 +21,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-aloe-inspired-windowsill-plant`](https://cozyloops.site/posts/crochet-aloe-inspired-windowsill-plant/) | 6 | yes | No automated issues found |
 | [`crochet-baby-animal-hats-bear-bunny-frog-guide`](https://cozyloops.site/posts/crochet-baby-animal-hats-bear-bunny-frog-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-baby-booties-sizing-sole-guide`](https://cozyloops.site/posts/crochet-baby-booties-sizing-sole-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`crochet-balaclava-hood-beginner-pattern`](https://cozyloops.site/posts/crochet-balaclava-hood-beginner-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-bow-keychain-free-pattern`](https://cozyloops.site/posts/crochet-bow-keychain-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-bucket-hat-for-beginners`](https://cozyloops.site/posts/crochet-bucket-hat-for-beginners/) | 3 | yes | No automated issues found |
 | [`crochet-burgundy-peplum-and-pink-lace-crop-top`](https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/) | 3 | yes | No automated issues found |
@@ -97,6 +98,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`snowy-owl-amigurumi-ornament-pattern`](https://cozyloops.site/posts/snowy-owl-amigurumi-ornament-pattern/) | 3 | yes | No automated issues found |
 | [`starfish-baby-crochet-outfit-guide`](https://cozyloops.site/posts/starfish-baby-crochet-outfit-guide/) | 5 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`sunflower-crochet-tote-bag-guide`](https://cozyloops.site/posts/sunflower-crochet-tote-bag-guide/) | 3 | yes | No automated issues found |
+| [`twisted-ear-warmer-headband-crochet`](https://cozyloops.site/posts/twisted-ear-warmer-headband-crochet/) | 3 | yes | No automated issues found |
 
 ## Automated findings
 
