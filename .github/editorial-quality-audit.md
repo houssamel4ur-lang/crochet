@@ -27,7 +27,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-dollhouse-picnic-blanket`](https://cozyloops.site/posts/crochet-dollhouse-picnic-blanket/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-reading-rug`](https://cozyloops.site/posts/crochet-dollhouse-reading-rug/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-round-pouf`](https://cozyloops.site/posts/crochet-dollhouse-round-pouf/) | 6 | yes | No automated issues found |
-| [`crochet-earbud-cord-wrap-with-a-buttonhole`](https://cozyloops.site/posts/crochet-earbud-cord-wrap-with-a-buttonhole/) | 0 | yes | No cover |
+| [`crochet-earbud-cord-wrap-with-a-buttonhole`](https://cozyloops.site/posts/crochet-earbud-cord-wrap-with-a-buttonhole/) | 3 | yes | No automated issues found |
 | [`crochet-eucalyptus-place-setting-sprig`](https://cozyloops.site/posts/crochet-eucalyptus-place-setting-sprig/) | 6 | yes | No automated issues found |
 | [`crochet-fan-palm-for-a-bookshelf`](https://cozyloops.site/posts/crochet-fan-palm-for-a-bookshelf/) | 6 | yes | No automated issues found |
 | [`crochet-fern-frond-bookmark`](https://cozyloops.site/posts/crochet-fern-frond-bookmark/) | 6 | yes | No automated issues found |
@@ -58,7 +58,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`easy-crochet-scarf-for-beginners`](https://cozyloops.site/posts/easy-crochet-scarf-for-beginners/) | 3 | yes | No automated issues found |
 | [`mini-crochet-coral-garden-in-a-bowl`](https://cozyloops.site/posts/mini-crochet-coral-garden-in-a-bowl/) | 6 | yes | No automated issues found |
 | [`mini-crochet-dinosaur-amigurumi-guide`](https://cozyloops.site/posts/mini-crochet-dinosaur-amigurumi-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
-| [`mini-crochet-goose-bag-charm-with-embroidered-face`](https://cozyloops.site/posts/mini-crochet-goose-bag-charm-with-embroidered-face/) | 0 | yes | No cover |
+| [`mini-crochet-goose-bag-charm-with-embroidered-face`](https://cozyloops.site/posts/mini-crochet-goose-bag-charm-with-embroidered-face/) | 3 | yes | No automated issues found |
 | [`mini-farm-animals-amigurumi-collection`](https://cozyloops.site/posts/mini-farm-animals-amigurumi-collection/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`mini-ocean-amigurumi-free-crochet-patterns`](https://cozyloops.site/posts/mini-ocean-amigurumi-free-crochet-patterns/) | 11 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`mini-ocean-amigurumi-keychains-free-patterns`](https://cozyloops.site/posts/mini-ocean-amigurumi-keychains-free-patterns/) | 10 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
@@ -71,7 +71,6 @@ Articles with AI/editorial illustration provenance: **18**.
 
 - **18** article(s): Concept imagery: replace with real source photo before claiming a tested pattern
 - **15** article(s): Contact-sheet crop: higher-resolution original needed
-- **2** article(s): No cover
 
 ## Checks that still require a real person or direct infrastructure access
 
