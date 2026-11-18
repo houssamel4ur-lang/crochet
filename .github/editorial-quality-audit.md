@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **102**. Missing generated articles: **0**.
+Articles checked: **104**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -19,6 +19,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`christmas-pudding-amigurumi-ornament-pattern`](https://cozyloops.site/posts/christmas-pudding-amigurumi-ornament-pattern/) | 3 | yes | No automated issues found |
 | [`chunky-cowl-button-closure-crochet`](https://cozyloops.site/posts/chunky-cowl-button-closure-crochet/) | 3 | yes | No automated issues found |
 | [`chunky-ribbed-crochet-scarf-pattern`](https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
+| [`coffee-cup-cozy-button-crochet`](https://cozyloops.site/posts/coffee-cup-cozy-button-crochet/) | 3 | yes | No automated issues found |
 | [`crochet-aloe-inspired-windowsill-plant`](https://cozyloops.site/posts/crochet-aloe-inspired-windowsill-plant/) | 6 | yes | No automated issues found |
 | [`crochet-baby-animal-hats-bear-bunny-frog-guide`](https://cozyloops.site/posts/crochet-baby-animal-hats-bear-bunny-frog-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-baby-booties-sizing-sole-guide`](https://cozyloops.site/posts/crochet-baby-booties-sizing-sole-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
@@ -96,6 +97,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`mini-ocean-amigurumi-free-crochet-patterns`](https://cozyloops.site/posts/mini-ocean-amigurumi-free-crochet-patterns/) | 11 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`mini-ocean-amigurumi-keychains-free-patterns`](https://cozyloops.site/posts/mini-ocean-amigurumi-keychains-free-patterns/) | 10 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`mini-woodland-amigurumi-animal-ideas`](https://cozyloops.site/posts/mini-woodland-amigurumi-animal-ideas/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`mug-rug-heart-motif-crochet`](https://cozyloops.site/posts/mug-rug-heart-motif-crochet/) | 3 | yes | No automated issues found |
 | [`nutcracker-amigurumi-crochet-pattern`](https://cozyloops.site/posts/nutcracker-amigurumi-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`pinecone-stitch-christmas-table-runner`](https://cozyloops.site/posts/pinecone-stitch-christmas-table-runner/) | 3 | yes | No automated issues found |
 | [`pink-axolotl-crochet-amigurumi-guide`](https://cozyloops.site/posts/pink-axolotl-crochet-amigurumi-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
