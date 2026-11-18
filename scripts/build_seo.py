@@ -153,14 +153,13 @@ def staged_photo_url(slug, role):
 
 
 def improved_editorial_cover(item):
-    """Replace only default low-res contact-sheet covers; retain owner Admin choices."""
+    """Use a validated high-resolution replacement only; otherwise preserve the existing cover."""
     slug = item.get("slug", "")
     if not isinstance(slug, str) or not SLUG.fullmatch(slug):
         return item
-    default = BASE + "assets/" + slug + "-01.webp"
     photo = staged_photo_url(slug, "hero")
     allowed_old_covers = (
-        default,
+        BASE + "assets/" + slug + "-01.webp",
         BASE + "assets/editorial-illustrations/" + slug + "-cover.webp",
         BASE + "assets/legacy-polished/" + slug + "-cover.webp",
         BASE + "assets/" + slug + "-1.webp",
@@ -173,15 +172,8 @@ def improved_editorial_cover(item):
                           str(item.get("title") or slug) +
                           "; not a photograph of a physically tested sample"),
         }
-    improved = ROOT / "assets" / "editorial-illustrations" / (slug + "-cover.webp")
-    if item.get("image_url") != default or not improved.is_file():
-        return item
-    return {
-        **item,
-        "image_url": BASE + "assets/editorial-illustrations/" + improved.name,
-        "image_alt": "Original editorial illustration of " + str(item.get("title") or slug)
-                     + ", not a photograph of a physically crocheted sample",
-    }
+    # Do not downgrade a usable original photo to a flat vector/diagram cover.
+    return item
 
 def load_articles():
     """Published Supabase articles and intentional GitHub editorials only."""
@@ -285,31 +277,23 @@ def concise_editorial_illustrations(content):
     return "".join(kept).strip()
 
 def crisp_concept_panels(content, slug):
-    """Prefer validated article photos; keep existing illustrations until replacements exist.
+    """Replace original article panels only when a validated high-resolution photo exists.
 
-    Never substitute generic icons, enlarge small contact-sheet crops or overwrite
-    images stored under a different/custom URL.
+    If no approved photo is available, retain the article's existing WebP image.
+    Never fall back to generated diagrams or overwrite a custom image URL.
     """
     if not isinstance(slug, str) or not SLUG.fullmatch(slug):
-        return content
-    artwork = ROOT / "assets" / "editorial-illustrations" / (slug + "-cover.svg")
-    if not artwork.is_file():
         return content
     stage_names = {"02": "materials", "04": "construction", "09": "finishing"}
     for number, label in stage_names.items():
         photo = staged_photo_url(slug, label)
-        visual = ROOT / "assets" / "editorial-illustrations" / (slug + "-panel-" + number + ".webp")
-        if not photo and not visual.is_file():
+        if not photo:
             continue
         old = re.compile(
             r"!\[[^\]]*\]\(" + re.escape(BASE + "assets/" + slug + "-" + number + ".webp") + r"\)"
         )
-        if photo:
-            new_alt = f"High-resolution AI-generated {label} concept for {slug.replace('-', ' ')}; not a tested project photograph"
-            replacement = f"![{new_alt}]({photo})"
-        else:
-            new_alt = f"High-resolution illustrated {label} reference for {slug.replace('-', ' ')}; not a real project photograph"
-            replacement = f"![{new_alt}]({BASE}assets/editorial-illustrations/{visual.name})"
+        new_alt = f"High-resolution AI-generated {label} concept for {slug.replace('-', ' ')}; not a tested project photograph"
+        replacement = f"![{new_alt}]({photo})"
         content = old.sub(lambda _m: replacement, content)
     return content
 
