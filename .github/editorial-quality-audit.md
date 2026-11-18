@@ -3,11 +3,12 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **75**. Missing generated articles: **0**.
+Articles checked: **77**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
 |---|---:|---|---|
+| [`arctic-fox-amigurumi-winter-scarf-pattern`](https://cozyloops.site/posts/arctic-fox-amigurumi-winter-scarf-pattern/) | 3 | yes | No automated issues found |
 | [`candy-cane-amigurumi-doll-crochet-pattern`](https://cozyloops.site/posts/candy-cane-amigurumi-doll-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`capybara-amigurumi-free-crochet-pattern`](https://cozyloops.site/posts/capybara-amigurumi-free-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`christmas-angel-amigurumi-lace-wings-pattern`](https://cozyloops.site/posts/christmas-angel-amigurumi-lace-wings-pattern/) | 3 | yes | No automated issues found |
@@ -81,6 +82,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`red-robin-amigurumi-christmas-bird-pattern`](https://cozyloops.site/posts/red-robin-amigurumi-christmas-bird-pattern/) | 3 | yes | No automated issues found |
 | [`ribbed-crochet-beanie-adult-pattern`](https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/) | 3 | yes | No automated issues found |
 | [`slouchy-crochet-beanie-pattern`](https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/) | 3 | yes | No automated issues found |
+| [`snowy-owl-amigurumi-ornament-pattern`](https://cozyloops.site/posts/snowy-owl-amigurumi-ornament-pattern/) | 3 | yes | No automated issues found |
 | [`starfish-baby-crochet-outfit-guide`](https://cozyloops.site/posts/starfish-baby-crochet-outfit-guide/) | 5 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`sunflower-crochet-tote-bag-guide`](https://cozyloops.site/posts/sunflower-crochet-tote-bag-guide/) | 3 | yes | No automated issues found |
 
