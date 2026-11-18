@@ -78,11 +78,12 @@ class EditorialSeoQuality(unittest.TestCase):
                 self.assertEqual(page.count("<figure"), 4)
                 self.assertEqual(page.count('class="article-cover"'), 1)
                 self.assertIn('content="summary_large_image"', page)
-                self.assertIn("-panel-02.webp", page)
-                self.assertIn("-panel-04.webp", page)
-                self.assertIn("-panel-09.webp", page)
-                self.assertNotIn(f"/assets/{post['slug']}-02.webp", page)
-                self.assertIn("not a real project photograph", page)
+                # Keep the article's original WebP panels until a reviewed
+                # high-resolution replacement is actually available.
+                for number in ("02", "04", "09"):
+                    self.assertIn(f"/assets/{post['slug']}-{number}.webp", page)
+                    self.assertNotIn(f"-panel-{number}.webp", page)
+                self.assertIn("AI-generated concept image — not a photograph of a physically made sample.", page)
 
 
     def test_no_fabricated_physical_pattern_testing(self):
