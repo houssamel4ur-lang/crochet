@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **98**. Missing generated articles: **0**.
+Articles checked: **100**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -68,6 +68,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-penguin-ornament-free-pattern`](https://cozyloops.site/posts/crochet-penguin-ornament-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-phone-pouch-crossbody-size-guide`](https://cozyloops.site/posts/crochet-phone-pouch-crossbody-size-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-plant-hanger-beginners`](https://cozyloops.site/posts/crochet-plant-hanger-beginners/) | 3 | yes | No automated issues found |
+| [`crochet-polo-shirt-modern-pattern`](https://cozyloops.site/posts/crochet-polo-shirt-modern-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-sea-urchin-desk-ornament`](https://cozyloops.site/posts/crochet-sea-urchin-desk-ornament/) | 6 | yes | No automated issues found |
 | [`crochet-seahorse-silhouette-wall-pennant`](https://cozyloops.site/posts/crochet-seahorse-silhouette-wall-pennant/) | 6 | yes | No automated issues found |
 | [`crochet-snowman-amigurumi-scarf-top-hat`](https://cozyloops.site/posts/crochet-snowman-amigurumi-scarf-top-hat/) | 3 | yes | No automated issues found |
@@ -81,6 +82,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`easy-crochet-scarf-for-beginners`](https://cozyloops.site/posts/easy-crochet-scarf-for-beginners/) | 3 | yes | No automated issues found |
 | [`fingerless-gloves-ribbed-cuffs-crochet`](https://cozyloops.site/posts/fingerless-gloves-ribbed-cuffs-crochet/) | 3 | yes | No automated issues found |
 | [`gingerbread-man-amigurumi-crochet-pattern`](https://cozyloops.site/posts/gingerbread-man-amigurumi-crochet-pattern/) | 3 | yes | No automated issues found |
+| [`granny-square-cardigan-pockets-crochet`](https://cozyloops.site/posts/granny-square-cardigan-pockets-crochet/) | 3 | yes | No automated issues found |
 | [`granny-square-vest-free-crochet-pattern`](https://cozyloops.site/posts/granny-square-vest-free-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`granny-stripe-crochet-scarf-pattern`](https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
 | [`mini-advent-stockings-24-crochet`](https://cozyloops.site/posts/mini-advent-stockings-24-crochet/) | 3 | yes | No automated issues found |
