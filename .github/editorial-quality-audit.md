@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **77**. Missing generated articles: **0**.
+Articles checked: **79**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -22,6 +22,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-bucket-hat-for-beginners`](https://cozyloops.site/posts/crochet-bucket-hat-for-beginners/) | 3 | yes | No automated issues found |
 | [`crochet-burgundy-peplum-and-pink-lace-crop-top`](https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/) | 3 | yes | No automated issues found |
 | [`crochet-butterfly-ornament-wing-guide`](https://cozyloops.site/posts/crochet-butterfly-ornament-wing-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`crochet-christmas-tree-skirt-granny-stripes`](https://cozyloops.site/posts/crochet-christmas-tree-skirt-granny-stripes/) | 3 | yes | No automated issues found |
 | [`crochet-clam-shell-ring-presentation-pad`](https://cozyloops.site/posts/crochet-clam-shell-ring-presentation-pad/) | 6 | yes | No automated issues found |
 | [`crochet-daisy-flower-bookmark-free-pattern`](https://cozyloops.site/posts/crochet-daisy-flower-bookmark-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-dollhouse-bed-runner`](https://cozyloops.site/posts/crochet-dollhouse-bed-runner/) | 6 | yes | No automated issues found |
@@ -69,6 +70,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`easy-crochet-scarf-for-beginners`](https://cozyloops.site/posts/easy-crochet-scarf-for-beginners/) | 3 | yes | No automated issues found |
 | [`gingerbread-man-amigurumi-crochet-pattern`](https://cozyloops.site/posts/gingerbread-man-amigurumi-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`granny-stripe-crochet-scarf-pattern`](https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
+| [`mini-christmas-stocking-garland-crochet`](https://cozyloops.site/posts/mini-christmas-stocking-garland-crochet/) | 3 | yes | No automated issues found |
 | [`mini-crochet-coral-garden-in-a-bowl`](https://cozyloops.site/posts/mini-crochet-coral-garden-in-a-bowl/) | 6 | yes | No automated issues found |
 | [`mini-crochet-dinosaur-amigurumi-guide`](https://cozyloops.site/posts/mini-crochet-dinosaur-amigurumi-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`mini-crochet-goose-bag-charm-with-embroidered-face`](https://cozyloops.site/posts/mini-crochet-goose-bag-charm-with-embroidered-face/) | 3 | yes | No automated issues found |
