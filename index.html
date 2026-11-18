@@ -589,6 +589,7 @@ function initAnalyticsConsent(){
  });
  document.getElementById('privacy-ad-settings')?.addEventListener('click',()=>{
   const status=document.getElementById('cookie-choice-status');
+  if(cmpReady===false){if(status)status.textContent='The advertising consent screen is not available in this browser right now. Your advertising preference has not been changed.';return;}
   const api=window.__tcfapi;
   if(typeof api==='function'){
    try{api('displayConsentUi',2,()=>{});if(status)status.textContent='Requested the advertising provider consent screen. No advertising choice was changed by CozyLoops.';return;}catch{}
@@ -599,6 +600,28 @@ function initAnalyticsConsent(){
   }
   if(status)status.textContent='The advertising consent screen is not available in this browser right now. Your advertising preference has not been changed.';
  });
+ /* Advertising consent belongs to the provider CMP (HB Agency / InMobi).
+  * __tcfapi('ping',2,...) is a read-only status query: it shows no UI and
+  * writes no consent. It only tells us whether the provider CMP actually
+  * loaded, so the banner does not promise a screen the provider script
+  * cannot show. Never auto-open the provider UI from here. */
+ let cmpReady=null;
+ const probeCmp=(triesLeft)=>{
+  const status=document.getElementById('cookie-choice-status');
+  const api=window.__tcfapi;
+  if(typeof api!=='function'){
+   if(triesLeft>0)window.setTimeout(()=>probeCmp(triesLeft-1),500);
+   else{cmpReady=false;if(status&&!status.textContent)status.textContent='The advertising consent screen is not available in this browser right now. Your analytics choice does not affect advertising cookies.';}
+   return;
+  }
+  try{
+   api('ping',2,(ping)=>{
+    cmpReady=!!(ping&&ping.cmpLoaded);
+    if(status&&!status.textContent)status.textContent=cmpReady?'Advertising consent screen is available from the advertising provider.':'The advertising consent screen is not available in this browser right now. Your analytics choice does not affect advertising cookies.';
+   });
+  }catch{cmpReady=false;if(status&&!status.textContent)status.textContent='The advertising consent screen is not available in this browser right now. Your analytics choice does not affect advertising cookies.';}
+ };
+ probeCmp(12);
 }
 let readingProgressScheduled=false;
 function updateReadingProgress(){
