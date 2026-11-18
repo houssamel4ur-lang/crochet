@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **85**. Missing generated articles: **0**.
+Articles checked: **87**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -13,6 +13,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`candy-cane-amigurumi-doll-crochet-pattern`](https://cozyloops.site/posts/candy-cane-amigurumi-doll-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`capybara-amigurumi-free-crochet-pattern`](https://cozyloops.site/posts/capybara-amigurumi-free-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`christmas-angel-amigurumi-lace-wings-pattern`](https://cozyloops.site/posts/christmas-angel-amigurumi-lace-wings-pattern/) | 3 | yes | No automated issues found |
+| [`christmas-cutlery-holders-tree-stocking`](https://cozyloops.site/posts/christmas-cutlery-holders-tree-stocking/) | 3 | yes | No automated issues found |
 | [`christmas-gnome-amigurumi-beard-pattern`](https://cozyloops.site/posts/christmas-gnome-amigurumi-beard-pattern/) | 3 | yes | No automated issues found |
 | [`christmas-placemats-holly-motif-crochet`](https://cozyloops.site/posts/christmas-placemats-holly-motif-crochet/) | 3 | yes | No automated issues found |
 | [`christmas-pudding-amigurumi-ornament-pattern`](https://cozyloops.site/posts/christmas-pudding-amigurumi-ornament-pattern/) | 3 | yes | No automated issues found |
@@ -24,6 +25,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-bucket-hat-for-beginners`](https://cozyloops.site/posts/crochet-bucket-hat-for-beginners/) | 3 | yes | No automated issues found |
 | [`crochet-burgundy-peplum-and-pink-lace-crop-top`](https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/) | 3 | yes | No automated issues found |
 | [`crochet-butterfly-ornament-wing-guide`](https://cozyloops.site/posts/crochet-butterfly-ornament-wing-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`crochet-candle-covers-mantel-pattern`](https://cozyloops.site/posts/crochet-candle-covers-mantel-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-christmas-tree-skirt-granny-stripes`](https://cozyloops.site/posts/crochet-christmas-tree-skirt-granny-stripes/) | 3 | yes | No automated issues found |
 | [`crochet-christmas-wreath-poinsettia-pattern`](https://cozyloops.site/posts/crochet-christmas-wreath-poinsettia-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-clam-shell-ring-presentation-pad`](https://cozyloops.site/posts/crochet-clam-shell-ring-presentation-pad/) | 6 | yes | No automated issues found |
