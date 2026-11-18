@@ -413,7 +413,7 @@ def render_page(article, css, articles=None):
     byline = " · ".join(byline_parts)
     # Keep the physical-testing disclosure as one concise note after the article body.
     # Never place an unverified-pattern warning in the title, introduction, or opening metadata.
-    draft_label = '<p class="pattern-status">Pattern note: This pattern has not yet been physically tested as a finished sample. Check your own sample before use.</p>' if is_draft else ""
+    draft_label = '<p class="pattern-status">Pattern note: This pattern is not yet physically tested as a finished sample. Check your own sample before use.</p>' if is_draft else ""
     original_status_html = ""
     structured = {
         "@context": "https://schema.org",
