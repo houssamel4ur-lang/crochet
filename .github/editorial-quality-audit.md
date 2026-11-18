@@ -3,12 +3,13 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **81**. Missing generated articles: **0**.
+Articles checked: **83**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
 |---|---:|---|---|
 | [`arctic-fox-amigurumi-winter-scarf-pattern`](https://cozyloops.site/posts/arctic-fox-amigurumi-winter-scarf-pattern/) | 3 | yes | No automated issues found |
+| [`bobble-christmas-trees-set-of-three`](https://cozyloops.site/posts/bobble-christmas-trees-set-of-three/) | 3 | yes | No automated issues found |
 | [`candy-cane-amigurumi-doll-crochet-pattern`](https://cozyloops.site/posts/candy-cane-amigurumi-doll-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`capybara-amigurumi-free-crochet-pattern`](https://cozyloops.site/posts/capybara-amigurumi-free-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`christmas-angel-amigurumi-lace-wings-pattern`](https://cozyloops.site/posts/christmas-angel-amigurumi-lace-wings-pattern/) | 3 | yes | No automated issues found |
@@ -23,6 +24,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-burgundy-peplum-and-pink-lace-crop-top`](https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/) | 3 | yes | No automated issues found |
 | [`crochet-butterfly-ornament-wing-guide`](https://cozyloops.site/posts/crochet-butterfly-ornament-wing-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-christmas-tree-skirt-granny-stripes`](https://cozyloops.site/posts/crochet-christmas-tree-skirt-granny-stripes/) | 3 | yes | No automated issues found |
+| [`crochet-christmas-wreath-poinsettia-pattern`](https://cozyloops.site/posts/crochet-christmas-wreath-poinsettia-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-clam-shell-ring-presentation-pad`](https://cozyloops.site/posts/crochet-clam-shell-ring-presentation-pad/) | 6 | yes | No automated issues found |
 | [`crochet-daisy-flower-bookmark-free-pattern`](https://cozyloops.site/posts/crochet-daisy-flower-bookmark-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-dollhouse-bed-runner`](https://cozyloops.site/posts/crochet-dollhouse-bed-runner/) | 6 | yes | No automated issues found |
