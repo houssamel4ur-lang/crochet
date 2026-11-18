@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **93**. Missing generated articles: **0**.
+Articles checked: **95**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -52,6 +52,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-gift-tags-mini-motifs-pattern`](https://cozyloops.site/posts/crochet-gift-tags-mini-motifs-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-granny-square-vest-and-striped-summer-top`](https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/) | 3 | yes | No automated issues found |
 | [`crochet-hanging-pea-vine-shelf-ornament`](https://cozyloops.site/posts/crochet-hanging-pea-vine-shelf-ornament/) | 6 | yes | No automated issues found |
+| [`crochet-headscarf-lace-edge-pattern`](https://cozyloops.site/posts/crochet-headscarf-lace-edge-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-jellyfish-for-a-desktop-display`](https://cozyloops.site/posts/crochet-jellyfish-for-a-desktop-display/) | 6 | yes | No automated issues found |
 | [`crochet-kelp-book-nook-panel`](https://cozyloops.site/posts/crochet-kelp-book-nook-panel/) | 6 | yes | No automated issues found |
 | [`crochet-lavender-sachet-cover`](https://cozyloops.site/posts/crochet-lavender-sachet-cover/) | 6 | yes | No automated issues found |
@@ -101,6 +102,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`starfish-baby-crochet-outfit-guide`](https://cozyloops.site/posts/starfish-baby-crochet-outfit-guide/) | 5 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`sunflower-crochet-tote-bag-guide`](https://cozyloops.site/posts/sunflower-crochet-tote-bag-guide/) | 3 | yes | No automated issues found |
 | [`twisted-ear-warmer-headband-crochet`](https://cozyloops.site/posts/twisted-ear-warmer-headband-crochet/) | 3 | yes | No automated issues found |
+| [`winter-shawl-with-pockets-crochet`](https://cozyloops.site/posts/winter-shawl-with-pockets-crochet/) | 3 | yes | No automated issues found |
 
 ## Automated findings
 
