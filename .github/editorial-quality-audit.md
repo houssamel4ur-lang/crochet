@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **83**. Missing generated articles: **0**.
+Articles checked: **85**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -14,6 +14,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`capybara-amigurumi-free-crochet-pattern`](https://cozyloops.site/posts/capybara-amigurumi-free-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`christmas-angel-amigurumi-lace-wings-pattern`](https://cozyloops.site/posts/christmas-angel-amigurumi-lace-wings-pattern/) | 3 | yes | No automated issues found |
 | [`christmas-gnome-amigurumi-beard-pattern`](https://cozyloops.site/posts/christmas-gnome-amigurumi-beard-pattern/) | 3 | yes | No automated issues found |
+| [`christmas-placemats-holly-motif-crochet`](https://cozyloops.site/posts/christmas-placemats-holly-motif-crochet/) | 3 | yes | No automated issues found |
 | [`christmas-pudding-amigurumi-ornament-pattern`](https://cozyloops.site/posts/christmas-pudding-amigurumi-ornament-pattern/) | 3 | yes | No automated issues found |
 | [`chunky-ribbed-crochet-scarf-pattern`](https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-aloe-inspired-windowsill-plant`](https://cozyloops.site/posts/crochet-aloe-inspired-windowsill-plant/) | 6 | yes | No automated issues found |
@@ -87,6 +88,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`polar-bear-amigurumi-santa-hat-pattern`](https://cozyloops.site/posts/polar-bear-amigurumi-santa-hat-pattern/) | 3 | yes | No automated issues found |
 | [`red-robin-amigurumi-christmas-bird-pattern`](https://cozyloops.site/posts/red-robin-amigurumi-christmas-bird-pattern/) | 3 | yes | No automated issues found |
 | [`ribbed-crochet-beanie-adult-pattern`](https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/) | 3 | yes | No automated issues found |
+| [`scalloped-christmas-coasters-crochet`](https://cozyloops.site/posts/scalloped-christmas-coasters-crochet/) | 3 | yes | No automated issues found |
 | [`slouchy-crochet-beanie-pattern`](https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/) | 3 | yes | No automated issues found |
 | [`snowy-owl-amigurumi-ornament-pattern`](https://cozyloops.site/posts/snowy-owl-amigurumi-ornament-pattern/) | 3 | yes | No automated issues found |
 | [`starfish-baby-crochet-outfit-guide`](https://cozyloops.site/posts/starfish-baby-crochet-outfit-guide/) | 5 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
