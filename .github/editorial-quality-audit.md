@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **95**. Missing generated articles: **0**.
+Articles checked: **98**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -59,6 +59,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-lithops-pebble-garden`](https://cozyloops.site/posts/crochet-lithops-pebble-garden/) | 6 | yes | No automated issues found |
 | [`crochet-manta-ray-applique-for-a-coastal-cushion`](https://cozyloops.site/posts/crochet-manta-ray-applique-for-a-coastal-cushion/) | 6 | yes | No automated issues found |
 | [`crochet-mini-bakery-baguette`](https://cozyloops.site/posts/crochet-mini-bakery-baguette/) | 6 | yes | No automated issues found |
+| [`crochet-mini-sushi-display-set`](https://cozyloops.site/posts/crochet-mini-sushi-display-set/) | 6 | yes | No automated issues found |
 | [`crochet-monstera-inspired-leaf-wall-tile`](https://cozyloops.site/posts/crochet-monstera-inspired-leaf-wall-tile/) | 6 | yes | No automated issues found |
 | [`crochet-moss-and-mushroom-terrarium-insert`](https://cozyloops.site/posts/crochet-moss-and-mushroom-terrarium-insert/) | 6 | yes | No automated issues found |
 | [`crochet-nautilus-inspired-spiral-medallion`](https://cozyloops.site/posts/crochet-nautilus-inspired-spiral-medallion/) | 6 | yes | No automated issues found |
@@ -80,6 +81,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`easy-crochet-scarf-for-beginners`](https://cozyloops.site/posts/easy-crochet-scarf-for-beginners/) | 3 | yes | No automated issues found |
 | [`fingerless-gloves-ribbed-cuffs-crochet`](https://cozyloops.site/posts/fingerless-gloves-ribbed-cuffs-crochet/) | 3 | yes | No automated issues found |
 | [`gingerbread-man-amigurumi-crochet-pattern`](https://cozyloops.site/posts/gingerbread-man-amigurumi-crochet-pattern/) | 3 | yes | No automated issues found |
+| [`granny-square-vest-free-crochet-pattern`](https://cozyloops.site/posts/granny-square-vest-free-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`granny-stripe-crochet-scarf-pattern`](https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
 | [`mini-advent-stockings-24-crochet`](https://cozyloops.site/posts/mini-advent-stockings-24-crochet/) | 3 | yes | No automated issues found |
 | [`mini-christmas-stocking-garland-crochet`](https://cozyloops.site/posts/mini-christmas-stocking-garland-crochet/) | 3 | yes | No automated issues found |
@@ -99,6 +101,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`scalloped-christmas-coasters-crochet`](https://cozyloops.site/posts/scalloped-christmas-coasters-crochet/) | 3 | yes | No automated issues found |
 | [`slouchy-crochet-beanie-pattern`](https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/) | 3 | yes | No automated issues found |
 | [`snowy-owl-amigurumi-ornament-pattern`](https://cozyloops.site/posts/snowy-owl-amigurumi-ornament-pattern/) | 3 | yes | No automated issues found |
+| [`spiral-crochet-sweater-beginner-guide`](https://cozyloops.site/posts/spiral-crochet-sweater-beginner-guide/) | 3 | yes | No automated issues found |
 | [`starfish-baby-crochet-outfit-guide`](https://cozyloops.site/posts/starfish-baby-crochet-outfit-guide/) | 5 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`sunflower-crochet-tote-bag-guide`](https://cozyloops.site/posts/sunflower-crochet-tote-bag-guide/) | 3 | yes | No automated issues found |
 | [`twisted-ear-warmer-headband-crochet`](https://cozyloops.site/posts/twisted-ear-warmer-headband-crochet/) | 3 | yes | No automated issues found |
