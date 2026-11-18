@@ -40,22 +40,33 @@ class EditorialCovers(unittest.TestCase):
                 self.assertLess(source.with_suffix(".webp").stat().st_size, 450_000)
 
     def test_homepage_uses_only_exact_default_article_covers(self):
+        # The owner's original -01.webp project photo is the cover everywhere.
+        # upgradeDefaultEditorialCover must NOT swap it for the flat vector
+        # title card in assets/editorial-illustrations/ (that swap was the
+        # damage reported on 2026-11-18: real photos replaced by flat panels).
         home = (ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn("function upgradeDefaultEditorialCover(p)", home)
         self.assertIn("illustratedDefaultSlugs.has(p.slug)", home)
-        self.assertIn("p.image_url!=='https://cozyloops.site/assets/'+p.slug+'-01.webp'", home)
+        # The cover-upgrade function must not build a flat-cover URL at all.
+        # (cardVisual still references the cover.webp URL only to recognise
+        # articles whose image already is one; it never swaps a photo.)
+        fn = re.search(r"function upgradeDefaultEditorialCover\(p\)\{.*?\n\}", home, re.S)
+        self.assertIsNotNone(fn)
+        self.assertNotIn("editorial-illustrations", fn.group(0))
+        self.assertNotIn("-panel-", home)
         self.assertIn("chosen.set(p.slug,upgradeDefaultEditorialCover(p))", home)
         self.assertIn("dynamic-illustration-cover", home)
         self.assertEqual(home.count("hbagency_space_349628"), 2)
 
-    def test_default_low_resolution_cover_only_is_upgraded(self):
+    def test_default_cover_is_never_replaced_by_illustration(self):
+        # A default -01.webp project photo must be kept as-is. The old
+        # expectation (swap it for the flat vector cover.webp) was the damage:
+        # it replaced the owner's real photos with flat illustrations.
         for source in self.files:
             slug = source.stem.removesuffix("-cover")
             original = {"slug": slug, "title": "A Crochet Project",
                         "image_url": f"{BASE}assets/{slug}-01.webp"}
-            improved = improved_editorial_cover(original)
-            self.assertEqual(improved["image_url"], BASE+"assets/editorial-illustrations/"+slug+"-cover.webp")
-            self.assertIn("not a photograph", improved["image_alt"])
+            self.assertEqual(improved_editorial_cover(original), original)
 
             custom = {"slug":slug,"title":"A Crochet Project",
                       "image_url":"https://example.com/owner-custom.webp"}
