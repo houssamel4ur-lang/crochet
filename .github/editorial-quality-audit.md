@@ -3,13 +3,14 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **69**. Missing generated articles: **0**.
+Articles checked: **71**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
 |---|---:|---|---|
 | [`capybara-amigurumi-free-crochet-pattern`](https://cozyloops.site/posts/capybara-amigurumi-free-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`christmas-angel-amigurumi-lace-wings-pattern`](https://cozyloops.site/posts/christmas-angel-amigurumi-lace-wings-pattern/) | 3 | yes | No automated issues found |
+| [`christmas-gnome-amigurumi-beard-pattern`](https://cozyloops.site/posts/christmas-gnome-amigurumi-beard-pattern/) | 3 | yes | No automated issues found |
 | [`chunky-ribbed-crochet-scarf-pattern`](https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-aloe-inspired-windowsill-plant`](https://cozyloops.site/posts/crochet-aloe-inspired-windowsill-plant/) | 6 | yes | No automated issues found |
 | [`crochet-baby-animal-hats-bear-bunny-frog-guide`](https://cozyloops.site/posts/crochet-baby-animal-hats-bear-bunny-frog-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
@@ -31,6 +32,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-dollhouse-reading-rug`](https://cozyloops.site/posts/crochet-dollhouse-reading-rug/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-round-pouf`](https://cozyloops.site/posts/crochet-dollhouse-round-pouf/) | 6 | yes | No automated issues found |
 | [`crochet-earbud-cord-wrap-with-a-buttonhole`](https://cozyloops.site/posts/crochet-earbud-cord-wrap-with-a-buttonhole/) | 3 | yes | No automated issues found |
+| [`crochet-elf-amigurumi-pointed-hat-pattern`](https://cozyloops.site/posts/crochet-elf-amigurumi-pointed-hat-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-eucalyptus-place-setting-sprig`](https://cozyloops.site/posts/crochet-eucalyptus-place-setting-sprig/) | 6 | yes | No automated issues found |
 | [`crochet-fan-palm-for-a-bookshelf`](https://cozyloops.site/posts/crochet-fan-palm-for-a-bookshelf/) | 6 | yes | No automated issues found |
 | [`crochet-fern-frond-bookmark`](https://cozyloops.site/posts/crochet-fern-frond-bookmark/) | 6 | yes | No automated issues found |
