@@ -3,12 +3,13 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **60**. Missing generated articles: **0**.
+Articles checked: **64**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
 |---|---:|---|---|
 | [`capybara-amigurumi-free-crochet-pattern`](https://cozyloops.site/posts/capybara-amigurumi-free-crochet-pattern/) | 3 | yes | No automated issues found |
+| [`chunky-ribbed-crochet-scarf-pattern`](https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-aloe-inspired-windowsill-plant`](https://cozyloops.site/posts/crochet-aloe-inspired-windowsill-plant/) | 6 | yes | No automated issues found |
 | [`crochet-baby-animal-hats-bear-bunny-frog-guide`](https://cozyloops.site/posts/crochet-baby-animal-hats-bear-bunny-frog-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-baby-booties-sizing-sole-guide`](https://cozyloops.site/posts/crochet-baby-booties-sizing-sole-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
@@ -58,6 +59,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`daisy-granny-square-blanket-guide`](https://cozyloops.site/posts/daisy-granny-square-blanket-guide/) | 3 | yes | No automated issues found |
 | [`easy-crochet-beanie-pattern`](https://cozyloops.site/posts/easy-crochet-beanie-pattern/) | 3 | yes | No automated issues found |
 | [`easy-crochet-scarf-for-beginners`](https://cozyloops.site/posts/easy-crochet-scarf-for-beginners/) | 3 | yes | No automated issues found |
+| [`granny-stripe-crochet-scarf-pattern`](https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
 | [`mini-crochet-coral-garden-in-a-bowl`](https://cozyloops.site/posts/mini-crochet-coral-garden-in-a-bowl/) | 6 | yes | No automated issues found |
 | [`mini-crochet-dinosaur-amigurumi-guide`](https://cozyloops.site/posts/mini-crochet-dinosaur-amigurumi-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`mini-crochet-goose-bag-charm-with-embroidered-face`](https://cozyloops.site/posts/mini-crochet-goose-bag-charm-with-embroidered-face/) | 3 | yes | No automated issues found |
@@ -66,6 +68,8 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`mini-ocean-amigurumi-keychains-free-patterns`](https://cozyloops.site/posts/mini-ocean-amigurumi-keychains-free-patterns/) | 10 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`mini-woodland-amigurumi-animal-ideas`](https://cozyloops.site/posts/mini-woodland-amigurumi-animal-ideas/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`pink-axolotl-crochet-amigurumi-guide`](https://cozyloops.site/posts/pink-axolotl-crochet-amigurumi-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`ribbed-crochet-beanie-adult-pattern`](https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/) | 3 | yes | No automated issues found |
+| [`slouchy-crochet-beanie-pattern`](https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/) | 3 | yes | No automated issues found |
 | [`starfish-baby-crochet-outfit-guide`](https://cozyloops.site/posts/starfish-baby-crochet-outfit-guide/) | 5 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`sunflower-crochet-tote-bag-guide`](https://cozyloops.site/posts/sunflower-crochet-tote-bag-guide/) | 3 | yes | No automated issues found |
 
