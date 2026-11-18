@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **58**. Missing generated articles: **0**.
+Articles checked: **60**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -14,6 +14,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-baby-booties-sizing-sole-guide`](https://cozyloops.site/posts/crochet-baby-booties-sizing-sole-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-bow-keychain-free-pattern`](https://cozyloops.site/posts/crochet-bow-keychain-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-bucket-hat-for-beginners`](https://cozyloops.site/posts/crochet-bucket-hat-for-beginners/) | 3 | yes | No automated issues found |
+| [`crochet-burgundy-peplum-and-pink-lace-crop-top`](https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/) | 3 | yes | No automated issues found |
 | [`crochet-butterfly-ornament-wing-guide`](https://cozyloops.site/posts/crochet-butterfly-ornament-wing-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-clam-shell-ring-presentation-pad`](https://cozyloops.site/posts/crochet-clam-shell-ring-presentation-pad/) | 6 | yes | No automated issues found |
 | [`crochet-daisy-flower-bookmark-free-pattern`](https://cozyloops.site/posts/crochet-daisy-flower-bookmark-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
@@ -33,6 +34,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-fern-frond-bookmark`](https://cozyloops.site/posts/crochet-fern-frond-bookmark/) | 6 | yes | No automated issues found |
 | [`crochet-flower-coasters-free-pattern`](https://cozyloops.site/posts/crochet-flower-coasters-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-flower-keychains-scrap-yarn-guide`](https://cozyloops.site/posts/crochet-flower-keychains-scrap-yarn-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`crochet-granny-square-vest-and-striped-summer-top`](https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/) | 3 | yes | No automated issues found |
 | [`crochet-hanging-pea-vine-shelf-ornament`](https://cozyloops.site/posts/crochet-hanging-pea-vine-shelf-ornament/) | 6 | yes | No automated issues found |
 | [`crochet-jellyfish-for-a-desktop-display`](https://cozyloops.site/posts/crochet-jellyfish-for-a-desktop-display/) | 6 | yes | No automated issues found |
 | [`crochet-kelp-book-nook-panel`](https://cozyloops.site/posts/crochet-kelp-book-nook-panel/) | 6 | yes | No automated issues found |
