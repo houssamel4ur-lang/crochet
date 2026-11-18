@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **108**. Missing generated articles: **0**.
+Articles checked: **110**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -92,6 +92,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`heart-granny-square-shrug-crochet`](https://cozyloops.site/posts/heart-granny-square-shrug-crochet/) | 3 | yes | No automated issues found |
 | [`heart-keychain-chenille-yarn-crochet`](https://cozyloops.site/posts/heart-keychain-chenille-yarn-crochet/) | 3 | yes | No automated issues found |
 | [`mini-advent-stockings-24-crochet`](https://cozyloops.site/posts/mini-advent-stockings-24-crochet/) | 3 | yes | No automated issues found |
+| [`mini-cat-amigurumi-pocket-size`](https://cozyloops.site/posts/mini-cat-amigurumi-pocket-size/) | 3 | yes | No automated issues found |
 | [`mini-christmas-stocking-garland-crochet`](https://cozyloops.site/posts/mini-christmas-stocking-garland-crochet/) | 3 | yes | No automated issues found |
 | [`mini-crochet-coral-garden-in-a-bowl`](https://cozyloops.site/posts/mini-crochet-coral-garden-in-a-bowl/) | 6 | yes | No automated issues found |
 | [`mini-crochet-dinosaur-amigurumi-guide`](https://cozyloops.site/posts/mini-crochet-dinosaur-amigurumi-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
@@ -99,6 +100,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`mini-farm-animals-amigurumi-collection`](https://cozyloops.site/posts/mini-farm-animals-amigurumi-collection/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`mini-ocean-amigurumi-free-crochet-patterns`](https://cozyloops.site/posts/mini-ocean-amigurumi-free-crochet-patterns/) | 11 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
 | [`mini-ocean-amigurumi-keychains-free-patterns`](https://cozyloops.site/posts/mini-ocean-amigurumi-keychains-free-patterns/) | 10 | yes | Concept imagery: replace with real source photo before claiming a tested pattern |
+| [`mini-octopus-amigurumi-curly-tentacles`](https://cozyloops.site/posts/mini-octopus-amigurumi-curly-tentacles/) | 3 | yes | No automated issues found |
 | [`mini-pouch-zipper-crochet-pattern`](https://cozyloops.site/posts/mini-pouch-zipper-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`mini-woodland-amigurumi-animal-ideas`](https://cozyloops.site/posts/mini-woodland-amigurumi-animal-ideas/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`mug-rug-heart-motif-crochet`](https://cozyloops.site/posts/mug-rug-heart-motif-crochet/) | 3 | yes | No automated issues found |
