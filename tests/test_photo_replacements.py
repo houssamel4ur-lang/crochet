@@ -32,6 +32,9 @@ class TestPhotoReplacements(unittest.TestCase):
 
     def test_missing_photo_does_not_override_existing_image(self):
         original = {"slug": SLUG, "title": "Daisy Bookmark", "image_url": DEFAULT}
+        cover = self.root / "assets" / "editorial-illustrations" / (SLUG + "-cover.webp")
+        cover.parent.mkdir(parents=True, exist_ok=True)
+        cover.write_bytes(b"illustration fallback must not replace the original photo")
         self.assertEqual(build_seo.improved_editorial_cover(original), original)
 
     def test_no_thumbnail_upscaling(self):
@@ -57,17 +60,21 @@ class TestPhotoReplacements(unittest.TestCase):
             self.assertEqual(build_seo.staged_photo_url(slug, "hero"), "")
         self.assertEqual(build_seo.staged_photo_url(SLUG, "icon"), "")
 
-    def test_stage_replaces_only_matching_editorial_image(self):
-        svg = self.root / "assets" / "editorial-illustrations" / (SLUG + "-cover.svg")
-        svg.parent.mkdir(parents=True, exist_ok=True)
-        svg.write_text("<svg></svg>", encoding="utf-8")
-        self.add_photo("materials")
+    def test_stage_replaces_only_editorial_image_when_real_photo_is_available(self):
         src = f"![old]({build_seo.BASE}assets/{SLUG}-02.webp)"
         other = "![Owner upload](https://example.com/custom.webp)"
+        self.add_photo("materials")
         result = build_seo.crisp_concept_panels(src + "\n\n" + other, SLUG)
         self.assertIn("/article-photos-v2/" + SLUG + "/materials.webp", result)
         self.assertIn(other, result)
         self.assertNotIn("assets/" + SLUG + "-02.webp", result)
+
+    def test_missing_stage_photo_keeps_original_instead_of_illustration_fallback(self):
+        visual = self.root / "assets" / "editorial-illustrations" / (SLUG + "-panel-02.webp")
+        visual.parent.mkdir(parents=True, exist_ok=True)
+        visual.write_bytes(b"illustration fallback must not replace the original photo")
+        src = f"![original]({build_seo.BASE}assets/{SLUG}-02.webp)"
+        self.assertEqual(build_seo.crisp_concept_panels(src, SLUG), src)
 
 
 if __name__ == "__main__":
