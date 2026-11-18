@@ -198,9 +198,9 @@ const illustratedDefaultSlugs=new Set([
   'mini-farm-animals-amigurumi-collection'
 ]);
 function upgradeDefaultEditorialCover(p){
-  if(!p||!illustratedDefaultSlugs.has(p.slug))return p;
-  if(p.image_url!=='https://cozyloops.site/assets/'+p.slug+'-01.webp')return p;
-  return {...p,image_url:'https://cozyloops.site/assets/editorial-illustrations/'+p.slug+'-cover.webp'};
+  // The owner's original -01.webp project photo is the cover. Never replace
+  // it with a flat vector title card.
+  return p;
 }
 const posts=[featuredEditorial];
 const categories=["All","Beginner Tutorials","Free Patterns","Amigurumi","Crochet Tips"];
@@ -445,15 +445,9 @@ function renderArticleMarkdown(source,articleSlug=''){
    const match=part.match(/^!\[([^\]]*)\]\((https:\/\/[^\s)]+)\)$/);
    if(match){
      let url=safeHttps(match[2]),alt=match[1],width=1000,height=625;
-     // 15 original concept articles had photos blown up from tiny contact sheets.
-     // Use purpose-built scalable vector references, never relabel them as photos.
-     const crop=match[2].match(/^https:\/\/cozyloops\.site\/assets\/([a-z0-9-]+)-(02|04|09)\.webp$/);
-     if(crop&&crop[1]===articleSlug&&illustratedDefaultSlugs.has(articleSlug)){
-       const stage={'02':'materials','04':'construction','09':'finishing'}[crop[2]];
-       url='https://cozyloops.site/assets/editorial-illustrations/'+articleSlug+'-panel-'+crop[2]+'.svg';
-       alt='Scalable illustrated '+stage+' reference for '+articleSlug.replace(/-/g,' ')+'; not a real project photograph';
-       width=900;height=1120;
-     }
+     // Keep the owner's original -02/-04/-09 project photos. Never replace
+     // them with flat vector panels: the photo stays until a validated
+     // replacement exists.
      if(url)return '<img loading="lazy" style="width:100%;height:auto;border-radius:14px;margin:16px 0" src="'+esc(url)+'" alt="'+esc(alt)+'" width="'+width+'" height="'+height+'" decoding="async">';
    }
    return esc(part).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');

@@ -173,15 +173,10 @@ def improved_editorial_cover(item):
                           str(item.get("title") or slug) +
                           "; not a photograph of a physically tested sample"),
         }
-    improved = ROOT / "assets" / "editorial-illustrations" / (slug + "-cover.webp")
-    if item.get("image_url") != default or not improved.is_file():
-        return item
-    return {
-        **item,
-        "image_url": BASE + "assets/editorial-illustrations/" + improved.name,
-        "image_alt": "Original editorial illustration of " + str(item.get("title") or slug)
-                     + ", not a photograph of a physically crocheted sample",
-    }
+    # Never replace the owner's original project photo with the flat vector
+    # title card in assets/editorial-illustrations/: the photo stays the cover
+    # until a validated staged photo exists (handled above).
+    return item
 
 def load_articles():
     """Published Supabase articles and intentional GitHub editorials only."""
@@ -285,31 +280,23 @@ def concise_editorial_illustrations(content):
     return "".join(kept).strip()
 
 def crisp_concept_panels(content, slug):
-    """Prefer validated article photos; keep existing illustrations until replacements exist.
+    """Replace an editorial image only with a validated staged photo.
 
-    Never substitute generic icons, enlarge small contact-sheet crops or overwrite
-    images stored under a different/custom URL.
+    Never substitute a flat illustration panel for a real project photo:
+    when no staged photo exists, the original -02/-04/-09 photo stays.
     """
     if not isinstance(slug, str) or not SLUG.fullmatch(slug):
-        return content
-    artwork = ROOT / "assets" / "editorial-illustrations" / (slug + "-cover.svg")
-    if not artwork.is_file():
         return content
     stage_names = {"02": "materials", "04": "construction", "09": "finishing"}
     for number, label in stage_names.items():
         photo = staged_photo_url(slug, label)
-        visual = ROOT / "assets" / "editorial-illustrations" / (slug + "-panel-" + number + ".webp")
-        if not photo and not visual.is_file():
+        if not photo:
             continue
         old = re.compile(
             r"!\[[^\]]*\]\(" + re.escape(BASE + "assets/" + slug + "-" + number + ".webp") + r"\)"
         )
-        if photo:
-            new_alt = f"High-resolution {label} image for {slug.replace('-', ' ')}; not a tested project photograph"
-            replacement = f"![{new_alt}]({photo})"
-        else:
-            new_alt = f"High-resolution illustrated {label} reference for {slug.replace('-', ' ')}; not a real project photograph"
-            replacement = f"![{new_alt}]({BASE}assets/editorial-illustrations/{visual.name})"
+        new_alt = f"High-resolution {label} image for {slug.replace('-', ' ')}; not a tested project photograph"
+        replacement = f"![{new_alt}]({photo})"
         content = old.sub(lambda _m: replacement, content)
     return content
 
