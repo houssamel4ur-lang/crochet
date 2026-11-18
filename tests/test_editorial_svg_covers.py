@@ -39,23 +39,20 @@ class EditorialCovers(unittest.TestCase):
                     self.assertEqual(cover.size, (1200, 750))
                 self.assertLess(source.with_suffix(".webp").stat().st_size, 450_000)
 
-    def test_homepage_uses_only_exact_default_article_covers(self):
+    def test_homepage_preserves_original_article_covers(self):
         home = (ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn("function upgradeDefaultEditorialCover(p)", home)
-        self.assertIn("illustratedDefaultSlugs.has(p.slug)", home)
-        self.assertIn("p.image_url!=='https://cozyloops.site/assets/'+p.slug+'-01.webp'", home)
-        self.assertIn("chosen.set(p.slug,upgradeDefaultEditorialCover(p))", home)
-        self.assertIn("dynamic-illustration-cover", home)
+        self.assertNotIn("function upgradeDefaultEditorialCover(p)", home)
+        self.assertIn("chosen.set(p.slug,p)", home)
+        self.assertIn("function cardVisual(p)", home)
+        self.assertIn("const defaultEditorial='https://cozyloops.site/assets/'+p.slug+'-01.webp'", home)
         self.assertEqual(home.count("hbagency_space_349628"), 2)
 
-    def test_default_low_resolution_cover_only_is_upgraded(self):
+    def test_default_cover_is_preserved_until_validated_photo_exists(self):
         for source in self.files:
             slug = source.stem.removesuffix("-cover")
             original = {"slug": slug, "title": "A Crochet Project",
                         "image_url": f"{BASE}assets/{slug}-01.webp"}
-            improved = improved_editorial_cover(original)
-            self.assertEqual(improved["image_url"], BASE+"assets/editorial-illustrations/"+slug+"-cover.webp")
-            self.assertIn("not a photograph", improved["image_alt"])
+            self.assertEqual(improved_editorial_cover(original), original)
 
             custom = {"slug":slug,"title":"A Crochet Project",
                       "image_url":"https://example.com/owner-custom.webp"}
