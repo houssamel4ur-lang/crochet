@@ -411,8 +411,10 @@ def render_page(article, css, articles=None):
         byline_parts.append("Updated " + modified_label)
     byline_parts.append(str(read_minutes) + " min read")
     byline = " · ".join(byline_parts)
-    draft_label = '<p class="pattern-status">Pattern note: This concept is not yet physically tested as a finished sample. Check your gauge, construction, and safety before use.</p>' if is_draft else ""
-    original_status_html = ('<details class="article-disclosure"><summary>Pattern testing and accuracy</summary><p>' + inline(original_status) + '</p></details>') if original_status and is_draft else ""
+    # Keep the physical-testing disclosure as one concise note after the article body.
+    # Never place an unverified-pattern warning in the title, introduction, or opening metadata.
+    draft_label = '<p class="pattern-status">Pattern note: This pattern has not yet been physically tested as a finished sample. Check your own sample before use.</p>' if is_draft else ""
+    original_status_html = ""
     structured = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
