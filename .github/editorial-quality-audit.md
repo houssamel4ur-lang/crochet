@@ -3,12 +3,13 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **112**. Missing generated articles: **0**.
+Articles checked: **114**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
 |---|---:|---|---|
 | [`arctic-fox-amigurumi-winter-scarf-pattern`](https://cozyloops.site/posts/arctic-fox-amigurumi-winter-scarf-pattern/) | 3 | yes | No automated issues found |
+| [`baby-santa-hat-pom-pom-crochet`](https://cozyloops.site/posts/baby-santa-hat-pom-pom-crochet/) | 3 | yes | No automated issues found |
 | [`bobble-christmas-trees-set-of-three`](https://cozyloops.site/posts/bobble-christmas-trees-set-of-three/) | 3 | yes | No automated issues found |
 | [`candy-cane-amigurumi-doll-crochet-pattern`](https://cozyloops.site/posts/candy-cane-amigurumi-doll-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`capybara-amigurumi-free-crochet-pattern`](https://cozyloops.site/posts/capybara-amigurumi-free-crochet-pattern/) | 3 | yes | No automated issues found |
@@ -18,6 +19,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`christmas-placemats-holly-motif-crochet`](https://cozyloops.site/posts/christmas-placemats-holly-motif-crochet/) | 3 | yes | No automated issues found |
 | [`christmas-pudding-amigurumi-ornament-pattern`](https://cozyloops.site/posts/christmas-pudding-amigurumi-ornament-pattern/) | 3 | yes | No automated issues found |
 | [`chunky-cowl-button-closure-crochet`](https://cozyloops.site/posts/chunky-cowl-button-closure-crochet/) | 3 | yes | No automated issues found |
+| [`chunky-crochet-pillow-cover-bobbles`](https://cozyloops.site/posts/chunky-crochet-pillow-cover-bobbles/) | 3 | yes | No automated issues found |
 | [`chunky-ribbed-crochet-scarf-pattern`](https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
 | [`coffee-cup-cozy-button-crochet`](https://cozyloops.site/posts/coffee-cup-cozy-button-crochet/) | 3 | yes | No automated issues found |
 | [`crochet-aloe-inspired-windowsill-plant`](https://cozyloops.site/posts/crochet-aloe-inspired-windowsill-plant/) | 6 | yes | No automated issues found |
