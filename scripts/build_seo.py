@@ -442,7 +442,7 @@ def render_page(article, css, articles=None):
 <meta charset="utf-8">
 <script src="https://d3u598arehftfk.cloudfront.net/prebid_hb_40300_44798.js" async></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{esc(title)} | CozyLoops</title>
+<title>{esc(title)}</title>
 <meta name="description" content="{esc(description)}">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="{esc(canonical)}">
