@@ -318,8 +318,9 @@ class SiteQualityTests(unittest.TestCase):
             self.assertIn('id="cookie-accept"', page)
             self.assertIn('id="cookie-decline"', page)
         builder=(ROOT / "scripts/build_seo.py").read_text(encoding="utf-8")
-        self.assertIn("Pattern note: This concept is not yet physically tested", builder)
-        self.assertLess(builder.index("{image_html}"), builder.index("{draft_label}"))
+        # The untested-pattern note was removed (owner decision 2026-11-19).
+        self.assertNotIn("not yet physically tested", builder)
+        self.assertNotIn("{draft_label}", builder)
         self.assertIn("Accept optional analytics", builder)
         self.assertIn("Reject optional analytics", builder)
 

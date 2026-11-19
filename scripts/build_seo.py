@@ -376,9 +376,7 @@ def render_page(article, css, articles=None):
     if visual_note:
         article_content = concise_editorial_illustrations(article_content)
         article_content = crisp_concept_panels(article_content, slug)
-    # Move verbose, unverified pattern-status notes below the guide, not out of it.
-    # To mark a future pattern Tested: physically make it, check instructions,
-    # add a genuine photo, then set pattern_tested=True and tested_photo_url in its CMS record.
+    # Strip the verbose pattern-status metadata line from the article body.
     status_match = re.search(r"(?m)^\*\*Pattern status:\*\*[^\n]*", article_content)
     original_status = status_match.group(0) if status_match else ""
     if status_match:
@@ -398,9 +396,6 @@ def render_page(article, css, articles=None):
         byline_parts.append("Updated " + modified_label)
     byline_parts.append(str(read_minutes) + " min read")
     byline = " · ".join(byline_parts)
-    # Keep the physical-testing disclosure as one concise note after the article body.
-    # Never place an unverified-pattern warning in the title, introduction, or opening metadata.
-    draft_label = '<p class="pattern-status">Pattern note: This concept is not yet physically tested as a finished sample. Check your own sample before use.</p>' if is_draft else ""
     original_status_html = ""
     structured = {
         "@context": "https://schema.org",
@@ -521,8 +516,7 @@ def render_page(article, css, articles=None):
 {markdown(article_content)}
 {('<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>' + linked_text(visual_note) + '</p></details>') if visual_note and is_draft else ''}
 {original_status_html}
-{draft_label}
-<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssam El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies draft patterns and concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
+<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssam El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
 {related_html}
 <h2>Keep Creating</h2>
 <p>Explore more crochet articles and patterns at CozyLoops.</p>
