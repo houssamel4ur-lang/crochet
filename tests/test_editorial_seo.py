@@ -101,7 +101,11 @@ class EditorialSeoQuality(unittest.TestCase):
             "excerpt": "A miniature crochet bed runner."
         }
         page = render_page(sample, "body{color:#29342d}", [])
-        self.assertIn("not yet physically tested", page)
+        # The untested-pattern note was removed (owner decision 2026-11-19):
+        # the article must not carry it. The Pattern status metadata line is
+        # still stripped from the body.
+        self.assertNotIn("not yet physically tested", page)
+        self.assertNotIn("Pattern status:", page)
 
     def test_project_specific_excerpts_replace_repetitive_seo_boilerplate(self):
         curated = json.loads((ROOT / "content" / "unique_excerpts.json").read_text(encoding="utf-8"))
