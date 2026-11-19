@@ -128,5 +128,58 @@
     banner.hidden = true;
     if (status) status.textContent = "Optional analytics: disabled.";
   });
+  /* Advertising consent is separate from analytics and belongs to the
+   * provider CMP (HB Agency / InMobi). Never fabricate a TCF/GPP signal,
+   * never auto-open the provider UI, and never change an ad choice here.
+   * The button below only ASKS the provider to open its own screen.
+   * __tcfapi('ping', ...) is a read-only status query: it shows no UI
+   * and writes no consent. It only tells us whether the provider CMP
+   * actually loaded, so the button does not promise a screen that the
+   * broken provider script cannot show. */
+  const adStatus = document.getElementById("article-ad-consent-status");
+  const adButton = document.getElementById("privacy-ad-settings");
+  let cmpReady = null; /* null = unknown, true = ping said loaded, false = not loaded */
+  const adUnavailable = "The advertising consent screen is not available in this browser right now. Your analytics choice does not affect advertising cookies.";
+  const probeCmp = (triesLeft) => {
+    const api = window.__tcfapi;
+    if (typeof api !== "function") {
+      if (triesLeft > 0) window.setTimeout(() => probeCmp(triesLeft - 1), 500);
+      else { cmpReady = false; if (adStatus && !adStatus.textContent) adStatus.textContent = adUnavailable; }
+      return;
+    }
+    try {
+      api("ping", 2, (ping) => {
+        cmpReady = !!(ping && ping.cmpLoaded);
+        if (adStatus && !adStatus.textContent) {
+          adStatus.textContent = cmpReady
+            ? "Advertising consent screen is available from the advertising provider."
+            : adUnavailable;
+        }
+      });
+    } catch { cmpReady = false; if (adStatus && !adStatus.textContent) adStatus.textContent = adUnavailable; }
+  };
+  if (adButton) {
+    probeCmp(12);
+    adButton.addEventListener("click", () => {
+      if (cmpReady === false) { if (adStatus) adStatus.textContent = adUnavailable; return; }
+      const api = window.__tcfapi;
+      if (typeof api === "function") {
+        try {
+          api("displayConsentUi", 2, () => {});
+          if (adStatus) adStatus.textContent = "Requested the advertising provider consent screen. No advertising choice was changed by CozyLoops.";
+          return;
+        } catch { /* Try the supported alternate CMP below. */ }
+      }
+      const fc = window.googlefc;
+      if (fc && typeof fc.showRevocationMessage === "function") {
+        try {
+          fc.showRevocationMessage();
+          if (adStatus) adStatus.textContent = "Requested the advertising provider preferences. No advertising choice was changed by CozyLoops.";
+          return;
+        } catch { /* Fall through to the truthful unavailable status. */ }
+      }
+      if (adStatus) adStatus.textContent = adUnavailable;
+    });
+  }
   record();
 })();
