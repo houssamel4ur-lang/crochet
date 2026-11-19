@@ -262,10 +262,27 @@ const failures = [];
     await owner.locator('.row-card', { hasText: 'Safe CRUD Test Crochet' }).waitFor({ timeout: 5000 });
     assert.equal(await owner.evaluate(() => window.__mockAdminRows.length), 1, 'draft stored only in test memory');
     assert.equal(await owner.evaluate(() => window.__mockAdminRows[0].status), 'draft');
+    // The publish checklist blocks a thin draft from going live.
+    await owner.locator('.row-card', { hasText: 'Safe CRUD Test Crochet' }).locator('[data-act="article-edit"]').click();
+    await owner.locator('#f-title').waitFor({ state: 'visible', timeout: 5000 });
+    await owner.locator('#f-status').selectOption('published');
+    await owner.locator('#f-save').click();
+    await owner.locator('#f-error:not(.hidden)').waitFor({ timeout: 5000 });
+    assert.match(await owner.locator('#f-error').innerText(), /Publish checklist/);
+    assert.equal(await owner.evaluate(() => window.__mockAdminRows[0].status), 'draft', 'rejected publish leaves the draft unpublished');
+    await owner.locator('#f-cancel').click();
     await owner.locator('.row-card', { hasText: 'Safe CRUD Test Crochet' }).locator('[data-act="article-edit"]').click();
     await owner.locator('#f-title').waitFor({ state: 'visible', timeout: 5000 });
     await owner.locator('#f-status').selectOption('published');
     await owner.locator('#f-title').fill('Safe CRUD Test Crochet Updated');
+    await owner.locator('#f-excerpt').fill('A detailed in-memory tutorial explaining crochet materials, sample stitches, accurate sizing and finishing without touching the live Supabase database.');
+    await owner.locator('#f-image').fill('https://cozyloops.site/assets/crochet-tulip-bouquet-stems-guide-01.webp');
+    const editorialTestSteps = ('Crochet a small test swatch, count every row, keep even tension, check your finished size and sew ends neatly. ').repeat(32);
+    await owner.locator('#f-content').fill('## Materials and Hook\n\n' + editorialTestSteps +
+      '\n\n![Crochet yarn and materials](https://cozyloops.site/assets/crochet-tulip-bouquet-stems-guide-02.webp)' +
+      '\n\n## Stitch Instructions\n\n' + editorialTestSteps +
+      '\n\n![Crochet project steps](https://cozyloops.site/assets/crochet-tulip-bouquet-stems-guide-04.webp)' +
+      '\n\n## Finishing\n\nSecure the ends and check the finished project.');
     await owner.locator('#f-save').click();
     await owner.waitForFunction(() => window.__mockAdminRows[0]?.status === 'published');
     assert.equal(await owner.evaluate(() => window.__mockAdminRows[0].title), 'Safe CRUD Test Crochet Updated');
