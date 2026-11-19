@@ -58,9 +58,10 @@ jobs:
           if (!script) throw new Error('Public script missing');
           new vm.Script(script[1], {filename:'index.html'});
           const admin = fs.readFileSync('admin/index.html', 'utf8');
-          if (!admin.includes('<script type="module" src="./app.js"></script>')) throw new Error('Admin external script missing');
-          const js = fs.readFileSync('admin/app.js', 'utf8').replace(/^import .*?;\s*$/gm,'');
-          new vm.Script('(async()=>{' + js + '})', {filename:'admin/index.html'});
+          if (!admin.includes('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2')) throw new Error('Admin Supabase script missing');
+          const inline = [...admin.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+          if (inline.length === 0) throw new Error('Admin inline script missing');
+          for (const block of inline) new vm.Script(block[1], {filename:'admin/index.html'});
           const article = fs.readFileSync('scripts/article_analytics.js', 'utf8');
           new vm.Script(article, {filename:'scripts/article_analytics.js'});
           console.log('Public, admin and article JavaScript syntax valid');
