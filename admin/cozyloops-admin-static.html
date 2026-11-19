@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>CozyLoops Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+      :root{
+        --bg:#fbf8f2; --surface:#ffffff; --soft:#e9eee3; --pink:#f4e4d8;
+        --ink:#29342d; --muted:#68736a; --line:#e5e7df;
+        --green:#4f694c; --green-dark:#3c523a; --green-ink:#ffffff;
+        --warn:#9a6a1b; --warn-bg:#f7ecd2; --bad:#a33b2e; --bad-bg:#f6ddd6;
+        --ok:#4f694c; --ok-bg:#e9eee3;
+        --shadow:0 1px 2px rgba(41,52,45,.06),0 8px 24px rgba(41,52,45,.06);
+        --radius:14px;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#1d2620; --surface:#26312a; --soft:#2e3d33; --pink:#4a3a32;
+          --ink:#eef2ec; --muted:#a7b3a8; --line:#3a4a3f;
+          --green:#8fb489; --green-dark:#a9cba1; --green-ink:#1d2620;
+          --warn:#e3b95e; --warn-bg:#453a1e; --bad:#ef9a8c; --bad-bg:#4c2a24;
+          --ok:#8fb489; --ok-bg:#2e3d33;
+          --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+        }
+      }
+      *{box-sizing:border-box}
+      html{-webkit-text-size-adjust:100%}
+      body{margin:0;background:var(--bg);color:var(--ink);
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+        font-size:16px;line-height:1.5}
+      h1,h2,h3,.display{font-family:Georgia,"Times New Roman",serif}
+      button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]),textarea{font:inherit}
+      button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:2.25rem}
+      a{color:var(--green)}
+      .hidden{display:none!important}
+
+      /* ---------- Login ---------- */
+      .login-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:1.25rem}
+      .login-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;
+        box-shadow:var(--shadow);padding:2rem 1.75rem;max-width:26rem;width:100%}
+      .login-card h1{font-size:1.5rem;margin:.2rem 0 .5rem;text-align:center}
+      .login-card p{color:var(--muted);text-align:center;margin:.25rem 0 1.25rem}
+      .login-mark{width:3.25rem;height:3.25rem;border-radius:50%;background:var(--soft);
+        display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:1.5rem}
+      label{display:block;font-weight:600;font-size:.9rem;margin:.9rem 0 .3rem}
+      input[type="text"],input[type="email"],input[type="password"],input[type="url"],
+      input[type="datetime-local"],input[type="search"],select,textarea{
+        width:100%;padding:.55rem .7rem;border:1px solid var(--line);border-radius:10px;
+        background:var(--surface);color:var(--ink)}
+      textarea{resize:vertical}
+      .btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+        border:1px solid var(--green);background:var(--green);color:var(--green-ink);
+        border-radius:10px;padding:.55rem 1rem;font-weight:600;cursor:pointer;text-decoration:none}
+      .btn:hover{background:var(--green-dark)}
+      .btn.secondary{background:var(--surface);color:var(--green);border-color:var(--line)}
+      .btn.secondary:hover{border-color:var(--green)}
+      .btn.danger{background:var(--surface);color:var(--bad);border-color:var(--bad)}
+      .btn.small{padding:.3rem .7rem;min-height:2.25rem;font-size:.9rem}
+      .btn:disabled{opacity:.55;cursor:wait}
+      .btn.block{width:100%;margin-top:1.25rem}
+      .msg{border-radius:10px;padding:.6rem .8rem;margin-top:1rem;font-size:.92rem}
+      .msg.error{background:var(--bad-bg);color:var(--bad)}
+      .msg.ok{background:var(--ok-bg);color:var(--ok)}
+      .msg.info{background:var(--soft);color:var(--ink)}
+
+      /* ---------- Shell ---------- */
+      .shell{display:flex;min-height:100dvh}
+      .sidebar{width:15.5rem;flex:0 0 15.5rem;background:var(--surface);border-inline-end:1px solid var(--line);
+        padding:1.25rem 1rem;display:flex;flex-direction:column;gap:.25rem;position:sticky;top:0;height:100dvh;overflow-y:auto}
+      .brand{font-family:Georgia,serif;font-size:1.35rem;font-weight:700;padding:.25rem .5rem}
+      .brand small{display:block;font-family:inherit;font-size:.78rem;font-weight:400;color:var(--muted);margin-top:.2rem;line-height:1.4}
+      .nav-btn{display:flex;align-items:center;gap:.6rem;width:100%;text-align:start;
+        background:none;border:0;border-radius:10px;padding:.55rem .6rem;cursor:pointer;color:var(--ink);font-weight:500}
+      .nav-btn:hover{background:var(--soft)}
+      .nav-btn.active{background:var(--green);color:var(--green-ink)}
+      .nav-btn svg{flex:0 0 auto}
+      .sidebar .spacer{flex:1}
+      .sidebar .who{font-size:.82rem;color:var(--muted);padding:.4rem .6rem;overflow-wrap:anywhere}
+      .progress-wrap{padding:.4rem .6rem}
+      .progress-track{height:.5rem;background:var(--soft);border-radius:99px;overflow:hidden}
+      .progress-fill{height:100%;background:var(--green);border-radius:99px}
+      .progress-wrap p{font-size:.8rem;color:var(--muted);margin:.35rem 0 0}
+      .main{flex:1;min-width:0;padding:1.5rem clamp(1rem,3vw,2.25rem) 4rem}
+      .mobilebar{display:none}
+      @media (max-width:820px){
+        .sidebar{display:none}
+        .mobilebar{display:block;position:sticky;top:0;z-index:30;background:var(--surface);
+          border-bottom:1px solid var(--line);padding:.6rem .75rem}
+        .mobilebar .brand{font-size:1.15rem;padding:0 0 .5rem}
+        .mobilenav{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.25rem;scrollbar-width:none}
+        .mobilenav::-webkit-scrollbar{display:none}
+        .mobilenav .nav-btn{width:auto;white-space:nowrap;border:1px solid var(--line);flex:0 0 auto}
+        .mobilenav .nav-btn.active{border-color:var(--green)}
+        .main{padding-top:1rem}
+      }
+
+      /* ---------- Views ---------- */
+      .view h2{font-size:1.7rem;margin:.1rem 0 .35rem}
+      .view .lede{color:var(--muted);margin:0 0 1.25rem;max-width:44rem}
+      .toolbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:1rem}
+      .toolbar .grow{flex:1}
+      .toolbar input[type="search"]{max-width:20rem}
+      .chip{display:inline-flex;align-items:center;gap:.3rem;border-radius:99px;padding:.14rem .65rem;
+        font-size:.78rem;font-weight:700;letter-spacing:.01em;background:var(--soft);color:var(--ink);white-space:nowrap}
+      .chip.ok{background:var(--ok-bg);color:var(--ok)}
+      .chip.warn{background:var(--warn-bg);color:var(--warn)}
+      .chip.bad{background:var(--bad-bg);color:var(--bad)}
+      .chip.pink{background:var(--pink);color:var(--ink)}
+      .chipbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;
+        padding:.3rem .85rem;cursor:pointer;font-weight:600;font-size:.88rem}
+      .chipbtn.active{background:var(--green);border-color:var(--green);color:var(--green-ink)}
+      .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+        box-shadow:var(--shadow);padding:1.1rem 1.15rem}
+      .grid{display:grid;gap:1rem}
+      .grid.kpis{grid-template-columns:repeat(auto-fit,minmax(10.5rem,1fr))}
+      .grid.two{grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))}
+      .kpi .num{font-family:Georgia,serif;font-size:2.1rem;font-weight:700;line-height:1.1}
+      .kpi .lbl{font-weight:700;margin-top:.15rem}
+      .kpi .sub{color:var(--muted);font-size:.88rem}
+      .hero{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
+        padding:1.6rem;margin-bottom:1rem}
+      .hero h2{font-size:clamp(1.7rem,4.5vw,2.5rem);margin:.3rem 0 .4rem}
+      .hero p{color:var(--muted);margin:.2rem 0}
+      .row-card{display:flex;gap:.9rem;align-items:flex-start;background:var(--surface);border:1px solid var(--line);
+        border-radius:var(--radius);box-shadow:var(--shadow);padding:.95rem 1.05rem;margin-bottom:.65rem}
+      .row-card .body{flex:1;min-width:0}
+      .row-card h3{margin:0 0 .2rem;font-size:1.05rem;line-height:1.35}
+      .row-card .meta{color:var(--muted);font-size:.86rem;overflow-wrap:anywhere}
+      .row-card .desc{font-size:.92rem;margin:.35rem 0 0;color:var(--ink)}
+      .row-card .actions{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+      .thumb{width:4.2rem;height:6.3rem;object-fit:cover;border-radius:10px;border:1px solid var(--line);flex:0 0 auto;background:var(--soft)}
+      .thumb.wide{width:6.3rem;height:4.2rem}
+      .empty{border:1.5px dashed var(--line);border-radius:var(--radius);padding:1.6rem;text-align:center;color:var(--muted)}
+      .day-block{margin-bottom:1.1rem}
+      .day-head{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin-bottom:.5rem}
+      .day-head h3{margin:0;font-size:1.12rem}
+      .slot{border-inline-start:3px solid var(--line);padding:.35rem 0 .35rem .8rem;margin:.45rem 0}
+      [dir="rtl"] .slot{border-inline-start:3px solid var(--line)}
+      .slot.filled{border-color:var(--green)}
+      code.snippet{display:block;background:var(--soft);border-radius:10px;padding:.6rem .7rem;font-size:.8rem;
+        overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:.5rem 0}
+      .dist-row{display:flex;justify-content:space-between;gap:1rem;padding:.45rem 0;border-bottom:1px solid var(--line);font-size:.94rem}
+      .dist-row:last-child{border-bottom:0}
+      .dist-row a{overflow-wrap:anywhere}
+      footer.note{color:var(--muted);font-size:.85rem;margin-top:2rem}
+
+      /* ---------- Modal ---------- */
+      .modal-back{position:fixed;inset:0;background:rgba(20,28,22,.5);z-index:50;display:flex;
+        align-items:flex-end;justify-content:center;padding:0}
+      @media (min-width:640px){.modal-back{align-items:center;padding:1.5rem}}
+      .modal{background:var(--surface);border-radius:18px 18px 0 0;width:100%;max-width:38rem;max-height:92dvh;
+        overflow-y:auto;padding:1.4rem 1.4rem 1.6rem}
+      @media (min-width:640px){.modal{border-radius:18px}}
+      .modal h2{margin:0 2rem .4rem 0;font-size:1.3rem}
+      .modal .x{float:right}
+      [dir="rtl"] .modal .x{float:left}
+      .modal .x button{border:0;background:var(--soft);border-radius:50%;width:2.25rem;height:2.25rem;cursor:pointer;font-size:1rem}
+      .form-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.3rem}
+      .toast{position:fixed;bottom:1.1rem;inset-inline-start:50%;transform:translateX(-50%);
+        background:var(--ink);color:var(--bg);border-radius:99px;padding:.6rem 1.1rem;z-index:80;
+        box-shadow:var(--shadow);font-weight:600;max-width:92vw;text-align:center}
+      [dir="rtl"] .toast{transform:translateX(50%)}
+    </style>
+  </head>
+  <body>
+    <!-- ======================= LOGIN ======================= -->
+    <div id="login-view" class="login-wrap hidden">
+      <form class="login-card" id="login-form">
+        <div class="login-mark" aria-hidden="true">🧶</div>
+        <h1 data-i18n="loginTitle">CozyLoops Admin — sign in</h1>
+        <p data-i18n="loginIntro">This admin is private. Sign in with the CozyLoops admin account (Supabase) to continue.</p>
+        <label for="login-email" data-i18n="emailLabel">Email</label>
+        <input type="email" id="login-email" autocomplete="username" required />
+        <label for="login-password" data-i18n="passwordLabel">Password</label>
+        <input type="password" id="login-password" autocomplete="current-password" required />
+        <button class="btn block" type="submit" id="login-btn" data-i18n="signIn">Sign in</button>
+        <div class="msg error hidden" id="login-error"></div>
+      </form>
+    </div>
+
+    <!-- ======================= DENIED ======================= -->
+    <div id="denied-view" class="login-wrap hidden">
+      <div class="login-card">
+        <div class="login-mark" aria-hidden="true">🔒</div>
+        <h1 data-i18n="deniedTitle">No admin access</h1>
+        <p data-i18n="loginDenied">This account does not have admin access. Only the CozyLoops owner account can use this admin.</p>
+        <button class="btn block" id="denied-back" data-i18n="backToLogin">Back to sign in</button>
+      </div>
+    </div>
+
+    <!-- ======================= LOADING ======================= -->
+    <div id="loading-view" class="login-wrap">
+      <div class="login-card"><p style="text-align:center" data-i18n="loading">Loading your admin…</p></div>
+    </div>
+
+    <!-- ======================= APP ======================= -->
+    <div id="app-view" class="shell hidden">
+      <aside class="sidebar">
+        <div class="brand">CozyLoops Admin<small data-i18n="adminTagline">Full manual control of your site — articles, pins, ads and more.</small></div>
+        <nav id="side-nav" aria-label="Sections"></nav>
+        <div class="spacer"></div>
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill" id="side-progress" style="width:0%"></div></div>
+          <p id="side-stats"></p>
+        </div>
+        <div class="who" id="side-who"></div>
+        <button class="btn secondary" id="sync-btn-side" data-i18n="syncNow">Sync now</button>
+        <button class="btn secondary" id="signout-btn" data-i18n="signOut">Sign out</button>
+      </aside>
+      <div style="flex:1;min-width:0">
+        <div class="mobilebar">
+          <div class="brand">CozyLoops Admin</div>
+          <nav class="mobilenav" id="mobile-nav" aria-label="Sections"></nav>
+        </div>
+        <main class="main" id="main"></main>
+      </div>
+    </div>
+
+    <div id="modal-root"></div>
+    <div id="toast-root"></div>
+
+<script>
+"use strict";
+/* =====================================================================
+   CozyLoops Admin — static build (deploys as admin/index.html)
+   Supabase project: yqmrunstyhrhnvxoyrap — same project + public
+   publishable key as the site's own admin/app.js. Articles read/write
+   go through the signed-in admin session, so drafts (hidden from the
+   public key by RLS) are fetched with the session access token.
+   ===================================================================== */
+var SB_URL = "https://yqmrunstyhrhnvxoyrap.supabase.co";
+var SB_KEY = "sb_publishable_HqkcpvBz8P8KJTZFgefrWQ_rFxKPMNh";
+var ADMIN_EMAIL = "houssam.el.4ur@gmail.com";
+var SITE = "https://cozyloops.site";
+var CAL_START = "2026-11-17";
+var CAL_DAYS = 25;
+
+var NICHES = ["Christmas amigurumi ornaments","Festive winter animals","Christmas home decor",
+  "Winter table & mantel","Winter wearables","Granny-square revival","Quick 1-hour gifts",
+  "Mini amigurumi","Baby Christmas","Cozy home"];
+var PIN_CATEGORIES = ["Wearables","Scarf","Beanie","Christmas","Home decor","Other"];
+var ARTICLE_CATEGORIES = ["Beginner Tutorials","Free Patterns","Amigurumi","Crochet Tips","Wearable Crochet"];
+
+/* ---------------- i18n (interface chrome only) ---------------- */
+var STR = {
+en:{loginTitle:"CozyLoops Admin — sign in",loginIntro:"This admin is private. Sign in with the CozyLoops admin account (Supabase) to continue.",emailLabel:"Email",passwordLabel:"Password",signIn:"Sign in",signingIn:"Signing in…",loginError:"Sign-in failed — check the email and password and try again.",deniedTitle:"No admin access",loginDenied:"This account does not have admin access. Only the CozyLoops owner account can use this admin.",backToLogin:"Back to sign in",loading:"Loading your admin…",adminTagline:"Full manual control of your site — articles, pins, ads and more.",syncNow:"Sync now",syncing:"Syncing…",signOut:"Sign out",signedInAs:"Signed in as",close:"Close",save:"Save",saving:"Saving…",edit:"Edit",delete:"Delete",confirmDelete:"Click again to confirm delete",add:"Add",cancel:"Cancel",view:"View site",notes:"Notes",status:"Status",title:"Title",
+tabToday:"Today",tabArticles:"Articles",tabCalendar:"Calendar",tabPins:"Pins",tabAds:"Ads",tabMedia:"Media Library",tabPages:"Pages & Settings",tabUsers:"Users",tabComments:"Comments",tabHealth:"Site Health & Notes",
+chipLive:"Live",chipDraft:"Draft",chipScheduled:"Scheduled",chipIdea:"Idea",chipDone:"Done",chipWriting:"Writing",chipPlanned:"Planned",chipPosted:"Posted",chipReady:"Ready",chipOk:"Good",chipWarn:"Attention",chipBad:"Problem",chipTodo:"Needs work",chipActive:"Active",chipPaused:"Paused",chipPending:"Pending",chipApproved:"Approved",chipSpam:"Spam",chipToday:"Today",chipImage:"Image",chipPdf:"PDF",chipOther:"Other",
+todayTitle:"Today",articlesPerDay:"2 articles a day",dayOf:"Day {n} of 25",calLine:"50-article calendar: {done} / 50 done or live ({pct}%).",kpiLive:"Live articles",kpiDrafts:"Drafts in Supabase",kpiDraftsSub:"{s} scheduled to publish",kpiPins:"Pinterest pins",kpiPinsSub:"{p} posted · {s} scheduled · {r} ready",kpiCal:"Calendar",kpiCalSub:"17 Nov – 11 Dec 2026",kpiHealth:"Open issues",kpiHealthSub:"in site health",quickActions:"Quick actions",quickNewArticle:"New article",quickNewPin:"New pin",quickCheckHealth:"Check live SEO files",todaysSlots:"Today's articles",slotEmpty:"Still empty — add today's article for this slot.",slotLabel:"Article {n}",upcomingDrafts:"Next scheduled drafts",upcomingPins:"Pins going out today",noneScheduled:"Nothing scheduled.",syncDone:"Sync done: {live} live · {drafts} drafts.",syncFailed:"Sync didn't finish — check the connection and try again.",seoOk:"Sitemap OK: {n} article pages live.",seoFail:"Couldn't read the live sitemap from here.",
+articlesTitle:"Articles",articlesLede:"Every article in Supabase — published ones are live on the site, drafts are read with your admin session (the public key can't see them).",searchArticles:"Search title or slug…",filterAll:"All",newArticle:"New article",slugLabel:"Slug (URL)",categoryLabel:"Section / Category",excerptLabel:"Excerpt",imageLabel:"Cover image URL",contentLabel:"Article content (Markdown)",scheduledAtLabel:"Publication date & time (UTC)",publishNow:"Published",saveArticle:"Save article",articleSaved:"Article saved.",articleDeleted:"Article deleted.",openArticle:"Open",keywordLabel:"Target keyword",
+calendarTitle:"Publishing calendar",calendarLede:"25 days × 2 articles — 17 Nov to 11 Dec 2026, across the 10 Christmas micro-niches.",addPlan:"Add to this day",planTitle:"Plan an article",nicheLabel:"Micro-niche",
+pinsTitle:"Pinterest pins",pinsLede:"The 60 v5 pins. Direct cozyloops.site links are blocked by Pinterest as spam, so every pin uses its own Worker redirect link.",filterPosted:"Posted",filterScheduled:"Scheduled",filterReady:"Ready",newPin:"New pin",pinCode:"Pin",workerLink:"Pinterest (Worker) link",articleLink:"Final article",scheduledFor:"Goes out",descLabel:"Description",distTitle:"Links per article",distNote:"6 articles × 10 pins each.",
+adsTitle:"Ads — HB Agency",adsLede:"The site's real ad placements. Copy a slot's code to check it against the live pages.",newAd:"New ad slot",slotKey:"Slot key",positionLabel:"Position",codeLabel:"Embed code",copyCode:"Copy code",copied:"Copied.",
+mediaTitle:"Media Library",mediaLede:"Files you add by hand — name, link and kind. Nothing is uploaded from here.",newMedia:"Add media",nameLabel:"Name",urlLabel:"File URL",kindLabel:"Kind",mediaEmpty:"No media yet — add your first file.",
+usersTitle:"Users",usersLede:"People with a role on the site, kept by hand.",newUser:"Add user",roleLabel:"Role",usersEmpty:"No users added yet.",
+commentsTitle:"Comments",commentsLede:"Comments you moderate by hand — approve, send back to pending, or mark as spam.",newComment:"Add comment",authorLabel:"Author",commentOn:"On article (slug)",commentText:"Comment",approve:"Approve",toPending:"Back to pending",markSpam:"Mark spam",commentsEmpty:"No comments yet.",
+pagesTitle:"Pages & Settings",pagesLede:"The site's fixed pages and your working settings.",pageStatusLive:"Live",pageStatusMissing:"Missing",settingsTitle:"Settings",siteName:"Site name",siteUrl:"Site URL",authorName:"Author name",contactEmail:"Contact email",perDay:"Articles per day",pinterestAcc:"Pinterest account",adsNetwork:"Ads network",languageTitle:"Language",languageNote:"Interface language. Arabic switches the layout to right-to-left.",saveSettings:"Save settings",settingsSaved:"Settings saved for this session.",
+healthTitle:"Site Health & Notes",healthLede:"The checks that were verified on the live site. Edit a card when something changes.",editCheck:"Edit check",detailLabel:"Detail",checkLive:"Check live sitemap",notesTitle:"Working notes",notesPh:"Notes for yourself — kept for this session…",sessionNote:"Manual lists (calendar, pins, media, users, comments, health, settings) are kept for this session in this static build; articles are saved in Supabase for real."},
+ar:{loginTitle:"أدمن CozyLoops — تسجيل الدخول",loginIntro:"هاد الأدمن خاص. دخل بحساب أدمن CozyLoops (Supabase) باش تكمل.",emailLabel:"الإيميل",passwordLabel:"كلمة السر",signIn:"دخل",signingIn:"كنسجل الدخول…",loginError:"تسجيل الدخول فشل — تأكد من الإيميل وكلمة السر وعاود.",deniedTitle:"ما عندكش صلاحية الأدمن",loginDenied:"هاد الحساب ما عندوش صلاحية الأدمن. غير حساب مول CozyLoops يقدر يستعمل هاد الأدمن.",backToLogin:"رجوع لتسجيل الدخول",loading:"كنحمل الأدمن ديالك…",adminTagline:"تحكم يدوي كامل فالموقع ديالك — مقالات، pins، إعلانات وأكثر.",syncNow:"زامن دابا",syncing:"كنزامن…",signOut:"خرج",signedInAs:"داخل بـ",close:"سد",save:"حفظ",saving:"كنحفظ…",edit:"عدّل",delete:"حذف",confirmDelete:"كليكي مرة أخرى باش تأكد الحذف",add:"زيد",cancel:"إلغاء",view:"شوف الموقع",notes:"ملاحظات",status:"الحالة",title:"العنوان",
+tabToday:"اليوم",tabArticles:"المقالات",tabCalendar:"الروزنامة",tabPins:"الـ Pins",tabAds:"الإعلانات",tabMedia:"مكتبة الوسائط",tabPages:"الصفحات والإعدادات",tabUsers:"المستعملين",tabComments:"التعليقات",tabHealth:"صحة الموقع والملاحظات",
+chipLive:"حي",chipDraft:"مسودة",chipScheduled:"مجدول",chipIdea:"فكرة",chipDone:"سالي",chipWriting:"كيتكتب",chipPlanned:"مخطط",chipPosted:"تنشر",chipReady:"جاهز",chipOk:"مزيان",chipWarn:"انتباه",chipBad:"مشكل",chipTodo:"خاصو خدمة",chipActive:"خدّام",chipPaused:"موقف",chipPending:"كيتسنى",chipApproved:"مقبول",chipSpam:"سبام",chipToday:"اليوم",chipImage:"صورة",chipPdf:"PDF",chipOther:"أخرى",
+todayTitle:"اليوم",articlesPerDay:"2 مقالات فالنهار",dayOf:"النهار {n} من 25",calLine:"روزنامة 50 مقال: {done} / 50 سالاو ولا حيين ({pct}%).",kpiLive:"مقالات حية",kpiDrafts:"مسودات فـ Supabase",kpiDraftsSub:"{s} مجدولة للنشر",kpiPins:"Pins ديال Pinterest",kpiPinsSub:"{p} تنشرو · {s} مجدولين · {r} جاهزين",kpiCal:"الروزنامة",kpiCalSub:"17 نونبر – 11 دجنبر 2026",kpiHealth:"مشاكل مفتوحة",kpiHealthSub:"فصحة الموقع",quickActions:"إجراءات سريعة",quickNewArticle:"مقال جديد",quickNewPin:"Pin جديد",quickCheckHealth:"تحقق من ملفات SEO الحية",todaysSlots:"مقالات اليوم",slotEmpty:"باقي خاوي — زيد مقال اليوم لهاد البلاصة.",slotLabel:"المقال {n}",upcomingDrafts:"المسودات المجدولة الجاية",upcomingPins:"الـ Pins اللي خارجين اليوم",noneScheduled:"والو ما مجدول.",syncDone:"سالات المزامنة: {live} حيين · {drafts} مسودات.",syncFailed:"المزامنة ما كملاتش — تأكد من الاتصال وعاود.",seoOk:"الـ sitemap مزيان: {n} صفحة مقال حية.",seoFail:"ما قدرتش نقرا الـ sitemap الحي من هنا.",
+articlesTitle:"المقالات",articlesLede:"كل مقال فـ Supabase — المنشورين حيين فالموقع، والمسودات كنقراوهم بجلسة الأدمن ديالك (المفتاح العمومي ما كيشوفهمش).",searchArticles:"قلب بالعنوان ولا الـ slug…",filterAll:"الكل",newArticle:"مقال جديد",slugLabel:"الـ Slug (الرابط)",categoryLabel:"القسم / الصنف",excerptLabel:"المقتطف",imageLabel:"رابط صورة الغلاف",contentLabel:"محتوى المقال (Markdown)",scheduledAtLabel:"تاريخ ووقت النشر (UTC)",publishNow:"منشور",saveArticle:"حفظ المقال",articleSaved:"تحفظ المقال.",articleDeleted:"تحذف المقال.",openArticle:"افتح",keywordLabel:"الكلمة المفتاحية",
+calendarTitle:"روزنامة النشر",calendarLede:"25 نهار × 2 مقالات — من 17 نونبر حتى 11 دجنبر 2026، على 10 ميكرو-نيشات ديال الكريسماس.",addPlan:"زيد لهاد النهار",planTitle:"خطط لمقال",nicheLabel:"الميكرو-نيش",
+pinsTitle:"Pins ديال Pinterest",pinsLede:"الـ 60 pin ديال v5. روابط cozyloops.site المباشرة مبلوكية فـ Pinterest كسبام، داكشي علاش كل pin كيستعمل رابط Worker خاص بيه.",filterPosted:"المنشورين",filterScheduled:"المجدولين",filterReady:"الجاهزين",newPin:"Pin جديد",pinCode:"Pin",workerLink:"رابط Pinterest (Worker)",articleLink:"المقال النهائي",scheduledFor:"غادي يخرج",descLabel:"الوصف",distTitle:"الروابط لكل مقال",distNote:"6 مقالات × 10 pins لكل وحدة.",
+adsTitle:"الإعلانات — HB Agency",adsLede:"بلاصات الإعلانات الحقيقية ديال الموقع. نسخ كود أي بلاصة باش تقارنو مع الصفحات الحية.",newAd:"بلاصة إعلان جديدة",slotKey:"مفتاح البلاصة",positionLabel:"البلاصة",codeLabel:"كود التضمين",copyCode:"نسخ الكود",copied:"تنسخ.",
+mediaTitle:"مكتبة الوسائط",mediaLede:"ملفات كتزيدهم بيدك — الاسم، الرابط والصنف. والو ما كيترفع من هنا.",newMedia:"زيد وسائط",nameLabel:"الاسم",urlLabel:"رابط الملف",kindLabel:"الصنف",mediaEmpty:"ما كاينة حتى وسائط باقي — زيد أول ملف.",
+usersTitle:"المستعملين",usersLede:"الناس اللي عندهم دور فالموقع، محفوظين بيدك.",newUser:"زيد مستعمل",roleLabel:"الدور",usersEmpty:"ما تزاد حتى مستعمل باقي.",
+commentsTitle:"التعليقات",commentsLede:"تعليقات كتديرهوم بيدك — قبل، رجع للانتظار، ولا علم كسبام.",newComment:"زيد تعليق",authorLabel:"الكاتب",commentOn:"على مقال (slug)",commentText:"التعليق",approve:"قبل",toPending:"رجع للانتظار",markSpam:"علم كسبام",commentsEmpty:"ما كاين حتى تعليق باقي.",
+pagesTitle:"الصفحات والإعدادات",pagesLede:"الصفحات الثابتة ديال الموقع وإعدادات الخدمة ديالك.",pageStatusLive:"حية",pageStatusMissing:"ناقصة",settingsTitle:"الإعدادات",siteName:"اسم الموقع",siteUrl:"رابط الموقع",authorName:"اسم الكاتب",contactEmail:"إيميل التواصل",perDay:"مقالات فالنهار",pinterestAcc:"حساب Pinterest",adsNetwork:"شبكة الإعلانات",languageTitle:"اللغة",languageNote:"لغة الواجهة. العربية كتبدل الاتجاه من اليمين لليسار.",saveSettings:"حفظ الإعدادات",settingsSaved:"تحفظات الإعدادات لهاد الجلسة.",
+healthTitle:"صحة الموقع والملاحظات",healthLede:"التحقيقات اللي تدارو على الموقع الحي. عدّل أي بطاقة ملي يتبدل شي حاجة.",editCheck:"عدّل التحقق",detailLabel:"التفاصيل",checkLive:"تحقق من الـ sitemap الحي",notesTitle:"ملاحظات الخدمة",notesPh:"ملاحظات ليك — محفوظة لهاد الجلسة…",sessionNote:"القوائم اليدوية (الروزنامة، الـ pins، الوسائط، المستعملين، التعليقات، الصحة، الإعدادات) محفوظة لهاد الجلسة فهاد النسخة الثابتة؛ المقالات كتحفظ فـ Supabase بالصح."}
+};
+var lang = "en";
+function t(key, vars){ var s = (STR[lang] && STR[lang][key]) || STR.en[key] || key;
+  if (vars) Object.keys(vars).forEach(function(k){ s = s.replace("{"+k+"}", vars[k]); });
+  return s; }
+function applyI18nStatic(){
+  document.querySelectorAll("[data-i18n]").forEach(function(el){ el.textContent = t(el.getAttribute("data-i18n")); });
+}
+
+/* ---------------- Seeds (real data, from the v4 admin) ---------------- */
+var PINS_SEED = [{"pinCode": "pin-01", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Romantic Crochet Top Pattern Lace Peplum Blouse", "description": "Looking for a romantic crochet top? This burgundy peplum blouse has soft lace stitches, a flared peplum hem and a sweetheart neckline. Wear it with jeans for an easy summer outfit. Click to explore the free pattern.", "status": "posted", "scheduledFor": ""}, {"pinCode": "pin-02", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Coquette Crochet Top Ideas Soft Lace and Ruffles", "description": "Dreaming of a soft lace top? The pink lace crop top in this pattern uses airy open stitches and a scalloped edge. It pairs well with high waisted skirts and white jeans. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-20 18:00"}, {"pinCode": "pin-03", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Dreamy Pink Lace Crochet Crop Top Free Pattern", "description": "Want a feminine crochet top for warm days? This pattern includes two tops, a burgundy peplum blouse and a pink lace crop top. Both use simple stitches and light yarn. Click to explore the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-21 18:00"}, {"pinCode": "pin-04", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Soft Feminine Crochet Top Burgundy Peplum Blouse", "description": "Looking for a coquette crochet top? The burgundy blouse has lace panels, a fitted bodice and a gentle peplum flare. Style it with a skirt for a soft romantic look. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-22 18:00"}, {"pinCode": "pin-05", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Romantic Lace Crochet Top Pattern for Summer", "description": "Need a pretty summer top to crochet? The pink lace crop top has delicate openwork, short sleeves and a neat scalloped hem. It works up fast in cotton yarn. Click to explore the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-23 18:00"}, {"pinCode": "pin-06", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Coquette Crochet Peplum Top Free Pattern Ideas", "description": "Dreaming of lace and ruffles? This pattern shows how to shape a peplum waist and finish the edges with a simple scallop. The result is soft, feminine and easy to wear. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-24 18:00"}, {"pinCode": "pin-07", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Burgundy Crochet Top Pattern Lace and Ruffles", "description": "Want a crochet top that looks handmade and lovely? The burgundy peplum blouse uses classic lace stitches and a flattering fit. Wear it over a camisole or on its own. Click to explore the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-25 18:00"}, {"pinCode": "pin-08", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Pink Lace Crochet Crop Top Romantic Summer Top", "description": "Looking for a light crochet crop top? The pink lace version is airy, soft and quick to make, with a sweetheart neckline. Pair it with denim shorts for summer. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-26 18:00"}, {"pinCode": "pin-09", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Feminine Crochet Top Pattern Lace Peplum Style", "description": "Love romantic crochet? This two top pattern gives you a burgundy peplum blouse and a pink lace crop top in one place. Both are beginner friendly with clear steps. Click to explore the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-27 18:00"}, {"pinCode": "pin-10", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-burgundy-peplum-and-pink-lace-crop-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/burgundy-peplum", "title": "Soft Romantic Crochet Top Free Pattern Lace", "description": "Want a soft feminine top for your wardrobe? The lace stitches, ruffled edging and peplum shape make this blouse feel special. It is a lovely weekend project. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-28 18:00"}, {"pinCode": "pin-11", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-11", "title": "Granny Square Crochet Vest Pattern Free", "description": "Looking for a fun crochet vest? This granny square vest uses colorful squares, a relaxed fit and a striped summer top to match. It is a cheerful project for warm days. Click to explore the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-29 18:00"}, {"pinCode": "pin-12", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-12", "title": "Retro Granny Square Vest Crochet Pattern", "description": "Love granny squares? This vest joins classic squares into a light layer you can wear over a tee or a dress. The striped top adds a fresh summer touch. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-30 18:00"}, {"pinCode": "pin-13", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-13", "title": "Crochet Granny Square Vest Summer Outfit Idea", "description": "Want a retro crochet top? The granny square vest has a boho feel, bright colors and an easy join. Wear it open over a simple outfit. Click to explore the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-01 18:00"}, {"pinCode": "pin-14", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-14", "title": "Striped Crochet Summer Top Free Pattern", "description": "Looking for an easy summer crochet project? This pattern includes a granny square vest and a striped summer tee, both quick and simple. Great for using up yarn. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-02 18:00"}, {"pinCode": "pin-15", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-15", "title": "Vintage Granny Square Top Crochet Pattern", "description": "Dreaming of a colorful crochet vest? The squares are small and quick, and the vest comes together in an afternoon. Style it with jeans and sandals. Click to explore the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-03 18:00"}, {"pinCode": "pin-16", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-16", "title": "Easy Granny Square Vest Free Crochet Pattern", "description": "Want a light layer for summer evenings? The granny square vest is airy, colorful and comfortable, with a striped tee underneath. A lovely gift to crochet. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-04 18:00"}, {"pinCode": "pin-17", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-17", "title": "Crochet Vest Pattern Granny Squares Summer", "description": "Love vintage crochet? This granny square vest brings back a classic look with modern colors. The pattern is clear and beginner friendly. Click to explore the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-05 18:00"}, {"pinCode": "pin-18", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-18", "title": "Colorful Granny Square Crochet Top Pattern", "description": "Looking for a scrap yarn project? The granny square vest uses small amounts of many colors, and the striped top is just as simple. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-06 18:00"}, {"pinCode": "pin-19", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-19", "title": "Boho Crochet Vest Pattern Free Summer Top", "description": "Want a boho crochet top for festivals and holidays? This vest and striped tee set is light, bright and easy to wear. Click to explore the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-07 18:00"}, {"pinCode": "pin-20", "category": "Wearables", "articleUrl": "https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-vest-20", "title": "Granny Square Striped Top Crochet Ideas", "description": "Need a quick crochet top? The granny square vest works up fast, and the squares are fun to make on the go. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-08 18:00"}, {"pinCode": "pin-21", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf", "title": "Easy Chunky Ribbed Crochet Scarf Free Pattern", "description": "This chunky ribbed scarf is an easy beginner pattern with a soft ribbed texture. It is long, warm and quick to crochet in thick yarn. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-19 18:00"}, {"pinCode": "pin-22", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf-22", "title": "Chunky Ribbed Crochet Scarf Pattern Beginner", "description": "A free chunky crochet scarf pattern with simple ribbed stitches. Perfect for beginners and it works up in a weekend. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-20 18:00"}, {"pinCode": "pin-23", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf-23", "title": "Free Crochet Scarf Pattern Chunky and Cozy", "description": "This ribbed scarf uses chunky yarn and an easy stitch repeat. It is warm, cozy and a great first scarf project. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-21 18:00"}, {"pinCode": "pin-24", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf-24", "title": "Easy Crochet Scarf for Beginners Ribbed Stitch", "description": "Looking for a quick winter scarf? This chunky ribbed pattern is simple, soft and finished in a few evenings. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-22 18:00"}, {"pinCode": "pin-25", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf-25", "title": "Chunky Crochet Scarf Pattern One Evening Make", "description": "A beginner friendly chunky scarf with a neat ribbed look. The pattern uses basic stitches and thick yarn. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-23 18:00"}, {"pinCode": "pin-26", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf-26", "title": "Cozy Ribbed Crochet Scarf Free Pattern Easy", "description": "This free scarf pattern makes a long chunky scarf with a lovely ribbed texture. Easy to follow and great for gifts. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-24 18:00"}, {"pinCode": "pin-27", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf-27", "title": "Beginner Crochet Scarf Pattern Chunky Ribbed", "description": "Crochet a warm chunky scarf with this easy ribbed pattern. The stitches are simple and the result is soft and cozy. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-25 18:00"}, {"pinCode": "pin-28", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf-28", "title": "Warm Chunky Crochet Scarf Pattern Free", "description": "A simple chunky ribbed scarf pattern for beginners. It uses chunky yarn, so it grows fast and keeps you warm. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-26 18:00"}, {"pinCode": "pin-29", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf-29", "title": "Ribbed Crochet Scarf Pattern Easy Winter Make", "description": "This cozy ribbed scarf is an easy one evening make in chunky yarn. The free pattern has clear steps for beginners. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-27 18:00"}, {"pinCode": "pin-30", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/chunky-ribbed-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/chunky-scarf-30", "title": "Free Chunky Scarf Crochet Pattern for Beginners", "description": "A free easy crochet scarf pattern with a chunky ribbed texture. Perfect for cold days and quick gifts. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-28 18:00"}, {"pinCode": "pin-31", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf", "title": "Granny Stripe Crochet Scarf Free Pattern", "description": "This granny stripe scarf is a free pattern with colorful stripes and a classic stitch. Easy and fun for beginners. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-29 18:00"}, {"pinCode": "pin-32", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf-32", "title": "Colorful Granny Stripe Scarf Crochet Pattern", "description": "A colorful striped crochet scarf with a simple granny stitch repeat. Great for using up yarn and easy to make. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-30 18:00"}, {"pinCode": "pin-33", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf-33", "title": "Easy Granny Stripe Crochet Scarf for Beginners", "description": "This free granny stripe scarf pattern is bright, cheerful and beginner friendly. The stripes are easy to follow. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-01 18:00"}, {"pinCode": "pin-34", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf-34", "title": "Free Crochet Scarf Pattern Granny Stripes", "description": "Looking for a fun scarf to crochet? The granny stripe pattern uses simple stitches and happy colors. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-02 18:00"}, {"pinCode": "pin-35", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf-35", "title": "Striped Crochet Scarf Pattern Easy and Colorful", "description": "A retro striped scarf pattern with granny stripes. Easy to crochet, light to wear and lovely as a gift. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-03 18:00"}, {"pinCode": "pin-36", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf-36", "title": "Granny Stripe Scarf Pattern Free Crochet", "description": "This colorful crochet scarf uses the classic granny stripe stitch. The free pattern is clear and simple for beginners. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-04 18:00"}, {"pinCode": "pin-37", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf-37", "title": "Beginner Granny Stripe Crochet Scarf Pattern", "description": "Crochet a cheerful granny stripe scarf with this easy free pattern. The stripes make it fun to work on. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-05 18:00"}, {"pinCode": "pin-38", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf-38", "title": "Retro Striped Crochet Scarf Free Pattern", "description": "A beginner friendly striped scarf with a granny stitch texture. The pattern is free and easy to follow. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-06 18:00"}, {"pinCode": "pin-39", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf-39", "title": "Colorful Crochet Scarf Pattern Granny Stripe", "description": "This striped crochet scarf is a quick colorful project. The granny stripe stitch is simple and relaxing. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-07 18:00"}, {"pinCode": "pin-40", "category": "Scarf", "articleUrl": "https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/granny-scarf-40", "title": "Easy Striped Crochet Scarf Pattern Free", "description": "A free granny stripe scarf pattern for beginners. Colorful, cozy and a lovely handmade gift. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-08 18:00"}, {"pinCode": "pin-41", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie", "title": "Easiest Free Beanie Crochet Pattern in One Hour", "description": "This ribbed beanie is the easiest free beanie you can crochet in one hour. Chunky yarn, simple stitches and a cozy fit. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-20 18:00"}, {"pinCode": "pin-42", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie-42", "title": "Easy Ribbed Crochet Beanie Free Pattern", "description": "A free ribbed beanie pattern you can finish in one evening. Easy, chunky and warm, with sizes for the whole family. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-21 18:00"}, {"pinCode": "pin-43", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie-43", "title": "Free Ribbed Beanie Pattern Crochet in One Evening", "description": "Looking for a quick crochet hat? This ribbed beanie works up in about an hour with chunky yarn and basic stitches. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-22 18:00"}, {"pinCode": "pin-44", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie-44", "title": "Beginner Crochet Beanie Pattern Ribbed and Chunky", "description": "This easy ribbed beanie is a one hour project for beginners. The free pattern includes clear steps and a neat ribbed texture. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-23 18:00"}, {"pinCode": "pin-45", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie-45", "title": "One Hour Crochet Beanie Free Pattern Easy", "description": "A free crochet beanie pattern with a cozy ribbed brim. Quick to make, warm to wear and great for gifts. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-24 18:00"}, {"pinCode": "pin-46", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie-46", "title": "Ribbed Crochet Beanie Pattern Free for Beginners", "description": "Crochet a chunky ribbed beanie in one evening with this free pattern. Simple stitches and a comfortable fit. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-25 18:00"}, {"pinCode": "pin-47", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie-47", "title": "Cozy Ribbed Beanie Crochet Pattern Free", "description": "This beginner beanie pattern is easy and fast. The ribbed texture looks lovely and the hat fits well. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-26 18:00"}, {"pinCode": "pin-48", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie-48", "title": "Easy Crochet Hat Pattern Ribbed Beanie Free", "description": "A free ribbed beanie pattern for beginners. It works up quickly in chunky yarn and makes a thoughtful gift. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-27 18:00"}, {"pinCode": "pin-49", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie-49", "title": "Chunky Ribbed Beanie Crochet Pattern One Hour", "description": "Want a beanie in an hour? This ribbed pattern uses chunky yarn and easy stitches, perfect for a last minute gift. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-28 18:00"}, {"pinCode": "pin-50", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/ribbed-beanie-50", "title": "Free Crochet Beanie Pattern Easy Ribbed Hat", "description": "This cozy ribbed beanie is a free pattern for beginners. One hour, one ball of yarn and a warm hat. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-29 18:00"}, {"pinCode": "pin-51", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-51", "title": "Slouchy Crochet Beanie Free Pattern Easy", "description": "This slouchy beanie is a free pattern with a relaxed fit and a soft ribbed brim. Easy for beginners and quick to make. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-11-30 18:00"}, {"pinCode": "pin-52", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-52", "title": "Easy Slouchy Beanie Crochet Pattern Free", "description": "A free slouchy crochet beanie pattern with a cozy relaxed shape. Simple stitches and a comfortable fit. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-01 18:00"}, {"pinCode": "pin-53", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-53", "title": "Free Slouchy Crochet Hat Pattern for Beginners", "description": "Looking for a slouchy hat to crochet? This easy pattern has a soft drape and a neat ribbed edge. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-02 18:00"}, {"pinCode": "pin-54", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-54", "title": "Cozy Slouchy Beanie Pattern Crochet Free", "description": "This slouchy beanie pattern is beginner friendly and works up in one evening. The free pattern has clear steps. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-03 18:00"}, {"pinCode": "pin-55", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-55", "title": "Slouchy Crochet Beanie Pattern One Evening", "description": "A cozy slouchy beanie with a relaxed fit. The free crochet pattern is easy to follow and great for gifts. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-04 18:00"}, {"pinCode": "pin-56", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-56", "title": "Beginner Slouchy Beanie Free Crochet Pattern", "description": "Crochet a soft slouchy beanie with this free pattern. The ribbed brim keeps it snug while the top stays relaxed. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-05 18:00"}, {"pinCode": "pin-57", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-57", "title": "Relaxed Slouchy Crochet Beanie Pattern Free", "description": "This easy slouchy hat pattern is perfect for beginners. Warm, soft and a lovely handmade gift. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-06 18:00"}, {"pinCode": "pin-58", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-58", "title": "Easy Crochet Slouchy Hat Pattern Free", "description": "A free slouchy beanie pattern with a simple stitch repeat. Quick to crochet and comfortable to wear. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-07 18:00"}, {"pinCode": "pin-59", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-59", "title": "Slouchy Beanie Crochet Pattern Soft and Warm", "description": "Want a relaxed beanie for cold days? This slouchy pattern is easy, soft and quick to finish. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-08 18:00"}, {"pinCode": "pin-60", "category": "Beanie", "articleUrl": "https://cozyloops.site/posts/slouchy-crochet-beanie-pattern/", "redirectUrl": "https://cozyloops-links.cozyloops.workers.dev/slouchy-beanie-60", "title": "Free Crochet Slouchy Beanie Pattern Easy Make", "description": "This slouchy crochet beanie is a free pattern for beginners. Soft, warm and a lovely weekend project. Click to see the free pattern.", "status": "scheduled", "scheduledFor": "2026-12-09 18:00"}];
+var ADS_SEED = [
+ {slotKey:"hbagency_space_349628",label:"Top — top of the article",position:"Article pages — right after the cover image, at the top of the content",code:"<div id='hbagency_space_349628'></div>",notes:"HB Agency — TOP in scripts/hb_placements.py.",status:"active"},
+ {slotKey:"hbagency_space_349630",label:"In-page — middle of the article",position:"Article pages — inside the content, before the middle H2 heading",code:"<div class=\"hb-ad-inpage\"><div class=\"hb-ad-inner\"><div class=\"hbagency_cls hbagency_space_349630\"></div></div></div>",notes:"HB Agency — INPAGE in scripts/hb_placements.py.",status:"active"},
+ {slotKey:"hbagency_space_349629",label:"Bottom — bottom of the article",position:"Article pages — at the end of the content, before the related posts",code:"<div id='hbagency_space_349629'></div>",notes:"HB Agency — BOTTOM in scripts/hb_placements.py.",status:"active"},
+ {slotKey:"hbagency_space_349627",label:"Floating footer 1",position:"All pages — floating footer banner with a close button, bottom of the page",code:"<div id='HB_Footer_Close_hbagency_space_349627'><div id='HB_CLOSE_hbagency_space_349627'></div><div id='HB_OUTER_hbagency_space_349627'><div id='hbagency_space_349627'></div></div></div>",notes:"HB Agency — FOOTER in scripts/hb_placements.py (first of the two footer slots).",status:"active"},
+ {slotKey:"hbagency_space_349626",label:"Floating footer 2",position:"All pages — floating footer banner with a close button, bottom of the page",code:"<div id='HB_Footer_Close_hbagency_space_349626'><div id='HB_CLOSE_hbagency_space_349626'></div><div id='HB_OUTER_hbagency_space_349626'><div id='hbagency_space_349626'></div></div></div>",notes:"HB Agency — FOOTER in scripts/hb_placements.py (second of the two footer slots).",status:"active"},
+ {slotKey:"hbagency_space_351114",label:"PDF — download dialog",position:"Inside the pattern PDF download dialog",code:"hbagency_space_351114",notes:"Added 18 Nov 2026 in scripts/build_seo.py — shows only in the PDF dialog, not on the page.",status:"active"}
+];
+var PAGES_SEED = [
+ {path:"/about/",title:"About",status:"live",notes:""},
+ {path:"/contact/",title:"Contact",status:"live",notes:"FormSubmit form — activated and verified end-to-end 18 Nov 2026."},
+ {path:"/privacy-policy/",title:"Privacy Policy",status:"live",notes:""},
+ {path:"/terms/",title:"Terms of Use",status:"live",notes:""},
+ {path:"/disclosure/",title:"Disclosure",status:"live",notes:""},
+ {path:"/cookie-policy/",title:"Cookie Policy",status:"live",notes:""},
+ {path:"/sitemap/",title:"Sitemap",status:"live",notes:""}
+];
+var HEALTH_SEED = [
+ {label:"Security headers",detail:"Grade A+ on securityheaders.com — HSTS max-age=2592000 (30 days), all 6 headers present.",state:"ok"},
+ {label:"Legal pages (7)",detail:"About, Contact, Privacy Policy, Terms, Disclosure, Cookie Policy, Sitemap — all live.",state:"ok"},
+ {label:"Contact form (FormSubmit)",detail:"Activated and test message reached houssam.el.4ur@gmail.com on 18 Nov 2026.",state:"ok"},
+ {label:"Cookie banner — advertising",detail:"PR #61 merged and live-verified 19 Nov 2026: banner shows on first load on homepage + articles, covers both choices, 'Manage advertising cookies' button present. The advertising consent screen itself is still unavailable — that is on InMobi/HB Agency, not a site bug.",state:"ok"},
+ {label:"Cloudflare",detail:"Zone cozyloops.site active (Free plan) — DNS to GitHub Pages, SSL mode full, certificate active. Verified 18 Nov 2026.",state:"ok"},
+ {label:"Pin links",detail:"Verified 19 Nov 2026: each of the 60 main pins (01–60) links to its own article through its own Worker redirect (cozyloops-links.cozyloops.workers.dev) — 60/60 checked, all 301 to the right article. The 10 extra pins (61–70) intentionally have no link. Direct cozyloops.site links are still blocked by Pinterest as spam.",state:"ok"},
+ {label:"WebP images",detail:"Beginners-guide cover + 3 Pexels images replaced with local WebP in Supabase on 19 Nov 2026 — 0 Pexels URLs left anywhere.",state:"ok"}
+];
+var PLAN_SEED = [
+ {date:"2026-11-17",slot:1,title:"Mini Crochet Goose Bag Charm with Embroidered Face",slug:"mini-crochet-goose-bag-charm-with-embroidered-face",niche:"Mini amigurumi",keyword:"",status:"done"},
+ {date:"2026-11-17",slot:2,title:"Crochet Earbud Cord Wrap with a Buttonhole",slug:"crochet-earbud-cord-wrap-with-a-buttonhole",niche:"Quick 1-hour gifts",keyword:"",status:"done"}
+];
+
+/* ---------------- State ---------------- */
+var sb = null;
+var session = null;
+var state = {
+  tab: "today",
+  articles: [], articlesLoaded: false, articlesError: "",
+  articleFilter: "all", articleSearch: "",
+  pins: JSON.parse(JSON.stringify(PINS_SEED)),
+  pinFilter: "all", pinSearch: "",
+  plan: JSON.parse(JSON.stringify(PLAN_SEED)),
+  ads: JSON.parse(JSON.stringify(ADS_SEED)),
+  pages: JSON.parse(JSON.stringify(PAGES_SEED)),
+  health: JSON.parse(JSON.stringify(HEALTH_SEED)),
+  media: [], users: [], comments: [], notes: "",
+  settings: {site_name:"CozyLoops",site_url:"https://cozyloops.site",author_name:"Houssam El Ouardy",contact_email:"houssam.el.4ur@gmail.com",articles_per_day:"2",pinterest_account:"@Houssam_El_Ouardy (crochet school)",ads_network:"HB Agency"}
+};
+
+/* ---------------- Helpers ---------------- */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function pad(n){ return (n < 10 ? "0" : "") + n; }
+function todayStr(){ var d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+function addDays(ds, n){ var d = new Date(ds + "T12:00:00"); d.setDate(d.getDate() + n); return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+function fmtDay(ds){ var d = new Date(ds + "T12:00:00"); return d.toLocaleDateString(lang === "ar" ? "ar" : "en-GB", {weekday:"short", day:"numeric", month:"short"}); }
+function dayNumber(ds){ var diff = Math.round((new Date(ds + "T12:00:00") - new Date(CAL_START + "T12:00:00")) / 86400000); return diff + 1; }
+function slugify(v){ return String(v || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 180); }
+function fmtSched(iso){ if (!iso) return ""; var d = new Date(iso); if (isNaN(d)) return iso; return d.toLocaleString(lang === "ar" ? "ar" : "en-GB", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}) + " UTC"; }
+function toast(msg){ var r = $("toast-root"); r.innerHTML = '<div class="toast">' + esc(msg) + '</div>'; setTimeout(function(){ r.innerHTML = ""; }, 3200); }
+function chip(text, cls){ return '<span class="chip ' + (cls || "") + '">' + esc(text) + '</span>'; }
+function articleChip(a){ if (a.status === "published") return chip(t("chipLive"), "ok"); if (a.scheduled_at) return chip(t("chipScheduled"), "pink"); return chip(t("chipDraft"), "warn"); }
+function pinChip(p){ if (p.status === "posted") return chip(t("chipPosted"), "ok"); if (p.status === "scheduled") return chip(t("chipScheduled"), "pink"); return chip(t("chipReady"), ""); }
+function healthChip(s){ return chip(t(s === "ok" ? "chipOk" : s === "warn" ? "chipWarn" : s === "bad" ? "chipBad" : "chipTodo"), s === "ok" ? "ok" : s === "warn" ? "warn" : s === "bad" ? "bad" : ""); }
+function planChip(s){ return chip(t(s === "done" ? "chipDone" : s === "writing" ? "chipWriting" : "chipPlanned"), s === "done" ? "ok" : s === "writing" ? "pink" : ""); }
+
+var ICONS = {
+  today:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+  articles:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>',
+  calendar:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  pin:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>',
+  ads:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l14-6v14L3 13z"/><path d="M7 13v6a2 2 0 0 0 4 0v-4"/></svg>',
+  media:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
+  pages:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  users:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>',
+  comments:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  health:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>'
+};
+var TABS = [
+  {id:"today", icon:"today", label:"tabToday"}, {id:"articles", icon:"articles", label:"tabArticles"},
+  {id:"calendar", icon:"calendar", label:"tabCalendar"}, {id:"pins", icon:"pin", label:"tabPins"},
+  {id:"ads", icon:"ads", label:"tabAds"}, {id:"media", icon:"media", label:"tabMedia"},
+  {id:"pages", icon:"pages", label:"tabPages"}, {id:"users", icon:"users", label:"tabUsers"},
+  {id:"comments", icon:"comments", label:"tabComments"}, {id:"health", icon:"health", label:"tabHealth"}
+];
+</script>
+<script>
+"use strict";
+/* ---------------- Modal ---------------- */
+function openModal(title, bodyHtml, onOpen){
+  var root = $("modal-root");
+  root.innerHTML = '<div class="modal-back" id="modal-back"><div class="modal" role="dialog" aria-modal="true">'
+    + '<div class="x"><button type="button" id="modal-x" aria-label="' + esc(t("close")) + '">✕</button></div>'
+    + '<h2>' + esc(title) + '</h2><div id="modal-body">' + bodyHtml + '</div></div></div>';
+  $("modal-x").addEventListener("click", closeModal);
+  $("modal-back").addEventListener("click", function(e){ if (e.target === $("modal-back")) closeModal(); });
+  if (onOpen) onOpen();
+}
+function closeModal(){ $("modal-root").innerHTML = ""; }
+function field(label, inner){ return '<label>' + esc(label) + '</label>' + inner; }
+function inp(id, val, extra){ return '<input type="text" id="' + id + '" value="' + esc(val || "") + '" ' + (extra || "") + ' />'; }
+function confirmDeleteBtn(btn, fn){
+  if (btn.getAttribute("data-armed") === "1"){ fn(); }
+  else { btn.setAttribute("data-armed", "1"); btn.textContent = t("confirmDelete");
+    setTimeout(function(){ btn.removeAttribute("data-armed"); btn.textContent = t("delete"); }, 2600); }
+}
+
+/* ---------------- Auth ---------------- */
+function showView(id){
+  ["login-view","denied-view","loading-view","app-view"].forEach(function(v){ $(v).classList.toggle("hidden", v !== id); });
+}
+async function verifyAdmin(sess){
+  if (!sess || !sess.user) return false;
+  if ((sess.user.email || "").toLowerCase() !== ADMIN_EMAIL) return false;
+  try {
+    var res = await sb.rpc("is_super_admin");
+    return !res.error && res.data === true;
+  } catch (e) { return false; }
+}
+/* Drafts + articles are read with the SESSION access token on purpose:
+   RLS hides draft rows from the publishable/anon key (it returns 0 drafts
+   with no error), while the signed-in admin token sees all of them. */
+async function loadArticles(){
+  if (!session) return;
+  var token = session.access_token;
+  var resp = await fetch(SB_URL + "/rest/v1/articles?select=*&order=created_at.desc&limit=500", {
+    headers: { "apikey": SB_KEY, "Authorization": "Bearer " + token }
+  });
+  if (!resp.ok) throw new Error("HTTP " + resp.status);
+  var rows = await resp.json();
+  state.articles = rows.filter(function(a){ return a && a.slug; });
+  state.articlesLoaded = true; state.articlesError = "";
+}
+async function syncNow(btn){
+  if (btn) { btn.disabled = true; btn.textContent = t("syncing"); }
+  try {
+    await loadArticles();
+    var live = state.articles.filter(function(a){ return a.status === "published"; }).length;
+    var drafts = state.articles.filter(function(a){ return a.status === "draft"; }).length;
+    toast(t("syncDone", {live: live, drafts: drafts}));
+    render();
+  } catch (e) { toast(t("syncFailed")); }
+  if (btn) { btn.disabled = false; btn.textContent = t("syncNow"); }
+}
+async function enterApp(sess){
+  session = sess;
+  showView("app-view");
+  buildNav();
+  $("side-who").textContent = t("signedInAs") + " " + (sess.user.email || "");
+  render();
+  try { await loadArticles(); render(); }
+  catch (e) { state.articlesError = String(e && e.message || e); render(); }
+}
+async function signOut(){
+  try { await sb.auth.signOut(); } catch (e) {}
+  session = null; state.articles = []; state.articlesLoaded = false;
+  showView("login-view");
+}
+
+/* ---------------- Shell / nav ---------------- */
+function buildNav(){
+  var html = TABS.map(function(tb){
+    return '<button type="button" class="nav-btn' + (state.tab === tb.id ? " active" : "") + '" data-tab="' + tb.id + '">'
+      + ICONS[tb.icon] + '<span>' + esc(t(tb.label)) + '</span></button>';
+  }).join("");
+  $("side-nav").innerHTML = html; $("mobile-nav").innerHTML = html;
+  document.querySelectorAll("[data-tab]").forEach(function(b){
+    b.addEventListener("click", function(){ state.tab = b.getAttribute("data-tab"); buildNav(); render(); window.scrollTo(0, 0); });
+  });
+  var done = state.plan.filter(function(p){ return p.status === "done"; }).length;
+  $("side-progress").style.width = Math.round(done / 50 * 100) + "%";
+  var live = state.articles.filter(function(a){ return a.status === "published"; }).length;
+  var posted = state.pins.filter(function(p){ return p.status === "posted"; }).length;
+  $("side-stats").textContent = t("calLine", {done: done, pct: Math.round(done / 50 * 100)}) + " · " + live + " " + t("kpiLive") + " · " + posted + " " + t("chipPosted");
+}
+function render(){
+  buildNav();
+  var m = $("main");
+  if (state.tab === "today") m.innerHTML = viewToday();
+  else if (state.tab === "articles") m.innerHTML = viewArticles();
+  else if (state.tab === "calendar") m.innerHTML = viewCalendar();
+  else if (state.tab === "pins") m.innerHTML = viewPins();
+  else if (state.tab === "ads") m.innerHTML = viewAds();
+  else if (state.tab === "media") m.innerHTML = viewMedia();
+  else if (state.tab === "pages") m.innerHTML = viewPages();
+  else if (state.tab === "users") m.innerHTML = viewUsers();
+  else if (state.tab === "comments") m.innerHTML = viewComments();
+  else if (state.tab === "health") m.innerHTML = viewHealth();
+  bindView();
+}
+
+/* ---------------- TODAY ---------------- */
+function viewToday(){
+  var today = todayStr();
+  var dn = dayNumber(today);
+  var inRange = dn >= 1 && dn <= CAL_DAYS;
+  var live = state.articles.filter(function(a){ return a.status === "published"; });
+  var drafts = state.articles.filter(function(a){ return a.status === "draft"; });
+  var schedDrafts = drafts.filter(function(a){ return a.scheduled_at; }).sort(function(a,b){ return new Date(a.scheduled_at) - new Date(b.scheduled_at); });
+  var posted = state.pins.filter(function(p){ return p.status === "posted"; }).length;
+  var sched = state.pins.filter(function(p){ return p.status === "scheduled"; }).length;
+  var ready = state.pins.filter(function(p){ return p.status === "ready"; }).length;
+  var done = state.plan.filter(function(p){ return p.status === "done"; }).length;
+  var openIssues = state.health.filter(function(h){ return h.state !== "ok"; }).length;
+  var slots = [1, 2].map(function(n){
+    var item = state.plan.find(function(p){ return p.date === today && p.slot === n; });
+    if (item) return '<div class="slot filled"><strong>' + esc(item.title) + '</strong> ' + planChip(item.status)
+      + '<div class="meta" style="color:var(--muted);font-size:.88rem">' + esc(item.niche) + (item.slug ? ' · <a href="' + SITE + '/posts/' + esc(item.slug) + '/" target="_blank" rel="noopener">' + esc(item.slug) + '</a>' : "") + '</div></div>';
+    return '<div class="slot"><span style="color:var(--muted)">' + esc(t("slotLabel", {n: n})) + ' — ' + esc(t("slotEmpty")) + '</span> '
+      + '<button type="button" class="btn secondary small" data-act="plan-add" data-date="' + today + '" data-slot="' + n + '">' + esc(t("add")) + '</button></div>';
+  }).join("");
+  var nextDrafts = schedDrafts.slice(0, 5).map(function(a){
+    return '<div class="dist-row"><span>' + esc(a.title) + '</span><span class="chip pink">' + esc(fmtSched(a.scheduled_at)) + '</span></div>';
+  }).join("") || '<p style="color:var(--muted)">' + esc(t("noneScheduled")) + '</p>';
+  var pinsToday = state.pins.filter(function(p){ return p.scheduledFor && p.scheduledFor.slice(0, 10) === today; }).map(function(p){
+    return '<div class="dist-row"><span>' + esc(p.pinCode) + ' — ' + esc(p.title) + '</span>' + pinChip(p) + '</div>';
+  }).join("") || '<p style="color:var(--muted)">' + esc(t("noneScheduled")) + '</p>';
+  return '<section class="view"><div class="hero">'
+    + '<span class="chip ok">' + esc(inRange ? t("dayOf", {n: dn}) : t("todayTitle")) + '</span>'
+    + '<h2>' + esc(new Date(today + "T12:00:00").toLocaleDateString(lang === "ar" ? "ar" : "en-GB", {weekday:"long", day:"numeric", month:"long", year:"numeric"})) + '</h2>'
+    + '<p>' + esc(t("articlesPerDay")) + ' · ' + esc(t("calLine", {done: done, pct: Math.round(done / 50 * 100)})) + '</p>'
+    + (state.articlesError ? '<div class="msg error">' + esc(t("syncFailed")) + ' (' + esc(state.articlesError) + ')</div>' : "")
+    + '</div>'
+    + '<div class="grid kpis">'
+    + '<div class="card kpi"><div class="num">' + (state.articlesLoaded ? live.length : "…") + '</div><div class="lbl">' + esc(t("kpiLive")) + '</div></div>'
+    + '<div class="card kpi"><div class="num">' + (state.articlesLoaded ? drafts.length : "…") + '</div><div class="lbl">' + esc(t("kpiDrafts")) + '</div><div class="sub">' + esc(t("kpiDraftsSub", {s: schedDrafts.length})) + '</div></div>'
+    + '<div class="card kpi"><div class="num">' + state.pins.length + '</div><div class="lbl">' + esc(t("kpiPins")) + '</div><div class="sub">' + esc(t("kpiPinsSub", {p: posted, s: sched, r: ready})) + '</div></div>'
+    + '<div class="card kpi"><div class="num">' + (inRange ? dn + " / 25" : "25") + '</div><div class="lbl">' + esc(t("kpiCal")) + '</div><div class="sub">' + esc(t("kpiCalSub")) + '</div></div>'
+    + '<div class="card kpi"><div class="num">' + openIssues + '</div><div class="lbl">' + esc(t("kpiHealth")) + '</div><div class="sub">' + esc(t("kpiHealthSub")) + '</div></div>'
+    + '</div>'
+    + '<h3 style="margin:1.4rem 0 .4rem">' + esc(t("quickActions")) + '</h3>'
+    + '<div class="toolbar"><button type="button" class="btn" data-act="article-new">' + esc(t("quickNewArticle")) + '</button>'
+    + '<button type="button" class="btn secondary" data-act="pin-new">' + esc(t("quickNewPin")) + '</button>'
+    + '<button type="button" class="btn secondary" data-act="sync">' + esc(t("syncNow")) + '</button>'
+    + '<button type="button" class="btn secondary" data-act="seo-check">' + esc(t("quickCheckHealth")) + '</button></div>'
+    + '<div id="seo-result"></div>'
+    + '<div class="grid two" style="margin-top:1rem">'
+    + '<div class="card"><h3 style="margin-top:0">' + esc(t("todaysSlots")) + '</h3>' + slots + '</div>'
+    + '<div class="card"><h3 style="margin-top:0">' + esc(t("upcomingDrafts")) + '</h3>' + nextDrafts
+    + '<h3 style="margin:1.1rem 0 .3rem">' + esc(t("upcomingPins")) + '</h3>' + pinsToday + '</div>'
+    + '</div>'
+    + '<footer class="note">' + esc(t("sessionNote")) + '</footer></section>';
+}
+
+/* ---------------- ARTICLES (Supabase, real save) ---------------- */
+function filteredArticles(){
+  var q = state.articleSearch.toLowerCase();
+  return state.articles.filter(function(a){
+    if (state.articleFilter === "live" && a.status !== "published") return false;
+    if (state.articleFilter === "draft" && a.status !== "draft") return false;
+    if (state.articleFilter === "scheduled" && !(a.status === "draft" && a.scheduled_at)) return false;
+    if (q && (a.title + " " + a.slug).toLowerCase().indexOf(q) === -1) return false;
+    return true;
+  });
+}
+function viewArticles(){
+  var counts = { all: state.articles.length,
+    live: state.articles.filter(function(a){ return a.status === "published"; }).length,
+    draft: state.articles.filter(function(a){ return a.status === "draft"; }).length,
+    scheduled: state.articles.filter(function(a){ return a.status === "draft" && a.scheduled_at; }).length };
+  var filters = [["all", t("filterAll")], ["live", t("chipLive")], ["draft", t("chipDraft")], ["scheduled", t("chipScheduled")]].map(function(f){
+    return '<button type="button" class="chipbtn' + (state.articleFilter === f[0] ? " active" : "") + '" data-afilter="' + f[0] + '">' + esc(f[1]) + ' · ' + counts[f[0]] + '</button>';
+  }).join("");
+  var rows = filteredArticles().map(function(a, i){
+    return '<article class="row-card"><div class="body"><h3>' + esc(a.title) + '</h3>'
+      + '<div class="meta">' + articleChip(a) + ' ' + esc(a.category || "") + (a.scheduled_at && a.status === "draft" ? ' · ' + esc(fmtSched(a.scheduled_at)) : "")
+      + '<br><a href="' + SITE + '/posts/' + esc(a.slug) + '/" target="_blank" rel="noopener">' + esc(a.slug) + '</a></div>'
+      + '<div class="actions"><button type="button" class="btn secondary small" data-act="article-edit" data-slug="' + esc(a.slug) + '">' + esc(t("edit")) + '</button>'
+      + '<a class="btn secondary small" href="' + SITE + '/posts/' + esc(a.slug) + '/" target="_blank" rel="noopener">' + esc(t("openArticle")) + '</a></div>'
+      + '</div></article>';
+  }).join("");
+  if (!state.articlesLoaded) rows = '<div class="empty">' + esc(t("loading")) + '</div>';
+  else if (!rows) rows = '<div class="empty">' + esc(t("noneScheduled")) + '</div>';
+  return '<section class="view"><h2>' + esc(t("articlesTitle")) + '</h2><p class="lede">' + esc(t("articlesLede")) + '</p>'
+    + '<div class="toolbar">' + filters + '<span class="grow"></span>'
+    + '<input type="search" id="article-search" placeholder="' + esc(t("searchArticles")) + '" value="' + esc(state.articleSearch) + '" />'
+    + '<button type="button" class="btn" data-act="article-new">' + esc(t("newArticle")) + '</button></div>'
+    + rows + '</section>';
+}
+function articleEditor(a){
+  var isNew = !a; a = a || {title:"", slug:"", category:"Free Patterns", status:"draft", excerpt:"", image_url:"", content:"", scheduled_at:""};
+  var catOpts = ARTICLE_CATEGORIES.slice();
+  if (a.category && catOpts.indexOf(a.category) === -1) catOpts.push(a.category);
+  var schedVal = a.scheduled_at ? String(a.scheduled_at).slice(0, 16) : "";
+  openModal(isNew ? t("newArticle") : t("edit") + ": " + a.title,
+    field(t("title"), inp("f-title", a.title))
+    + field(t("slugLabel"), inp("f-slug", a.slug))
+    + field(t("categoryLabel"), '<select id="f-category">' + catOpts.map(function(c){ return '<option' + (c === a.category ? " selected" : "") + '>' + esc(c) + '</option>'; }).join("") + '</select>')
+    + field(t("status"), '<select id="f-status"><option value="draft"' + (a.status === "draft" ? " selected" : "") + '>' + esc(t("chipDraft")) + '</option><option value="published"' + (a.status === "published" ? " selected" : "") + '>' + esc(t("publishNow")) + '</option></select>')
+    + field(t("scheduledAtLabel"), '<input type="datetime-local" id="f-scheduled" value="' + esc(schedVal) + '" />')
+    + field(t("excerptLabel"), '<textarea id="f-excerpt" rows="3" maxlength="500">' + esc(a.excerpt || "") + '</textarea>')
+    + field(t("imageLabel"), inp("f-image", a.image_url, 'type="url"'))
+    + field(t("contentLabel"), '<textarea id="f-content" rows="12">' + esc(a.content || "") + '</textarea>')
+    + '<div class="msg error hidden" id="f-error"></div>'
+    + '<div class="form-actions"><button type="button" class="btn" id="f-save">' + esc(t("saveArticle")) + '</button>'
+    + (isNew ? "" : '<button type="button" class="btn danger" id="f-delete">' + esc(t("delete")) + '</button>')
+    + '<button type="button" class="btn secondary" id="f-cancel">' + esc(t("cancel")) + '</button></div>',
+    function(){
+      $("f-title").addEventListener("input", function(){ if (isNew) $("f-slug").value = slugify($("f-title").value); });
+      $("f-cancel").addEventListener("click", closeModal);
+      if (!isNew) $("f-delete").addEventListener("click", function(){
+        confirmDeleteBtn(this, async function(){
+          var res = await sb.from("articles").delete().eq("id", a.id);
+          if (res.error) { toast(res.error.message); return; }
+          closeModal(); toast(t("articleDeleted")); await loadArticles().catch(function(){}); render();
+        });
+      });
+      $("f-save").addEventListener("click", async function(){
+        var btn = this; btn.disabled = true; btn.textContent = t("saving");
+        var payload = { title: $("f-title").value.trim(), slug: slugify($("f-slug").value), category: $("f-category").value,
+          status: $("f-status").value, excerpt: $("f-excerpt").value, image_url: $("f-image").value.trim(),
+          content: $("f-content").value, scheduled_at: $("f-scheduled").value ? new Date($("f-scheduled").value).toISOString() : null };
+        var res;
+        if (isNew) res = await sb.from("articles").insert(payload);
+        else res = await sb.from("articles").update(payload).eq("id", a.id);
+        btn.disabled = false; btn.textContent = t("saveArticle");
+        if (res.error) { var e = $("f-error"); e.textContent = res.error.message; e.classList.remove("hidden"); return; }
+        closeModal(); toast(t("articleSaved")); await loadArticles().catch(function(){}); render();
+      });
+    });
+}
+</script>
+<script>
+"use strict";
+/* ---------------- CALENDAR ---------------- */
+function viewCalendar(){
+  var days = "";
+  for (var i = 0; i < CAL_DAYS; i++){
+    var date = addDays(CAL_START, i);
+    var items = state.plan.filter(function(p){ return p.date === date; });
+    var slots = [1, 2].map(function(n){
+      var item = items.find(function(p){ return p.slot === n; });
+      if (item) return '<div class="slot filled"><strong>' + esc(item.title) + '</strong> ' + planChip(item.status)
+        + '<div style="color:var(--muted);font-size:.88rem">' + esc(item.niche) + (item.keyword ? ' · ' + esc(t("keywordLabel")) + ': ' + esc(item.keyword) : "") + (item.slug ? ' · ' + esc(item.slug) : "") + '</div>'
+        + '<div class="actions" style="display:flex;gap:.4rem;margin-top:.35rem"><button type="button" class="btn secondary small" data-act="plan-edit" data-date="' + date + '" data-slot="' + n + '">' + esc(t("edit")) + '</button></div></div>';
+      return '<div class="slot"><span style="color:var(--muted)">' + esc(t("slotLabel", {n: n})) + ' — ' + esc(t("slotEmpty")) + '</span> '
+        + '<button type="button" class="btn secondary small" data-act="plan-add" data-date="' + date + '" data-slot="' + n + '">' + esc(t("add")) + '</button></div>';
+    }).join("");
+    days += '<div class="card day-block"><div class="day-head"><h3>' + esc(fmtDay(date)) + '</h3>'
+      + '<span class="chip">' + esc(t("dayOf", {n: i + 1})) + '</span>'
+      + (date === todayStr() ? chip(t("chipToday"), "pink") : "") + '</div>' + slots + '</div>';
+  }
+  return '<section class="view"><h2>' + esc(t("calendarTitle")) + '</h2><p class="lede">' + esc(t("calendarLede")) + '</p>' + days + '</section>';
+}
+function planEditor(date, slot, existing){
+  var item = existing || {date: date, slot: slot, title: "", slug: "", niche: NICHES[0], keyword: "", status: "planned"};
+  openModal(t("planTitle") + " — " + fmtDay(date),
+    field(t("title"), inp("p-title", item.title))
+    + field(t("slugLabel"), inp("p-slug", item.slug))
+    + field(t("nicheLabel"), '<select id="p-niche">' + NICHES.map(function(n){ return '<option' + (n === item.niche ? " selected" : "") + '>' + esc(n) + '</option>'; }).join("") + '</select>')
+    + field(t("keywordLabel"), inp("p-keyword", item.keyword))
+    + field(t("status"), '<select id="p-status">' + [["planned","chipPlanned"],["writing","chipWriting"],["done","chipDone"]].map(function(o){ return '<option value="' + o[0] + '"' + (item.status === o[0] ? " selected" : "") + '>' + esc(t(o[1])) + '</option>'; }).join("") + '</select>')
+    + '<div class="form-actions"><button type="button" class="btn" id="p-save">' + esc(t("save")) + '</button>'
+    + (existing ? '<button type="button" class="btn danger" id="p-delete">' + esc(t("delete")) + '</button>' : "")
+    + '<button type="button" class="btn secondary" id="p-cancel">' + esc(t("cancel")) + '</button></div>',
+    function(){
+      $("p-title").addEventListener("input", function(){ if (!existing) $("p-slug").value = slugify($("p-title").value); });
+      $("p-cancel").addEventListener("click", closeModal);
+      if (existing) $("p-delete").addEventListener("click", function(){
+        confirmDeleteBtn(this, function(){ state.plan = state.plan.filter(function(p){ return p !== existing; }); closeModal(); render(); });
+      });
+      $("p-save").addEventListener("click", function(){
+        var rec = {date: date, slot: slot, title: $("p-title").value.trim(), slug: slugify($("p-slug").value), niche: $("p-niche").value, keyword: $("p-keyword").value.trim(), status: $("p-status").value};
+        if (existing) { var ix = state.plan.indexOf(existing); state.plan[ix] = rec; } else state.plan.push(rec);
+        closeModal(); render();
+      });
+    });
+}
+
+/* ---------------- PINS ---------------- */
+function pinImg(code){ var n = String(code || "").replace("pin-", ""); return "https://cozyloops.site/pins/" + code + ".png"; }
+function viewPins(){
+  var counts = { all: state.pins.length,
+    posted: state.pins.filter(function(p){ return p.status === "posted"; }).length,
+    scheduled: state.pins.filter(function(p){ return p.status === "scheduled"; }).length,
+    ready: state.pins.filter(function(p){ return p.status === "ready"; }).length };
+  var filters = [["all", t("filterAll")], ["posted", t("filterPosted")], ["scheduled", t("filterScheduled")], ["ready", t("filterReady")]].map(function(f){
+    return '<button type="button" class="chipbtn' + (state.pinFilter === f[0] ? " active" : "") + '" data-pfilter="' + f[0] + '">' + esc(f[1]) + ' · ' + counts[f[0]] + '</button>';
+  }).join("");
+  var q = state.pinSearch.toLowerCase();
+  var rows = state.pins.filter(function(p){
+    if (state.pinFilter !== "all" && p.status !== state.pinFilter) return false;
+    if (q && (p.title + " " + p.pinCode + " " + p.category).toLowerCase().indexOf(q) === -1) return false;
+    return true;
+  }).map(function(p){
+    return '<article class="row-card"><img class="thumb" loading="lazy" alt="" src="assets/pins/' + esc(p.pinCode) + '.jpg" onerror="this.style.display=\'none\'" /><div class="body">'
+      + '<h3>' + esc(p.title) + '</h3>'
+      + '<div class="meta">' + chip(p.pinCode, "") + ' ' + pinChip(p) + ' ' + chip(p.category, "pink")
+      + (p.scheduledFor ? ' · ' + esc(t("scheduledFor")) + ': ' + esc(p.scheduledFor) : "") + '</div>'
+      + '<p class="desc">' + esc(p.description) + '</p>'
+      + '<div class="meta">' + esc(t("workerLink")) + ': <a href="' + esc(p.redirectUrl) + '" target="_blank" rel="noopener">' + esc(p.redirectUrl) + '</a><br>'
+      + esc(t("articleLink")) + ': <a href="' + esc(p.articleUrl) + '" target="_blank" rel="noopener">' + esc(p.articleUrl) + '</a></div>'
+      + '<div class="actions"><button type="button" class="btn secondary small" data-act="pin-edit" data-code="' + esc(p.pinCode) + '">' + esc(t("edit")) + '</button></div>'
+      + '</div></article>';
+  }).join("") || '<div class="empty">' + esc(t("noneScheduled")) + '</div>';
+  var dist = {};
+  state.pins.forEach(function(p){ dist[p.articleUrl] = (dist[p.articleUrl] || 0) + 1; });
+  var distHtml = Object.keys(dist).map(function(u){
+    return '<div class="dist-row"><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u.replace(SITE + "/posts/", "").replace(/\//g, "")) + '</a><strong>' + dist[u] + '</strong></div>';
+  }).join("");
+  return '<section class="view"><h2>' + esc(t("pinsTitle")) + '</h2><p class="lede">' + esc(t("pinsLede")) + '</p>'
+    + '<div class="toolbar">' + filters + '<span class="grow"></span>'
+    + '<input type="search" id="pin-search" placeholder="' + esc(t("searchArticles")) + '" value="' + esc(state.pinSearch) + '" />'
+    + '<button type="button" class="btn" data-act="pin-new">' + esc(t("newPin")) + '</button></div>'
+    + '<div class="card" style="margin-bottom:1rem"><h3 style="margin-top:0">' + esc(t("distTitle")) + '</h3>' + distHtml
+    + '<p style="color:var(--muted);font-size:.88rem;margin-bottom:0">' + esc(t("distNote")) + '</p></div>'
+    + rows + '</section>';
+}
+function pinEditor(p){
+  var isNew = !p;
+  p = p || {pinCode: "pin-" + pad(state.pins.length + 1), category: "Wearables", articleUrl: "", redirectUrl: "", title: "", description: "", status: "ready", scheduledFor: ""};
+  openModal(isNew ? t("newPin") : t("edit") + ": " + p.pinCode,
+    field(t("pinCode"), inp("n-code", p.pinCode))
+    + field(t("title"), inp("n-title", p.title))
+    + field(t("descLabel"), '<textarea id="n-desc" rows="4">' + esc(p.description) + '</textarea>')
+    + field(t("categoryLabel"), '<select id="n-cat">' + PIN_CATEGORIES.map(function(c){ return '<option' + (c === p.category ? " selected" : "") + '>' + esc(c) + '</option>'; }).join("") + '</select>')
+    + field(t("workerLink"), inp("n-redirect", p.redirectUrl, 'type="url"'))
+    + field(t("articleLink"), inp("n-article", p.articleUrl, 'type="url"'))
+    + field(t("status"), '<select id="n-status">' + [["ready","chipReady"],["scheduled","chipScheduled"],["posted","chipPosted"]].map(function(o){ return '<option value="' + o[0] + '"' + (p.status === o[0] ? " selected" : "") + '>' + esc(t(o[1])) + '</option>'; }).join("") + '</select>')
+    + field(t("scheduledFor"), inp("n-when", p.scheduledFor, 'placeholder="2026-11-20 18:00"'))
+    + '<div class="form-actions"><button type="button" class="btn" id="n-save">' + esc(t("save")) + '</button>'
+    + (isNew ? "" : '<button type="button" class="btn danger" id="n-delete">' + esc(t("delete")) + '</button>')
+    + '<button type="button" class="btn secondary" id="n-cancel">' + esc(t("cancel")) + '</button></div>',
+    function(){
+      $("n-cancel").addEventListener("click", closeModal);
+      if (!isNew) $("n-delete").addEventListener("click", function(){
+        confirmDeleteBtn(this, function(){ state.pins = state.pins.filter(function(x){ return x !== p; }); closeModal(); render(); });
+      });
+      $("n-save").addEventListener("click", function(){
+        var rec = {pinCode: $("n-code").value.trim(), title: $("n-title").value.trim(), description: $("n-desc").value, category: $("n-cat").value, redirectUrl: $("n-redirect").value.trim(), articleUrl: $("n-article").value.trim(), status: $("n-status").value, scheduledFor: $("n-when").value.trim()};
+        if (isNew) state.pins.push(rec); else { var ix = state.pins.indexOf(p); state.pins[ix] = rec; }
+        closeModal(); render();
+      });
+    });
+}
+
+/* ---------------- ADS ---------------- */
+function viewAds(){
+  var rows = state.ads.map(function(a, i){
+    return '<article class="row-card"><div class="body"><h3>' + esc(a.label) + '</h3>'
+      + '<div class="meta">' + chip(a.status === "active" ? t("chipActive") : t("chipPaused"), a.status === "active" ? "ok" : "warn") + ' ' + esc(a.slotKey) + '<br>' + esc(a.position) + '</div>'
+      + '<code class="snippet">' + esc(a.code) + '</code>'
+      + (a.notes ? '<p class="desc">' + esc(a.notes) + '</p>' : "")
+      + '<div class="actions"><button type="button" class="btn secondary small" data-act="ad-copy" data-i="' + i + '">' + esc(t("copyCode")) + '</button>'
+      + '<button type="button" class="btn secondary small" data-act="ad-edit" data-i="' + i + '">' + esc(t("edit")) + '</button></div>'
+      + '</div></article>';
+  }).join("");
+  return '<section class="view"><h2>' + esc(t("adsTitle")) + '</h2><p class="lede">' + esc(t("adsLede")) + '</p>'
+    + '<div class="toolbar"><button type="button" class="btn" data-act="ad-new">' + esc(t("newAd")) + '</button></div>' + rows + '</section>';
+}
+function adEditor(a){
+  var isNew = !a; a = a || {slotKey: "", label: "", position: "", code: "", notes: "", status: "active"};
+  openModal(isNew ? t("newAd") : t("edit") + ": " + a.label,
+    field(t("title"), inp("a-label", a.label))
+    + field(t("slotKey"), inp("a-key", a.slotKey))
+    + field(t("positionLabel"), inp("a-pos", a.position))
+    + field(t("status"), '<select id="a-status"><option value="active"' + (a.status === "active" ? " selected" : "") + '>' + esc(t("chipActive")) + '</option><option value="paused"' + (a.status === "paused" ? " selected" : "") + '>' + esc(t("chipPaused")) + '</option></select>')
+    + field(t("codeLabel"), '<textarea id="a-code" rows="4">' + esc(a.code) + '</textarea>')
+    + field(t("notes"), '<textarea id="a-notes" rows="2">' + esc(a.notes) + '</textarea>')
+    + '<div class="form-actions"><button type="button" class="btn" id="a-save">' + esc(t("save")) + '</button>'
+    + (isNew ? "" : '<button type="button" class="btn danger" id="a-delete">' + esc(t("delete")) + '</button>')
+    + '<button type="button" class="btn secondary" id="a-cancel">' + esc(t("cancel")) + '</button></div>',
+    function(){
+      $("a-cancel").addEventListener("click", closeModal);
+      if (!isNew) $("a-delete").addEventListener("click", function(){
+        confirmDeleteBtn(this, function(){ state.ads = state.ads.filter(function(x){ return x !== a; }); closeModal(); render(); });
+      });
+      $("a-save").addEventListener("click", function(){
+        var rec = {label: $("a-label").value.trim(), slotKey: $("a-key").value.trim(), position: $("a-pos").value.trim(), status: $("a-status").value, code: $("a-code").value, notes: $("a-notes").value};
+        if (isNew) state.ads.push(rec); else { var ix = state.ads.indexOf(a); state.ads[ix] = rec; }
+        closeModal(); render();
+      });
+    });
+}
+
+/* ---------------- MEDIA / USERS / COMMENTS (manual, start empty) ---------------- */
+function viewMedia(){
+  var rows = state.media.map(function(m, i){
+    return '<article class="row-card">' + (m.kind === "image" && m.url ? '<img class="thumb wide" loading="lazy" alt="" src="' + esc(m.url) + '" onerror="this.style.display=\'none\'" />' : "")
+      + '<div class="body"><h3>' + esc(m.name) + '</h3><div class="meta">' + chip(m.kind === "image" ? t("chipImage") : m.kind === "pdf" ? t("chipPdf") : t("chipOther"), "pink")
+      + ' <a href="' + esc(m.url) + '" target="_blank" rel="noopener">' + esc(m.url) + '</a></div>'
+      + (m.notes ? '<p class="desc">' + esc(m.notes) + '</p>' : "")
+      + '<div class="actions"><button type="button" class="btn secondary small" data-act="media-edit" data-i="' + i + '">' + esc(t("edit")) + '</button></div></div></article>';
+  }).join("") || '<div class="empty">' + esc(t("mediaEmpty")) + '</div>';
+  return '<section class="view"><h2>' + esc(t("mediaTitle")) + '</h2><p class="lede">' + esc(t("mediaLede")) + '</p>'
+    + '<div class="toolbar"><button type="button" class="btn" data-act="media-new">' + esc(t("newMedia")) + '</button></div>' + rows + '</section>';
+}
+function mediaEditor(m){
+  var isNew = !m; m = m || {name: "", url: "", kind: "image", notes: ""};
+  openModal(isNew ? t("newMedia") : t("edit") + ": " + m.name,
+    field(t("nameLabel"), inp("m-name", m.name)) + field(t("urlLabel"), inp("m-url", m.url, 'type="url"'))
+    + field(t("kindLabel"), '<select id="m-kind">' + [["image","chipImage"],["pdf","chipPdf"],["other","chipOther"]].map(function(o){ return '<option value="' + o[0] + '"' + (m.kind === o[0] ? " selected" : "") + '>' + esc(t(o[1])) + '</option>'; }).join("") + '</select>')
+    + field(t("notes"), '<textarea id="m-notes" rows="2">' + esc(m.notes) + '</textarea>')
+    + '<div class="form-actions"><button type="button" class="btn" id="m-save">' + esc(t("save")) + '</button>'
+    + (isNew ? "" : '<button type="button" class="btn danger" id="m-delete">' + esc(t("delete")) + '</button>')
+    + '<button type="button" class="btn secondary" id="m-cancel">' + esc(t("cancel")) + '</button></div>',
+    function(){
+      $("m-cancel").addEventListener("click", closeModal);
+      if (!isNew) $("m-delete").addEventListener("click", function(){ confirmDeleteBtn(this, function(){ state.media = state.media.filter(function(x){ return x !== m; }); closeModal(); render(); }); });
+      $("m-save").addEventListener("click", function(){
+        var rec = {name: $("m-name").value.trim(), url: $("m-url").value.trim(), kind: $("m-kind").value, notes: $("m-notes").value};
+        if (isNew) state.media.push(rec); else { var ix = state.media.indexOf(m); state.media[ix] = rec; }
+        closeModal(); render();
+      });
+    });
+}
+function viewUsers(){
+  var rows = state.users.map(function(u, i){
+    return '<article class="row-card"><div class="body"><h3>' + esc(u.name) + '</h3><div class="meta">' + chip(u.role, "pink") + ' ' + esc(u.email) + '</div>'
+      + (u.notes ? '<p class="desc">' + esc(u.notes) + '</p>' : "")
+      + '<div class="actions"><button type="button" class="btn secondary small" data-act="user-edit" data-i="' + i + '">' + esc(t("edit")) + '</button></div></div></article>';
+  }).join("") || '<div class="empty">' + esc(t("usersEmpty")) + '</div>';
+  return '<section class="view"><h2>' + esc(t("usersTitle")) + '</h2><p class="lede">' + esc(t("usersLede")) + '</p>'
+    + '<div class="toolbar"><button type="button" class="btn" data-act="user-new">' + esc(t("newUser")) + '</button></div>' + rows + '</section>';
+}
+function userEditor(u){
+  var isNew = !u; u = u || {name: "", email: "", role: "Admin", notes: ""};
+  openModal(isNew ? t("newUser") : t("edit") + ": " + u.name,
+    field(t("nameLabel"), inp("u-name", u.name)) + field(t("emailLabel"), inp("u-email", u.email, 'type="email"'))
+    + field(t("roleLabel"), '<select id="u-role">' + ["Admin","Editor","Author","Viewer"].map(function(r){ return '<option' + (u.role === r ? " selected" : "") + '>' + r + '</option>'; }).join("") + '</select>')
+    + field(t("notes"), '<textarea id="u-notes" rows="2">' + esc(u.notes) + '</textarea>')
+    + '<div class="form-actions"><button type="button" class="btn" id="u-save">' + esc(t("save")) + '</button>'
+    + (isNew ? "" : '<button type="button" class="btn danger" id="u-delete">' + esc(t("delete")) + '</button>')
+    + '<button type="button" class="btn secondary" id="u-cancel">' + esc(t("cancel")) + '</button></div>',
+    function(){
+      $("u-cancel").addEventListener("click", closeModal);
+      if (!isNew) $("u-delete").addEventListener("click", function(){ confirmDeleteBtn(this, function(){ state.users = state.users.filter(function(x){ return x !== u; }); closeModal(); render(); }); });
+      $("u-save").addEventListener("click", function(){
+        var rec = {name: $("u-name").value.trim(), email: $("u-email").value.trim(), role: $("u-role").value, notes: $("u-notes").value};
+        if (isNew) state.users.push(rec); else { var ix = state.users.indexOf(u); state.users[ix] = rec; }
+        closeModal(); render();
+      });
+    });
+}
+function commentChip(s){ return chip(t(s === "approved" ? "chipApproved" : s === "spam" ? "chipSpam" : "chipPending"), s === "approved" ? "ok" : s === "spam" ? "bad" : "warn"); }
+function viewComments(){
+  var rows = state.comments.map(function(c, i){
+    return '<article class="row-card"><div class="body"><h3>' + esc(c.author) + '</h3>'
+      + '<div class="meta">' + commentChip(c.status) + ' ' + esc(t("commentOn")) + ': ' + esc(c.article) + '</div>'
+      + '<p class="desc">' + esc(c.text) + '</p>'
+      + '<div class="actions">'
+      + (c.status !== "approved" ? '<button type="button" class="btn secondary small" data-act="comment-set" data-i="' + i + '" data-s="approved">' + esc(t("approve")) + '</button>' : "")
+      + (c.status !== "pending" ? '<button type="button" class="btn secondary small" data-act="comment-set" data-i="' + i + '" data-s="pending">' + esc(t("toPending")) + '</button>' : "")
+      + (c.status !== "spam" ? '<button type="button" class="btn secondary small" data-act="comment-set" data-i="' + i + '" data-s="spam">' + esc(t("markSpam")) + '</button>' : "")
+      + '<button type="button" class="btn secondary small" data-act="comment-edit" data-i="' + i + '">' + esc(t("edit")) + '</button></div></div></article>';
+  }).join("") || '<div class="empty">' + esc(t("commentsEmpty")) + '</div>';
+  return '<section class="view"><h2>' + esc(t("commentsTitle")) + '</h2><p class="lede">' + esc(t("commentsLede")) + '</p>'
+    + '<div class="toolbar"><button type="button" class="btn" data-act="comment-new">' + esc(t("newComment")) + '</button></div>' + rows + '</section>';
+}
+function commentEditor(c){
+  var isNew = !c; c = c || {author: "", article: "", text: "", status: "pending"};
+  openModal(isNew ? t("newComment") : t("edit") + ": " + c.author,
+    field(t("authorLabel"), inp("c-author", c.author)) + field(t("commentOn"), inp("c-article", c.article))
+    + field(t("commentText"), '<textarea id="c-text" rows="4">' + esc(c.text) + '</textarea>')
+    + field(t("status"), '<select id="c-status">' + [["pending","chipPending"],["approved","chipApproved"],["spam","chipSpam"]].map(function(o){ return '<option value="' + o[0] + '"' + (c.status === o[0] ? " selected" : "") + '>' + esc(t(o[1])) + '</option>'; }).join("") + '</select>')
+    + '<div class="form-actions"><button type="button" class="btn" id="c-save">' + esc(t("save")) + '</button>'
+    + (isNew ? "" : '<button type="button" class="btn danger" id="c-delete">' + esc(t("delete")) + '</button>')
+    + '<button type="button" class="btn secondary" id="c-cancel">' + esc(t("cancel")) + '</button></div>',
+    function(){
+      $("c-cancel").addEventListener("click", closeModal);
+      if (!isNew) $("c-delete").addEventListener("click", function(){ confirmDeleteBtn(this, function(){ state.comments = state.comments.filter(function(x){ return x !== c; }); closeModal(); render(); }); });
+      $("c-save").addEventListener("click", function(){
+        var rec = {author: $("c-author").value.trim(), article: $("c-article").value.trim(), text: $("c-text").value, status: $("c-status").value};
+        if (isNew) state.comments.push(rec); else { var ix = state.comments.indexOf(c); state.comments[ix] = rec; }
+        closeModal(); render();
+      });
+    });
+}
+
+/* ---------------- PAGES & SETTINGS ---------------- */
+function viewPages(){
+  var pageRows = state.pages.map(function(p, i){
+    return '<article class="row-card"><div class="body"><h3>' + esc(p.title) + '</h3>'
+      + '<div class="meta">' + chip(p.status === "live" ? t("pageStatusLive") : t("pageStatusMissing"), p.status === "live" ? "ok" : "bad")
+      + ' <a href="' + SITE + esc(p.path) + '" target="_blank" rel="noopener">' + esc(p.path) + '</a></div>'
+      + (p.notes ? '<p class="desc">' + esc(p.notes) + '</p>' : "")
+      + '<div class="actions"><button type="button" class="btn secondary small" data-act="page-edit" data-i="' + i + '">' + esc(t("edit")) + '</button></div></div></article>';
+  }).join("");
+  var s = state.settings;
+  var setField = function(key, label){ return field(label, inp("s-" + key, s[key])); };
+  return '<section class="view"><h2>' + esc(t("pagesTitle")) + '</h2><p class="lede">' + esc(t("pagesLede")) + '</p>'
+    + pageRows
+    + '<div class="card" style="margin-top:1.2rem"><h3 style="margin-top:0">' + esc(t("languageTitle")) + '</h3>'
+    + '<p style="color:var(--muted)">' + esc(t("languageNote")) + '</p>'
+    + '<div class="toolbar" style="margin:0"><button type="button" class="chipbtn' + (lang === "en" ? " active" : "") + '" data-lang="en">English</button>'
+    + '<button type="button" class="chipbtn' + (lang === "ar" ? " active" : "") + '" data-lang="ar">العربية</button></div></div>'
+    + '<div class="card" style="margin-top:1rem"><h3 style="margin-top:0">' + esc(t("settingsTitle")) + '</h3>'
+    + setField("site_name", t("siteName")) + setField("site_url", t("siteUrl")) + setField("author_name", t("authorName"))
+    + setField("contact_email", t("contactEmail")) + setField("articles_per_day", t("perDay"))
+    + setField("pinterest_account", t("pinterestAcc")) + setField("ads_network", t("adsNetwork"))
+    + '<div class="form-actions"><button type="button" class="btn" data-act="settings-save">' + esc(t("saveSettings")) + '</button></div></div>'
+    + '</section>';
+}
+function pageEditor(p){
+  openModal(t("edit") + ": " + p.title,
+    field(t("status"), '<select id="pg-status"><option value="live"' + (p.status === "live" ? " selected" : "") + '>' + esc(t("pageStatusLive")) + '</option><option value="missing"' + (p.status === "missing" ? " selected" : "") + '>' + esc(t("pageStatusMissing")) + '</option></select>')
+    + field(t("notes"), '<textarea id="pg-notes" rows="3">' + esc(p.notes) + '</textarea>')
+    + '<div class="form-actions"><button type="button" class="btn" id="pg-save">' + esc(t("save")) + '</button><button type="button" class="btn secondary" id="pg-cancel">' + esc(t("cancel")) + '</button></div>',
+    function(){
+      $("pg-cancel").addEventListener("click", closeModal);
+      $("pg-save").addEventListener("click", function(){ p.status = $("pg-status").value; p.notes = $("pg-notes").value; closeModal(); render(); });
+    });
+}
+
+/* ---------------- HEALTH & NOTES ---------------- */
+function viewHealth(){
+  var rows = state.health.map(function(h, i){
+    return '<article class="row-card"><div class="body"><h3>' + esc(h.label) + ' ' + healthChip(h.state) + '</h3>'
+      + '<p class="desc">' + esc(h.detail) + '</p>'
+      + '<div class="actions"><button type="button" class="btn secondary small" data-act="health-edit" data-i="' + i + '">' + esc(t("editCheck")) + '</button></div></div></article>';
+  }).join("");
+  return '<section class="view"><h2>' + esc(t("healthTitle")) + '</h2><p class="lede">' + esc(t("healthLede")) + '</p>'
+    + '<div class="toolbar"><button type="button" class="btn secondary" data-act="seo-check">' + esc(t("checkLive")) + '</button></div>'
+    + '<div id="seo-result"></div>' + rows
+    + '<div class="card" style="margin-top:1.2rem"><h3 style="margin-top:0">' + esc(t("notesTitle")) + '</h3>'
+    + '<textarea id="work-notes" rows="5" placeholder="' + esc(t("notesPh")) + '">' + esc(state.notes) + '</textarea></div>'
+    + '<footer class="note">' + esc(t("sessionNote")) + '</footer></section>';
+}
+function healthEditor(h){
+  openModal(t("editCheck") + ": " + h.label,
+    field(t("status"), '<select id="h-state">' + [["ok","chipOk"],["warn","chipWarn"],["bad","chipBad"],["todo","chipTodo"]].map(function(o){ return '<option value="' + o[0] + '"' + (h.state === o[0] ? " selected" : "") + '>' + esc(t(o[1])) + '</option>'; }).join("") + '</select>')
+    + field(t("detailLabel"), '<textarea id="h-detail" rows="4">' + esc(h.detail) + '</textarea>')
+    + '<div class="form-actions"><button type="button" class="btn" id="h-save">' + esc(t("save")) + '</button><button type="button" class="btn secondary" id="h-cancel">' + esc(t("cancel")) + '</button></div>',
+    function(){
+      $("h-cancel").addEventListener("click", closeModal);
+      $("h-save").addEventListener("click", function(){ h.state = $("h-state").value; h.detail = $("h-detail").value; closeModal(); render(); });
+    });
+}
+
+/* ---------------- Live SEO check ---------------- */
+async function seoCheck(){
+  var box = $("seo-result"); if (!box) return;
+  box.innerHTML = '<div class="msg info">' + esc(t("loading")) + '</div>';
+  try {
+    var resp = await fetch(SITE + "/sitemap.xml", {cache: "no-store"});
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    var xml = await resp.text();
+    var n = (xml.match(/\/posts\//g) || []).length;
+    box.innerHTML = '<div class="msg ok">' + esc(t("seoOk", {n: n})) + '</div>';
+  } catch (e) {
+    box.innerHTML = '<div class="msg error">' + esc(t("seoFail")) + '</div>';
+  }
+}
+
+/* ---------------- View bindings ---------------- */
+function bindView(){
+  document.querySelectorAll("[data-afilter]").forEach(function(b){ b.addEventListener("click", function(){ state.articleFilter = b.getAttribute("data-afilter"); render(); }); });
+  document.querySelectorAll("[data-pfilter]").forEach(function(b){ b.addEventListener("click", function(){ state.pinFilter = b.getAttribute("data-pfilter"); render(); }); });
+  var as = $("article-search"); if (as) as.addEventListener("input", function(){ state.articleSearch = as.value; var pos = as.selectionStart; render(); var n = $("article-search"); n.focus(); n.setSelectionRange(pos, pos); });
+  var ps = $("pin-search"); if (ps) ps.addEventListener("input", function(){ state.pinSearch = ps.value; var pos = ps.selectionStart; render(); var n = $("pin-search"); n.focus(); n.setSelectionRange(pos, pos); });
+  var wn = $("work-notes"); if (wn) wn.addEventListener("input", function(){ state.notes = wn.value; });
+  document.querySelectorAll("[data-lang]").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
+  document.querySelectorAll("[data-act]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var act = b.getAttribute("data-act"), i = b.getAttribute("data-i");
+      if (act === "sync") syncNow(b);
+      else if (act === "seo-check") seoCheck();
+      else if (act === "article-new") articleEditor(null);
+      else if (act === "article-edit") articleEditor(state.articles.find(function(a){ return a.slug === b.getAttribute("data-slug"); }));
+      else if (act === "plan-add") planEditor(b.getAttribute("data-date"), parseInt(b.getAttribute("data-slot"), 10), null);
+      else if (act === "plan-edit") planEditor(b.getAttribute("data-date"), parseInt(b.getAttribute("data-slot"), 10), state.plan.find(function(p){ return p.date === b.getAttribute("data-date") && p.slot === parseInt(b.getAttribute("data-slot"), 10); }));
+      else if (act === "pin-new") pinEditor(null);
+      else if (act === "pin-edit") pinEditor(state.pins.find(function(p){ return p.pinCode === b.getAttribute("data-code"); }));
+      else if (act === "ad-new") adEditor(null);
+      else if (act === "ad-edit") adEditor(state.ads[parseInt(i, 10)]);
+      else if (act === "ad-copy") { var code = state.ads[parseInt(i, 10)].code;
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(function(){ toast(t("copied")); }); else toast(code); }
+      else if (act === "media-new") mediaEditor(null);
+      else if (act === "media-edit") mediaEditor(state.media[parseInt(i, 10)]);
+      else if (act === "user-new") userEditor(null);
+      else if (act === "user-edit") userEditor(state.users[parseInt(i, 10)]);
+      else if (act === "comment-new") commentEditor(null);
+      else if (act === "comment-edit") commentEditor(state.comments[parseInt(i, 10)]);
+      else if (act === "comment-set") { state.comments[parseInt(i, 10)].status = b.getAttribute("data-s"); render(); }
+      else if (act === "page-edit") pageEditor(state.pages[parseInt(i, 10)]);
+      else if (act === "health-edit") healthEditor(state.health[parseInt(i, 10)]);
+      else if (act === "settings-save") {
+        ["site_name","site_url","author_name","contact_email","articles_per_day","pinterest_account","ads_network"].forEach(function(k){ var el = $("s-" + k); if (el) state.settings[k] = el.value; });
+        toast(t("settingsSaved"));
+      }
+    });
+  });
+}
+function setLang(l){
+  lang = l; document.documentElement.lang = l; document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+  applyI18nStatic(); if (session) render();
+}
+
+/* ---------------- Boot ---------------- */
+document.addEventListener("DOMContentLoaded", async function(){
+  applyI18nStatic();
+  $("login-form").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var btn = $("login-btn"), err = $("login-error");
+    err.classList.add("hidden");
+    if (!sb) { err.textContent = t("loginError"); err.classList.remove("hidden"); return; }
+    btn.disabled = true; btn.textContent = t("signingIn");
+    var res = await sb.auth.signInWithPassword({email: $("login-email").value.trim(), password: $("login-password").value});
+    btn.disabled = false; btn.textContent = t("signIn");
+    if (res.error || !res.data.session) { err.textContent = t("loginError"); err.classList.remove("hidden"); return; }
+    if (await verifyAdmin(res.data.session)) enterApp(res.data.session);
+    else { await sb.auth.signOut(); showView("denied-view"); }
+  });
+  $("denied-back").addEventListener("click", function(){ showView("login-view"); });
+  $("signout-btn").addEventListener("click", signOut);
+  $("sync-btn-side").addEventListener("click", function(){ syncNow(this); });
+  if (!window.supabase) { showView("login-view"); return; }
+  sb = window.supabase.createClient(SB_URL, SB_KEY);
+  var got = await sb.auth.getSession();
+  var sess = got && got.data ? got.data.session : null;
+  if (sess && await verifyAdmin(sess)) enterApp(sess);
+  else { if (sess) await sb.auth.signOut(); showView("login-view"); }
+});
+</script>
+</body>
+</html>
