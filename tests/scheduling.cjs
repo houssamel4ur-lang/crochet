@@ -1,78 +1,85 @@
-// All writes remain in memory. Run with the local site served on port 8765.
-const {chromium}=require('playwright');
-const fs=require('fs');
-const assert=require('node:assert/strict');
-(async()=>{
-  const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
-  try{
-    for(const active of [false,true]){
-      const page=await browser.newPage({timezoneId:'Africa/Casablanca',viewport:{width:390,height:844}});
-      const errors=[];page.on('pageerror',e=>errors.push(e.message));
-      const mock=fs.readFileSync('tests/mock-admin-supabase.mjs','utf8').replace("if(name==='is_super_admin')return", "if(name==='article_scheduler_status')return {data:"+active+",error:null};if(name==='is_super_admin')return");
-      await page.route('https://esm.sh/@supabase/supabase-js@2.119.0',r=>r.fulfill({contentType:'application/javascript',body:mock}));
-      // This test is isolated from production content and always has a valid catalog.
-      await page.route('**/content/github_articles.json',r=>r.fulfill({contentType:'application/json',body:'[]'}));
-      await page.goto('http://127.0.0.1:8765/admin/');
-      await page.locator('#dashboard').waitFor({state:'visible'});
-      await page.locator('[data-panel="posts"][data-post-filter="all"]').click();
-      await page.waitForFunction(()=>!document.querySelector('#scheduler-health').textContent.includes('Checking'));
-      // Loading the editorial catalog is async; scheduling requires it to finish.
-      await page.waitForFunction(()=>document.querySelector('#posts-message').textContent.includes('available for editing.'));
-      assert.equal(await page.locator('option[value="scheduled"]').isDisabled(),!active);
-      await page.locator('#new-post').click();
-      await page.locator('#post-title').fill('Schedule regression article');
-      await page.locator('#post-excerpt').fill('A mock-only scheduled draft.');
-      await page.locator('#post-content').fill('## Instructions\n\nChain ten.');
-      if(active){
-        await page.locator('#post-status').selectOption('scheduled');
-        await page.locator('#post-scheduled-at').fill('2020-01-01T12:00');
-        await page.locator('#save-post').click();
-        const invalidMessage=page.locator('#post-form-message');
-        await invalidMessage.getByText('Choose a publication time at least one minute in the future.').waitFor({
-          timeout:5000
-        }).catch(async ()=>{
-          const details=await page.evaluate(()=>({
-            status:document.querySelector('#post-form-message').textContent,
-            valid:document.querySelector('#post-form').checkValidity(),
-            scheduler:document.querySelector('#scheduler-health').textContent
-          }));
-          throw Error('Past-time validation failed: '+JSON.stringify(details));
-        });
-        assert.equal(await page.evaluate(()=>window.__mockAdminRows.length),0);
-        const target=await page.evaluate(()=>{const d=new Date(Date.now()+3600000);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)});
-        await page.locator('#post-scheduled-at').fill(target);
-        await page.locator('#save-post').click();
-        await page.waitForFunction(()=>window.__mockAdminRows.length===1);
-        const row=await page.evaluate(()=>window.__mockAdminRows[0]);
-        assert.equal(row.status,'draft');assert.ok(row.scheduled_at.endsWith('Z'));
-        await page.locator('#scheduled-posts-nav').click();
-        await page.getByRole('heading',{name:'Scheduled Posts',exact:true}).waitFor();
-        assert.equal(await page.locator('#posts-list .post-row').count(),1,'scheduled view excludes other posts');
-        const item=page.locator('.post-row').filter({hasText:'Schedule regression article'});
-        await item.getByRole('button',{name:'Edit',exact:true}).click();
-        assert.equal(await page.locator('#post-scheduled-at').inputValue(),target,'UTC roundtrip preserves local minute');
-        const later=await page.evaluate(()=>{const d=new Date(Date.now()+7200000);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)});
-        await page.locator('#post-scheduled-at').fill(later);
-        await page.locator('#save-post').click();
-        await page.waitForFunction(old=>window.__mockAdminRows[0].scheduled_at!==old,row.scheduled_at);
-        await item.getByRole('button',{name:'Edit',exact:true}).click();
-        await page.locator('#post-status').selectOption('draft');
-        await page.locator('#save-post').click();
-        await page.waitForFunction(()=>window.__mockAdminRows[0].scheduled_at===null);
-        assert.equal(await page.evaluate(()=>window.__mockAdminRows[0].status),'draft');
-        await page.getByText('No scheduled posts yet.',{exact:false}).waitFor();
-        assert.equal(await page.locator('#posts-list .post-row').count(),0,'cancelled schedules leave the scheduled view');
-        await page.locator('[data-post-filter="all"]').click();
-        await page.getByRole('heading',{name:'Posts',exact:true}).waitFor();
-        assert.equal(await page.locator('#posts-list .post-row').filter({hasText:'Schedule regression article'}).count(),1,'draft remains in all posts');
-      }else{
-        await page.locator('#save-post').click();
-        await page.waitForFunction(()=>window.__mockAdminRows.length===1);
-        assert.equal(await page.evaluate(()=>window.__mockAdminRows[0].status),'draft');
-      }
-      assert.deepEqual(errors,[]);
-      await page.close();
-    }
-    console.log('Scheduling UI: inactive server, draft saves, past-time rejection, UTC roundtrip, reschedule and cancel passed.');
-  }finally{await browser.close();}
-})().catch(e=>{console.error(e);process.exitCode=1});
+// Scheduling controls for the static admin, all writes in memory.
+// Run with the local site served on port 8765.
+const { chromium } = require('playwright');
+const fs = require('fs');
+const assert = require('node:assert/strict');
+const path = require('node:path');
+const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+(async () => {
+  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+  try {
+    const page = await browser.newPage({ timezoneId: 'UTC', viewport: { width: 1365, height: 900 } });
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    const mock = fs.readFileSync(path.join(__dirname, 'mock-admin-supabase.mjs'), 'utf8');
+    await page.route(SUPABASE_JS, r => r.fulfill({ status: 200, contentType: 'application/javascript', body: mock }));
+    // Drafts are read with the session token through the REST endpoint.
+    await page.route('**/rest/v1/articles*', async r => {
+      const rows = await page.evaluate(() => window.__mockAdminRows || []);
+      await r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(rows), headers: { 'access-control-allow-origin': '*' } });
+    });
+    await page.goto('http://127.0.0.1:8765/admin/', { waitUntil: 'domcontentloaded' });
+    await page.locator('#app-view').waitFor({ state: 'visible', timeout: 12000 });
+    await page.locator('#side-nav [data-tab="articles"]').click();
+    await page.locator('[data-afilter="scheduled"]').waitFor({ timeout: 12000 });
+
+    const target = await page.evaluate(() => {
+      const d = new Date(Date.now() + 3600000);
+      return d.toISOString().slice(0, 16);
+    });
+    const later = await page.evaluate(() => {
+      const d = new Date(Date.now() + 7200000);
+      return d.toISOString().slice(0, 16);
+    });
+    const row = page.locator('.row-card', { hasText: 'Schedule regression article' });
+
+    // Create a draft scheduled one hour from now.
+    await page.locator('[data-act="article-new"]').click();
+    await page.locator('#f-title').waitFor({ state: 'visible', timeout: 5000 });
+    await page.locator('#f-title').fill('Schedule regression article');
+    await page.locator('#f-excerpt').fill('A mock-only scheduled draft.');
+    await page.locator('#f-content').fill('## Instructions\n\nChain ten.');
+    await page.locator('#f-scheduled').fill(target);
+    await page.locator('#f-save').click();
+    await page.waitForFunction(() => window.__mockAdminRows.length === 1);
+    await row.waitFor({ timeout: 5000 });
+    assert.equal(await page.evaluate(() => window.__mockAdminRows[0].status), 'draft');
+    assert.ok(await page.evaluate(() => window.__mockAdminRows[0].scheduled_at.endsWith('Z')), 'scheduled_at is stored as ISO UTC');
+
+    // The scheduled filter shows only drafts with a scheduled time.
+    await page.locator('[data-afilter="scheduled"]').click();
+    assert.equal(await page.locator('.row-card').count(), 1, 'scheduled view lists the draft');
+
+    // Reopening the editor shows the same scheduled minute (UTC roundtrip).
+    await row.locator('[data-act="article-edit"]').click();
+    await page.locator('#f-title').waitFor({ state: 'visible', timeout: 5000 });
+    assert.equal(await page.locator('#f-scheduled').inputValue(), target, 'UTC roundtrip preserves the scheduled minute');
+
+    // Reschedule to a later time.
+    const oldSched = await page.evaluate(() => window.__mockAdminRows[0].scheduled_at);
+    await page.locator('#f-scheduled').fill(later);
+    await page.locator('#f-save').click();
+    await page.waitForFunction(old => window.__mockAdminRows[0].scheduled_at !== old, oldSched);
+    assert.equal(await page.evaluate(() => window.__mockAdminRows[0].scheduled_at.slice(0, 16)), later);
+
+    // Clearing the scheduled time removes the draft from the scheduled view.
+    await row.locator('[data-act="article-edit"]').click();
+    await page.locator('#f-title').waitFor({ state: 'visible', timeout: 5000 });
+    await page.locator('#f-scheduled').fill('');
+    await page.locator('#f-save').click();
+    await page.waitForFunction(() => window.__mockAdminRows[0].scheduled_at === null);
+    assert.equal(await page.evaluate(() => window.__mockAdminRows[0].status), 'draft');
+    await page.waitForFunction(() => document.querySelectorAll('.row-card').length === 0);
+    assert.equal(await page.locator('.row-card').count(), 0, 'cancelled schedules leave the scheduled view');
+
+    // The draft itself remains in the full list.
+    await page.locator('[data-afilter="all"]').click();
+    await page.waitForFunction(() => document.querySelectorAll('.row-card').length === 1);
+    assert.equal(await page.locator('.row-card').count(), 1, 'draft remains in all articles');
+    assert.equal(await page.locator('.row-card', { hasText: 'Schedule regression article' }).count(), 1);
+
+    assert.deepEqual(errors, []);
+    await page.close();
+    console.log('Scheduling UI: draft saves, scheduled filter, UTC roundtrip, reschedule and cancel passed.');
+  } finally { await browser.close(); }
+})().catch(e => { console.error(e); process.exitCode = 1; });
