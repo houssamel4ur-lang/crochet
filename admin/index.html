@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
 <!-- cozy-security:start -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' https://esm.sh https://cdn.jsdelivr.net 'sha256-Tff6W4ocTDU9kvjEaEfMYXkcSkGmAd63Ato75wcGYOc=' 'sha256-tflibmMJyQOBFHzLyrzU67JjjRRx0rEYHgbTAZ9s1vY=' 'sha256-WS00c14HJt05K/bZKbYRdIAznDNW9O1y/Bljw9HdnG8='; style-src 'self' 'unsafe-inline'; img-src 'self' https: blob: data:; connect-src 'self' https://yqmrunstyhrhnvxoyrap.supabase.co; frame-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' https://esm.sh https://cdn.jsdelivr.net 'sha256-Tff6W4ocTDU9kvjEaEfMYXkcSkGmAd63Ato75wcGYOc=' 'sha256-a3+HmATrVX1mRy+7bPG3rKvcfEd/odOuD1csc9cGi0I=' 'sha256-92k8+qQv5CvSrqg4KGliKIt+EnJxex362h0DEDYs0hE='; style-src 'self' 'unsafe-inline'; img-src 'self' https: blob: data:; connect-src 'self' https://yqmrunstyhrhnvxoyrap.supabase.co; frame-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <!-- cozy-security:end -->
 
@@ -597,6 +597,34 @@ function articleEditor(a){
         });
       });
       $("f-save").addEventListener("click", async function(){
+        var fail = function(msg){ var e = $("f-error"); e.textContent = msg; e.classList.remove("hidden"); };
+        var vTitle = $("f-title").value.trim();
+        var vSlug = $("f-slug").value.trim();
+        var vContent = $("f-content").value;
+        var vImage = $("f-image").value.trim();
+        var vStatus = $("f-status").value;
+        var vExcerpt = $("f-excerpt").value;
+        var vSched = $("f-scheduled").value;
+        var isHttpsUrl = function(v){ try { return new URL(v).protocol === "https:"; } catch (err) { return false; } };
+        if (!vTitle || !vSlug || !vContent.trim()) { fail("Title, slug and content are required."); return; }
+        if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(vSlug)) { fail("Slug must use lowercase letters, numbers and hyphens."); return; }
+        if (vImage && !isHttpsUrl(vImage)) { fail("Image URL must use HTTPS."); return; }
+        if (vSched && new Date(vSched).getTime() < Date.now() + 60000) { fail("Choose a publication time at least one minute in the future."); return; }
+        if (vStatus === "published" && (isNew || a.status !== "published")) {
+          if (!vImage) { fail("Publish checklist: add a cover image first."); return; }
+          if (vTitle.length < 20 || vTitle.length > 95) { fail("Publish checklist: use a descriptive article title (20–95 characters)."); return; }
+          var exLen = vExcerpt.trim().length;
+          if (exLen < 70 || exLen > 180) { fail("Publish checklist: write a unique 70–180 character summary."); return; }
+          if ((vContent.match(/^##\s/gm) || []).length < 3) { fail("Publish checklist: include at least three useful main sections (## Heading)."); return; }
+          if (vContent.trim().split(/\s+/).filter(function(w){ return w; }).length < 300) { fail("Publish checklist: add substantial, original step-by-step content before publishing."); return; }
+          var isWebp = function(u){ return /\.webp($|[?#])/i.test(u); };
+          var imgRe = /!\[([^\]]*)\]\((https:\/\/[^)\s]+)\)/g, im, inline = [];
+          while ((im = imgRe.exec(vContent)) !== null) inline.push({ alt: im[1], url: im[2] });
+          var goodPhotos = inline.filter(function(p){ return p.alt.trim().length >= 12 && isWebp(p.url); });
+          if (!isWebp(vImage) || goodPhotos.length < 2) { fail("Publish checklist: include a WebP cover and at least two WebP photos with descriptive alt text (12+ characters)."); return; }
+          var allUrls = [vImage].concat(inline.map(function(p){ return p.url; }));
+          if (new Set(allUrls).size !== allUrls.length) { fail("Publish checklist: use different photos for the cover and each step; repeated image URLs are not accepted."); return; }
+        }
         var btn = this; btn.disabled = true; btn.textContent = t("saving");
         var payload = { title: $("f-title").value.trim(), slug: slugify($("f-slug").value), category: $("f-category").value,
           status: $("f-status").value, excerpt: $("f-excerpt").value, image_url: $("f-image").value.trim(),
@@ -782,6 +810,7 @@ function mediaEditor(m){
     field(t("nameLabel"), inp("m-name", m.name)) + field(t("urlLabel"), inp("m-url", m.url, 'type="url"'))
     + field(t("kindLabel"), '<select id="m-kind">' + [["image","chipImage"],["pdf","chipPdf"],["other","chipOther"]].map(function(o){ return '<option value="' + o[0] + '"' + (m.kind === o[0] ? " selected" : "") + '>' + esc(t(o[1])) + '</option>'; }).join("") + '</select>')
     + field(t("notes"), '<textarea id="m-notes" rows="2">' + esc(m.notes) + '</textarea>')
+    + '<div class="msg error hidden" id="m-error"></div>'
     + '<div class="form-actions"><button type="button" class="btn" id="m-save">' + esc(t("save")) + '</button>'
     + (isNew ? "" : '<button type="button" class="btn danger" id="m-delete">' + esc(t("delete")) + '</button>')
     + '<button type="button" class="btn secondary" id="m-cancel">' + esc(t("cancel")) + '</button></div>',
@@ -790,6 +819,11 @@ function mediaEditor(m){
       if (!isNew) $("m-delete").addEventListener("click", function(){ confirmDeleteBtn(this, function(){ state.media = state.media.filter(function(x){ return x !== m; }); closeModal(); render(); }); });
       $("m-save").addEventListener("click", function(){
         var rec = {name: $("m-name").value.trim(), url: $("m-url").value.trim(), kind: $("m-kind").value, notes: $("m-notes").value};
+        var fail = function(msg){ var e = $("m-error"); e.textContent = msg; e.classList.remove("hidden"); };
+        if (!rec.name || !rec.url) { fail("Name and URL are required."); return; }
+        var urlOk = false; try { urlOk = new URL(rec.url).protocol === "https:"; } catch (err) { urlOk = false; }
+        if (!urlOk) { fail("URL must use HTTPS."); return; }
+        if (state.media.some(function(x){ return x !== m && x.url === rec.url; })) { fail("This URL is already in the media library."); return; }
         if (isNew) state.media.push(rec); else { var ix = state.media.indexOf(m); state.media[ix] = rec; }
         closeModal(); render();
       });
