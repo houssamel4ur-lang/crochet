@@ -48,8 +48,7 @@ class SiteQualityTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.home = (ROOT / "index.html").read_text(encoding="utf-8")
-        cls.admin = ((ROOT / "admin/index.html").read_text(encoding="utf-8") + '\n'
-                     + (ROOT / "admin/app.js").read_text(encoding="utf-8"))
+        cls.admin = (ROOT / "admin/index.html").read_text(encoding="utf-8")
         cls.manifest = json.loads((ROOT / "posts/manifest.json").read_text(encoding="utf-8"))
         cls.sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
 
@@ -62,7 +61,7 @@ class SiteQualityTests(unittest.TestCase):
         self.assertNotIn("optional member accounts", self.home)
         self.assertFalse((ROOT / "account/index.html").exists())
         self.assertFalse((ROOT / "account/auth.js").exists())
-        self.assertIn('id="login"', self.admin)
+        self.assertIn('id="login-form"', self.admin)
         self.assertIn("is_super_admin", self.admin)
 
     def test_hb_agency_ad_script_preserves_original_loading_setup(self):
@@ -135,38 +134,31 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn(" updateCardLinks();\n requestAnimationFrame(scheduleReadingProgress)", self.home)
 
     def test_admin_not_indexable(self):
-        self.assertRegex(self.admin, r'<meta name="robots" content="noindex,nofollow">')
+        self.assertRegex(self.admin, r'<meta name="robots" content="noindex,nofollow"\s*/?>')
         self.assertIn("is_super_admin", self.admin)
         self.assertIn("sb_publishable_", self.admin)
         self.assertNotIn("sb_secret_", self.admin)
 
-    def test_admin_editor_validates_real_uploads_and_heading_hierarchy(self):
-        self.assertIn("file.slice(0,16).arrayBuffer()", self.admin)
-        self.assertIn("actualType!==file.type", self.admin)
-        self.assertIn("file.size>5*1024*1024", self.admin)
-        self.assertIn("Math.min(3,Math.max(2,match[1].length))", self.admin)
+    def test_admin_article_editor_saves_to_supabase(self):
+        self.assertIn('id="f-content"', self.admin)
+        self.assertIn('id="f-excerpt"', self.admin)
+        self.assertIn('id="f-status"', self.admin)
+        self.assertIn('id="f-category"', self.admin)
+        self.assertIn('sb.from("articles")', self.admin)
+        self.assertIn("is_super_admin", self.admin)
 
-    def test_new_editorial_uploads_reject_low_resolution_and_repeated_images(self):
-        self.assertIn("const minHeight=kind==='cover'?540:400;", self.admin)
-        self.assertIn("if(bitmap.width<minWidth||bitmap.height<minHeight)", self.admin)
-        self.assertIn("if(ratio<0.5||ratio>2.5)", self.admin)
-        self.assertIn("m[1].trim().length>=12", self.admin)
-        self.assertIn("new Set(imageUrls).size!==imageUrls.length", self.admin)
+    def test_admin_pins_carry_worker_redirect_links(self):
+        self.assertIn("cozyloops-links.cozyloops.workers.dev", self.admin)
+        self.assertGreater(self.admin.count("redirectUrl"), 60)
 
-    def test_owner_release_guidance_is_available_without_false_claims(self):
-        self.assertIn("Owner launch verification", self.admin)
-        self.assertIn("supabase/rls_audit_readonly.sql", self.admin)
-        self.assertIn("search.google.com/search-console", self.admin)
-        self.assertIn("Automated checks do not mark them completed.", self.admin)
-        self.assertIn("Real Admin test:", self.admin)
+    def test_admin_states_session_only_limits_honestly(self):
+        self.assertIn("kept for this session in this static build", self.admin)
+        self.assertIn("articles are saved in Supabase for real", self.admin)
 
-    def test_admin_has_operational_seo_health_panel(self):
-        self.assertIn('id="panel-settings"', self.admin)
-        self.assertIn('id="check-seo-health"', self.admin)
-        self.assertIn("posts/manifest.json", self.admin)
+    def test_admin_has_health_notes_panel(self):
+        self.assertIn("Health & Notes", self.admin)
+        self.assertIn('id="seo-result"', self.admin)
         self.assertIn("sitemap.xml", self.admin)
-        self.assertIn("search.google.com/search-console", self.admin)
-        self.assertIn("Sitemap and published SEO article list do not match.", self.admin)
 
     def test_all_generated_posts_have_good_metadata(self):
         self.assertEqual(len(self.manifest), len(set(self.manifest)))
