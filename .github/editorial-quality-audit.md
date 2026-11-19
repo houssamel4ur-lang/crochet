@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **115**. Missing generated articles: **0**.
+Articles checked: **116**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -112,6 +112,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`nutcracker-amigurumi-crochet-pattern`](https://cozyloops.site/posts/nutcracker-amigurumi-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`pinecone-stitch-christmas-table-runner`](https://cozyloops.site/posts/pinecone-stitch-christmas-table-runner/) | 3 | yes | No automated issues found |
 | [`pink-axolotl-crochet-amigurumi-guide`](https://cozyloops.site/posts/pink-axolotl-crochet-amigurumi-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`pink-lace-crochet-top-free-pattern`](https://cozyloops.site/posts/pink-lace-crochet-top-free-pattern/) | 3 | yes | No automated issues found |
 | [`polar-bear-amigurumi-santa-hat-pattern`](https://cozyloops.site/posts/polar-bear-amigurumi-santa-hat-pattern/) | 3 | yes | No automated issues found |
 | [`red-robin-amigurumi-christmas-bird-pattern`](https://cozyloops.site/posts/red-robin-amigurumi-christmas-bird-pattern/) | 3 | yes | No automated issues found |
 | [`ribbed-crochet-beanie-adult-pattern`](https://cozyloops.site/posts/ribbed-crochet-beanie-adult-pattern/) | 3 | yes | No automated issues found |
