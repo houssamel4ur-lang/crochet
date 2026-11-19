@@ -22,7 +22,7 @@ def protect(source, admin=False, external_contact_form=False):
                 digest = base64.b64encode(hashlib.sha256(body.encode()).digest()).decode()
                 hashes.append("'sha256-" + digest + "'")
         policy = ("default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'self'; "
-                  "script-src 'self' https://esm.sh " + ' '.join(hashes) + "; "
+                  "script-src 'self' https://esm.sh https://cdn.jsdelivr.net " + ' '.join(hashes) + "; "
                   "style-src 'self' 'unsafe-inline'; img-src 'self' https: blob: data:; "
                   "connect-src 'self' https://yqmrunstyhrhnvxoyrap.supabase.co; "
                   "frame-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests")
