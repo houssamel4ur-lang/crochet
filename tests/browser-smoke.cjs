@@ -131,6 +131,10 @@ const failures = [];
       const articlePage = await browser.newPage({viewport,reducedMotion:'reduce'});
       articlePage.on('pageerror', error => failures.push('static article '+viewport.width+'px: '+error.message));
       await articlePage.addInitScript(() => localStorage.setItem('cozyloops_analytics_consent','no'));
+      // Serve the analytics script from the repo so reading controls do not depend on the live site.
+      await articlePage.route('https://cozyloops.site/scripts/article_analytics.js', route =>
+        route.fulfill({ status: 200, contentType: 'application/javascript', body: fs.readFileSync('scripts/article_analytics.js', 'utf8') })
+      );
       await articlePage.goto(base+'/posts/crochet-patterns-for-beginners-guide/',{waitUntil:'domcontentloaded'});
       assert.equal(await articlePage.locator('.nav-menu-toggle').count(),0,'static article has no hamburger');
       assert.equal(await articlePage.locator('#site-drawer').count(),0,'static article has no drawer');
@@ -179,7 +183,8 @@ const failures = [];
     page.on('pageerror', error => failures.push('admin: ' + error.message));
     await page.goto(base + '/admin/', { waitUntil: 'domcontentloaded' });
     assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'noindex,nofollow');
-    assert.equal(await page.locator('#dashboard').isVisible(), false, 'admin is not exposed to signed-out browser');
+    await page.locator('#login-view').waitFor({ state: 'visible', timeout: 12000 });
+    assert.equal(await page.locator('#app-view').isVisible(), false, 'admin is not exposed to signed-out browser');
     await page.close();
     console.log('OK admin logged-out UI');
     // Exercise consent withdrawal from a generated SEO article as well.
@@ -203,113 +208,87 @@ const failures = [];
     // Simulate an authenticated but unauthorized account without using real credentials.
     const denied = await browser.newPage();
     denied.on('pageerror', error => failures.push('denied admin: ' + error.message));
-    await denied.route('https://esm.sh/@supabase/supabase-js@2.119.0', route => route.fulfill({
+    await denied.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js', route => route.fulfill({
       status: 200, contentType: 'application/javascript',
-      headers: {'access-control-allow-origin': '*'},
+      headers: { 'access-control-allow-origin': '*' },
       body: [
-        'let active=true;',
-        'export function createClient(){return {',
-        ' auth:{getUser:async()=>({data:{user:active?{id:"test-user",email:"test@example.invalid"}:null},error:null}),',
-        ' signOut:async()=>{active=false;return {error:null};},',
-        ' signInWithPassword:async()=>({error:null})},',
-        ' rpc:async()=>({data:false,error:null})',
-        '};}'
+        'window.supabase = { createClient: function(){ return {',
+        ' auth: {',
+        '  getSession: async function(){ return {data:{session:{access_token:"denied-token",user:{id:"test-user",email:"test@example.invalid"}}},error:null}; },',
+        '  signInWithPassword: async function(){ return {data:{session:{access_token:"denied-token",user:{id:"test-user",email:"test@example.invalid"}}},error:null}; },',
+        '  signOut: async function(){ return {error:null}; }',
+        ' },',
+        ' rpc: async function(){ return {data:false,error:null}; },',
+        ' from: function(){ return { insert: async function(){ return {error:{message:"denied"}}; } }; }',
+        '};} };'
       ].join('\n')
     }));
     await denied.goto(base + '/admin/', { waitUntil: 'domcontentloaded' });
-    await denied.locator('#denied-logout').waitFor({ state:'visible', timeout: 12000 });
-    assert.equal(await denied.locator('#dashboard').isVisible(), false, 'denied user must not see dashboard');
-    assert.match(await denied.locator('#message').innerText(), /does not have Super Admin access/);
-    await denied.locator('#denied-logout').click();
-    await denied.locator('#login').waitFor({state:'visible',timeout:5000});
-    assert.equal(await denied.locator('#dashboard').isVisible(), false);
+    await denied.locator('#login-view').waitFor({ state: 'visible', timeout: 12000 });
+    await denied.locator('#login-email').fill('test@example.invalid');
+    await denied.locator('#login-password').fill('not-the-real-password');
+    await denied.locator('#login-btn').click();
+    await denied.locator('#denied-view').waitFor({ state: 'visible', timeout: 12000 });
+    assert.equal(await denied.locator('#app-view').isVisible(), false, 'denied user must not see the admin');
+    assert.match(await denied.locator('#denied-view').innerText(), /does not have admin access/);
+    await denied.locator('#denied-back').click();
+    await denied.locator('#login-view').waitFor({ state: 'visible', timeout: 5000 });
+    assert.equal(await denied.locator('#app-view').isVisible(), false);
     await denied.close();
     console.log('OK denied Admin sign-out and recovery (mocked auth)');
-    // Exercise an authorized editor with an in-memory test database.
-    const fs = require('node:fs');
-    const owner = await browser.newPage({viewport:{width:1365,height:900}});
-    owner.on('pageerror', error => failures.push('owner admin: '+error.message));
-    const mockSource=fs.readFileSync('tests/mock-admin-supabase.mjs','utf8');
-    await owner.route('https://esm.sh/@supabase/supabase-js@2.119.0', route => route.fulfill({
-      status:200,contentType:'application/javascript',
-      headers:{'access-control-allow-origin':'*'},body:mockSource
+    // Exercise the owner admin with an in-memory test database.
+    const owner = await browser.newPage({ viewport: { width: 1365, height: 900 } });
+    owner.on('pageerror', error => failures.push('owner admin: ' + error.message));
+    const mockSource = fs.readFileSync('tests/mock-admin-supabase.mjs', 'utf8');
+    await owner.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js', route => route.fulfill({
+      status: 200, contentType: 'application/javascript',
+      headers: { 'access-control-allow-origin': '*' }, body: mockSource
     }));
-    await owner.route('**/content/github_articles.json', route => route.fulfill({
-      status:200,contentType:'application/json',
-      body:JSON.stringify([featuredEditorial])
-    }));
-    await owner.goto(base+'/admin/',{waitUntil:'domcontentloaded'});
-    await owner.locator('#dashboard').waitFor({state:'visible',timeout:12000});
-    await owner.locator('.admin-nav button[data-panel="analytics"]').click();
-    await owner.locator('#traffic-chart svg.traffic-chart-svg').waitFor({timeout:12000});
-    assert.equal(await owner.locator('[data-analytics-range]').count(),5,'five analytics periods are available');
-    assert.equal(await owner.locator('#traffic-chart .traffic-chart-dot').count(),30,'30-day chart has 30 daily buckets');
-    assert.equal(await owner.locator('#visitor-stats .stat-box').first().locator('strong').innerText(),'10','range KPI is computed from mocked visit data');
-    for(const [range,expected] of [['15d',15],['7d',7],['1d',24],['1h',12],['30d',30]]){
-      await owner.locator('[data-analytics-range="'+range+'"]').click();
-      await owner.waitForFunction(n=>document.querySelectorAll('#traffic-chart .traffic-chart-dot').length===n,expected);
-      assert.equal(await owner.locator('[data-analytics-range="'+range+'"]').getAttribute('aria-pressed'),'true');
-    }
-    await owner.locator('[data-analytics-range="1h"]').click();
-    await owner.waitForFunction(()=>document.querySelectorAll('#traffic-chart .traffic-chart-dot').length===12);
-    await owner.locator('#traffic-chart rect[role="button"]').first().focus();
-    assert.match(await owner.locator('.traffic-chart-selection').innerText(),/tracked page views/);
-    await owner.setViewportSize({width:390,height:844});
-    assert.equal(await owner.locator('#traffic-chart svg').isVisible(),true,'mobile analytics chart visible');
-    const graphWidth=await owner.locator('#traffic-chart svg').evaluate(node=>node.getBoundingClientRect().width);
-    assert.ok(graphWidth>0&&graphWidth<390,'chart fits inside mobile viewport');
-    await owner.setViewportSize({width:1365,height:900});
-    console.log('OK authenticated Admin Pinterest-style analytics filters, chart, keyboard and mobile layout');
-    await owner.locator('.admin-nav button[data-panel="posts"][data-post-filter="all"]').click();
-    const editorialRow=owner.locator('#posts-list .post-row',{hasText:'Crochet Patterns for Beginners'});
-    await editorialRow.waitFor({timeout:5000});
-    assert.equal(await owner.locator('#import-original-posts').count(),0,'deleted six-post importer is gone');
-    assert.equal(await owner.locator('.editorial-import').count(),1,'editable GitHub editorial is listed');
-    await owner.locator('#new-post').click();
-    await owner.locator('#post-title').fill('Safe CRUD Test Crochet');
-    await owner.locator('#post-excerpt').fill('A test draft created in memory only.');
-    await owner.locator('#post-content').fill('## Steps\\n\\nChain 10 stitches.');
-    await owner.locator('#post-status').selectOption('draft');
-    await owner.locator('#save-post').click();
-    await owner.locator('#posts-list .post-row').first().waitFor();
-    assert.equal(await owner.evaluate(()=>window.__mockAdminRows.length),1,'draft stored only in test memory');
-    assert.equal(await owner.evaluate(()=>window.__mockAdminRows[0].status),'draft');
-    await owner.locator('#posts-list .post-row', {hasText:'Safe CRUD Test Crochet'}).locator('button.secondary').click();
-    await owner.locator('#post-status').selectOption('published');
-    await owner.locator('#post-title').fill('Safe CRUD Test Crochet Updated');
-    await owner.locator('#post-excerpt').fill('A detailed in-memory tutorial explaining crochet materials, sample stitches, accurate sizing and finishing without touching the live Supabase database.');
-    await owner.locator('#post-image').fill('https://cozyloops.site/assets/crochet-tulip-bouquet-stems-guide-01.webp');
-    const editorialTestSteps = ('Crochet a small test swatch, count every row, keep even tension, check your finished size and sew ends neatly. ').repeat(32);
-    await owner.locator('#post-content').fill('## Materials and Hook\n\n'+editorialTestSteps+
-      '\n\n![Crochet yarn and materials](https://cozyloops.site/assets/crochet-tulip-bouquet-stems-guide-02.webp)'+
-      '\n\n## Stitch Instructions\n\n'+editorialTestSteps+
-      '\n\n![Crochet project steps](https://cozyloops.site/assets/crochet-tulip-bouquet-stems-guide-04.webp)'+
-      '\n\n## Finishing\n\nSecure the ends and check the finished project.');
-    await owner.locator('#save-post').click();
-    await owner.waitForFunction(()=>window.__mockAdminRows[0]?.status==='published');
-    assert.equal(await owner.evaluate(()=>window.__mockAdminRows[0].title),'Safe CRUD Test Crochet Updated');
-    owner.once('dialog',dialog=>dialog.accept());
-    await owner.locator('#posts-list .post-row .danger').first().click();
-    await owner.waitForFunction(()=>window.__mockAdminRows.length===0);
-    await owner.waitForFunction(() => document.querySelectorAll('#posts-list .post-row').length === 1, {timeout:5000});
-    assert.equal(await owner.locator('#posts-list .post-row').count(),1,'GitHub editorial remains available for editing');
-    await owner.locator('#posts-list .post-row .editorial-import').click();
-    assert.equal(await owner.locator('#post-slug').inputValue(),'crochet-patterns-for-beginners-guide');
-    assert.match(await owner.locator('#post-content').inputValue(),/What Is a Crochet Pattern/);
-    owner.once('dialog',dialog=>dialog.accept('Finishing Tips'));
-    await owner.locator('#post-add-article-section').click();
-    assert.match(await owner.locator('#post-content').inputValue(),/## Finishing Tips/);
-    owner.once('dialog',dialog=>dialog.accept());
-    await owner.locator('#save-post').click();
-    await owner.waitForFunction(()=>window.__mockAdminRows.some(p=>p.slug==='crochet-patterns-for-beginners-guide'));
-    await owner.waitForFunction(() => document.querySelectorAll('#posts-list .editorial-import').length === 0 && !document.querySelector('#posts-list')?.classList.contains('hide'), {timeout:5000});
-    assert.equal(await owner.locator('#posts-list .post-row .editorial-import').count(),0,'imported editorial is now a normal Admin post');
-    await owner.locator('#posts-list .post-row',{hasText:'Crochet Patterns for Beginners'}).locator('button.secondary').click();
-    await owner.locator('#post-title').fill('Crochet Patterns for Beginners (Edited)');
-    await owner.locator('#save-post').click();
-    await owner.waitForFunction(()=>window.__mockAdminRows.some(p=>p.title==='Crochet Patterns for Beginners (Edited)'));
+    await owner.route('**/rest/v1/articles*', async route => {
+      const rows = await owner.evaluate(() => window.__mockAdminRows || []);
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(rows), headers: { 'access-control-allow-origin': '*' } });
+    });
+    await owner.goto(base + '/admin/', { waitUntil: 'domcontentloaded' });
+    await owner.locator('#app-view').waitFor({ state: 'visible', timeout: 12000 });
+    assert.match(await owner.locator('#side-who').innerText(), /houssam\.el\.4ur@gmail\.com/);
+    await owner.locator('#side-nav [data-tab="articles"]').click();
+    await owner.locator('[data-afilter="all"]').waitFor({ timeout: 12000 });
+    await owner.locator('[data-act="article-new"]').click();
+    await owner.locator('#f-title').waitFor({ state: 'visible', timeout: 5000 });
+    await owner.locator('#f-title').fill('Safe CRUD Test Crochet');
+    await owner.locator('#f-excerpt').fill('A test draft created in memory only.');
+    await owner.locator('#f-content').fill('## Steps\n\nChain 10 stitches.');
+    await owner.locator('#f-save').click();
+    await owner.locator('.row-card', { hasText: 'Safe CRUD Test Crochet' }).waitFor({ timeout: 5000 });
+    assert.equal(await owner.evaluate(() => window.__mockAdminRows.length), 1, 'draft stored only in test memory');
+    assert.equal(await owner.evaluate(() => window.__mockAdminRows[0].status), 'draft');
+    await owner.locator('.row-card', { hasText: 'Safe CRUD Test Crochet' }).locator('[data-act="article-edit"]').click();
+    await owner.locator('#f-title').waitFor({ state: 'visible', timeout: 5000 });
+    await owner.locator('#f-status').selectOption('published');
+    await owner.locator('#f-title').fill('Safe CRUD Test Crochet Updated');
+    await owner.locator('#f-save').click();
+    await owner.waitForFunction(() => window.__mockAdminRows[0]?.status === 'published');
+    assert.equal(await owner.evaluate(() => window.__mockAdminRows[0].title), 'Safe CRUD Test Crochet Updated');
+    await owner.locator('.row-card', { hasText: 'Safe CRUD Test Crochet Updated' }).locator('[data-act="article-edit"]').click();
+    await owner.locator('#f-title').waitFor({ state: 'visible', timeout: 5000 });
+    await owner.locator('#f-delete').click();
+    await owner.locator('#f-delete').click();
+    await owner.waitForFunction(() => window.__mockAdminRows.length === 0);
+    console.log('OK authenticated Admin CRUD (in-memory mock)');
+    await owner.locator('#side-nav [data-tab="pins"]').click();
+    await owner.locator('.row-card').first().waitFor({ timeout: 12000 });
+    assert.equal(await owner.locator('.row-card').count(), 60, 'all 60 pins are listed');
+    await owner.locator('#side-nav [data-tab="ads"]').click();
+    await owner.locator('.row-card').first().waitFor({ timeout: 12000 });
+    assert.equal(await owner.locator('.row-card').count(), 6, 'all 6 HB Agency ad slots are listed');
+    assert.match(await owner.locator('#main').innerText(), /349628/);
+    await owner.locator('#side-nav [data-tab="pages"]').click();
+    await owner.locator('[data-lang="ar"]').click();
+    assert.equal(await owner.evaluate(() => document.documentElement.dir), 'rtl', 'Arabic switches the admin to RTL');
+    await owner.locator('[data-lang="en"]').click();
+    assert.equal(await owner.evaluate(() => document.documentElement.dir), 'ltr', 'English switches the admin back to LTR');
     await owner.close();
-    console.log('OK authenticated Admin CRUD, editorial import/edit, and Add Article Section (in-memory mock)');
+    console.log('OK authenticated Admin pins, ads and Arabic RTL');
     assert.deepEqual(failures, [], 'no browser JavaScript errors');
     console.log('All Chromium smoke checks passed');
   } finally {
