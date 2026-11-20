@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **119**. Missing generated articles: **0**.
+Articles checked: **120**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -65,6 +65,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-mini-bakery-baguette`](https://cozyloops.site/posts/crochet-mini-bakery-baguette/) | 6 | yes | No automated issues found |
 | [`crochet-mini-berry-pie`](https://cozyloops.site/posts/crochet-mini-berry-pie/) | 6 | yes | No automated issues found |
 | [`crochet-mini-citrus-tart`](https://cozyloops.site/posts/crochet-mini-citrus-tart/) | 6 | yes | No automated issues found |
+| [`crochet-mini-ice-cream-cone-brooch`](https://cozyloops.site/posts/crochet-mini-ice-cream-cone-brooch/) | 6 | yes | No automated issues found |
 | [`crochet-mini-pretzel-ornament`](https://cozyloops.site/posts/crochet-mini-pretzel-ornament/) | 6 | yes | No automated issues found |
 | [`crochet-mini-ravioli-garland`](https://cozyloops.site/posts/crochet-mini-ravioli-garland/) | 6 | yes | No automated issues found |
 | [`crochet-mini-sushi-display-set`](https://cozyloops.site/posts/crochet-mini-sushi-display-set/) | 6 | yes | No automated issues found |
