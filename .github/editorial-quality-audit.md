@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **120**. Missing generated articles: **0**.
+Articles checked: **121**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -69,6 +69,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-mini-pretzel-ornament`](https://cozyloops.site/posts/crochet-mini-pretzel-ornament/) | 6 | yes | No automated issues found |
 | [`crochet-mini-ravioli-garland`](https://cozyloops.site/posts/crochet-mini-ravioli-garland/) | 6 | yes | No automated issues found |
 | [`crochet-mini-sushi-display-set`](https://cozyloops.site/posts/crochet-mini-sushi-display-set/) | 6 | yes | No automated issues found |
+| [`crochet-mini-tea-bag-bookmark`](https://cozyloops.site/posts/crochet-mini-tea-bag-bookmark/) | 6 | yes | No automated issues found |
 | [`crochet-monstera-inspired-leaf-wall-tile`](https://cozyloops.site/posts/crochet-monstera-inspired-leaf-wall-tile/) | 6 | yes | No automated issues found |
 | [`crochet-moss-and-mushroom-terrarium-insert`](https://cozyloops.site/posts/crochet-moss-and-mushroom-terrarium-insert/) | 6 | yes | No automated issues found |
 | [`crochet-nautilus-inspired-spiral-medallion`](https://cozyloops.site/posts/crochet-nautilus-inspired-spiral-medallion/) | 6 | yes | No automated issues found |
