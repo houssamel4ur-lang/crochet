@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **123**. Missing generated articles: **0**.
+Articles checked: **124**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -74,6 +74,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-mini-tea-bag-bookmark`](https://cozyloops.site/posts/crochet-mini-tea-bag-bookmark/) | 6 | yes | No automated issues found |
 | [`crochet-monstera-inspired-leaf-wall-tile`](https://cozyloops.site/posts/crochet-monstera-inspired-leaf-wall-tile/) | 6 | yes | No automated issues found |
 | [`crochet-moss-and-mushroom-terrarium-insert`](https://cozyloops.site/posts/crochet-moss-and-mushroom-terrarium-insert/) | 6 | yes | No automated issues found |
+| [`crochet-mushroom-dice-pouch`](https://cozyloops.site/posts/crochet-mushroom-dice-pouch/) | 6 | yes | No automated issues found |
 | [`crochet-nautilus-inspired-spiral-medallion`](https://cozyloops.site/posts/crochet-nautilus-inspired-spiral-medallion/) | 6 | yes | No automated issues found |
 | [`crochet-oyster-and-pearl-keepsake-display`](https://cozyloops.site/posts/crochet-oyster-and-pearl-keepsake-display/) | 6 | yes | No automated issues found |
 | [`crochet-patterns-for-beginners-guide`](https://cozyloops.site/posts/crochet-patterns-for-beginners-guide/) | 4 | yes | No automated issues found |
