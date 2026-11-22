@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **127**. Missing generated articles: **0**.
+Articles checked: **128**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -94,6 +94,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-string-of-hearts-desk-planter`](https://cozyloops.site/posts/crochet-string-of-hearts-desk-planter/) | 6 | yes | No automated issues found |
 | [`crochet-sunglasses-holder-strap`](https://cozyloops.site/posts/crochet-sunglasses-holder-strap/) | 3 | yes | No automated issues found |
 | [`crochet-tide-pool-limpets-on-a-pebble-mat`](https://cozyloops.site/posts/crochet-tide-pool-limpets-on-a-pebble-mat/) | 6 | yes | No automated issues found |
+| [`crochet-treasure-chest-token-mat`](https://cozyloops.site/posts/crochet-treasure-chest-token-mat/) | 6 | yes | No automated issues found |
 | [`crochet-tulip-bouquet-stems-guide`](https://cozyloops.site/posts/crochet-tulip-bouquet-stems-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`daisy-granny-square-blanket-guide`](https://cozyloops.site/posts/daisy-granny-square-blanket-guide/) | 3 | yes | No automated issues found |
 | [`easy-crochet-beanie-pattern`](https://cozyloops.site/posts/easy-crochet-beanie-pattern/) | 3 | yes | No automated issues found |
