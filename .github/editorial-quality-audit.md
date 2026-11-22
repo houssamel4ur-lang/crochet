@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **125**. Missing generated articles: **0**.
+Articles checked: **126**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -46,6 +46,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-dollhouse-picnic-blanket`](https://cozyloops.site/posts/crochet-dollhouse-picnic-blanket/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-reading-rug`](https://cozyloops.site/posts/crochet-dollhouse-reading-rug/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-round-pouf`](https://cozyloops.site/posts/crochet-dollhouse-round-pouf/) | 6 | yes | No automated issues found |
+| [`crochet-dragon-egg-dice-display`](https://cozyloops.site/posts/crochet-dragon-egg-dice-display/) | 6 | yes | No automated issues found |
 | [`crochet-earbud-cord-wrap-with-a-buttonhole`](https://cozyloops.site/posts/crochet-earbud-cord-wrap-with-a-buttonhole/) | 3 | yes | No automated issues found |
 | [`crochet-elf-amigurumi-pointed-hat-pattern`](https://cozyloops.site/posts/crochet-elf-amigurumi-pointed-hat-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-eucalyptus-place-setting-sprig`](https://cozyloops.site/posts/crochet-eucalyptus-place-setting-sprig/) | 6 | yes | No automated issues found |
