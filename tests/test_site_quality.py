@@ -286,12 +286,30 @@ class SiteQualityTests(unittest.TestCase):
         self.assertIn(email, (ROOT / "contact/index.html").read_text(encoding="utf-8"))
         self.assertIn('action="https://formsubmit.co/' + email + '"',
                       (ROOT / "contact/index.html").read_text(encoding="utf-8"))
+        authors_data = json.loads((ROOT / "content" / "authors.json").read_text(encoding="utf-8"))
+        by_category = {}
+        for author in authors_data["authors"]:
+            for category in author["categories"]:
+                by_category[category] = author
+        keep_slugs = set(authors_data["keep_houssam_slugs"])
+        contributor_names = {author["name"] for author in authors_data["authors"]}
         for slug in self.manifest:
             with self.subTest(article=slug):
                 html = (ROOT / "posts" / slug / "index.html").read_text(encoding="utf-8")
-                self.assertIn("By " + name, html)
-                self.assertIn('"name": "' + name + '"', html)
                 self.assertNotIn(("Hous" + "sal El Ouardy"), html)
+                byline = re.search(r'<p class="meta">By ([^·<]+) ·', html)
+                self.assertIsNotNone(byline, "missing byline")
+                author_name = byline.group(1).strip()
+                self.assertIn(author_name, contributor_names | {name})
+                self.assertIn('"name": "' + author_name + '"', html)
+                if author_name == name:
+                    expected_url = PUBLIC_BASE + "about/"
+                else:
+                    expected_slug = next(a["slug"] for a in authors_data["authors"] if a["name"] == author_name)
+                    expected_url = PUBLIC_BASE + "authors/" + expected_slug + "/"
+                self.assertIn('"url": "' + expected_url + '"', html)
+                if slug in keep_slugs:
+                    self.assertEqual(author_name, name)
 
     def test_optional_consent_is_visible_to_first_time_visitors_on_all_templates(self):
         html = self.home
@@ -334,9 +352,11 @@ class SiteQualityTests(unittest.TestCase):
         urls = [e.text for e in root.findall(f"{namespace}url/{namespace}loc")]
         self.assertEqual(len(urls), len(set(urls)))
         legal_pages = {"about", "contact", "privacy-policy", "terms", "disclosure", "cookie-policy", "sitemap"}
+        authors = json.loads((ROOT / "content" / "authors.json").read_text(encoding="utf-8"))["authors"]
         self.assertEqual(set(urls),
             {PUBLIC_BASE} | {PUBLIC_BASE + "posts/" + slug + "/" for slug in self.manifest}
-            | {PUBLIC_BASE + page + "/" for page in legal_pages})
+            | {PUBLIC_BASE + page + "/" for page in legal_pages}
+            | {PUBLIC_BASE + "authors/" + author["slug"] + "/" for author in authors})
         for page in legal_pages:
             content = (ROOT / page / "index.html").read_text(encoding="utf-8")
             self.assertIn('<link rel="canonical" href="' + PUBLIC_BASE + page + '/"', content)

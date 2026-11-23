@@ -9,7 +9,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from scripts.build_seo import (
     ROOT, IMAGE, normalize_article_content, concise_editorial_illustrations,
     render_page, seo_description, table_of_contents, has_physical_test_evidence,
-    extract_faq, related_articles,
+    extract_faq, related_articles, resolve_author, render_author_page,
+    AUTHORS, AUTHORS_BY_CATEGORY, KEEP_HOUSSAM_SLUGS, HOUSSAM_AUTHOR,
 )
 
 class EditorialSeoQuality(unittest.TestCase):
@@ -193,6 +194,66 @@ class EditorialSeoQuality(unittest.TestCase):
             "body{color:#29342d}", [article] + others,
         )
         self.assertEqual(rendered.count('<li><a href="https://cozyloops.site/posts/'), 6)
+
+    def test_author_resolved_by_category_and_exclusion(self):
+        self.assertEqual(len(AUTHORS), 5)
+        self.assertEqual(resolve_author({"slug": "x", "category": "Amigurumi"})["name"], "Emma Carter")
+        self.assertEqual(resolve_author({"slug": "x", "category": "Wearable Crochet"})["name"], "Grace Miller")
+        self.assertEqual(resolve_author({"slug": "x", "category": "Home Decor"})["name"], "Sophie Hayes")
+        self.assertEqual(resolve_author({"slug": "x", "category": "Accessories"})["name"], "Mia Thompson")
+        self.assertEqual(resolve_author({"slug": "x", "category": "Beginner Tutorials"})["name"], "Lily Bennett")
+        for slug in KEEP_HOUSSAM_SLUGS:
+            with self.subTest(slug=slug):
+                self.assertEqual(resolve_author({"slug": slug, "category": "Amigurumi"}), HOUSSAM_AUTHOR)
+        self.assertEqual(resolve_author({"slug": "x", "category": "Unknown Category"}), HOUSSAM_AUTHOR)
+        self.assertEqual(resolve_author({"slug": "x"}), HOUSSAM_AUTHOR)
+
+    def test_render_page_uses_resolved_author(self):
+        amigurumi = {
+            "slug": "amigurumi-sample",
+            "title": "Amigurumi Sample Pattern",
+            "category": "Amigurumi",
+            "content": "## Materials\n\nUse cotton yarn.",
+            "excerpt": "A sample amigurumi pattern with a resolved contributor author.",
+        }
+        page = render_page(amigurumi, "body{color:#29342d}", [])
+        self.assertIn("By Emma Carter", page)
+        self.assertIn('"name": "Emma Carter"', page)
+        self.assertIn("https://cozyloops.site/authors/emma-carter/", page)
+        self.assertIn("Emma writes CozyLoops", page)
+        self.assertIn(">EC<", page)
+        kept = {
+            "slug": "chunky-ribbed-crochet-scarf-pattern",
+            "title": "Chunky Ribbed Crochet Scarf Pattern",
+            "category": "Wearable Crochet",
+            "content": "## Materials\n\nUse cotton yarn.",
+            "excerpt": "A sample scarf pattern that keeps Houssam as its author.",
+        }
+        kept_page = render_page(kept, "body{color:#29342d}", [])
+        self.assertIn("By Houssam El Ouardy", kept_page)
+        self.assertIn("https://cozyloops.site/about/", kept_page)
+
+    def test_author_page_lists_its_articles(self):
+        author = AUTHORS_BY_CATEGORY["Amigurumi"]
+        page = render_author_page(author, self.posts, "body{color:#29342d}")
+        self.assertIn("Emma Carter", page)
+        self.assertIn("amigurumi patterns", page)
+        self.assertIn("https://cozyloops.site/authors/emma-carter/", page)
+        self.assertIn("https://cozyloops.site/posts/", page)
+        for post in self.posts:
+            if post.get("category") == "Amigurumi":
+                self.assertIn(post["slug"], page)
+            if post.get("category") == "Wearable Crochet":
+                self.assertNotIn(post["slug"], page)
+
+    def test_homepage_spa_resolves_authors(self):
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn("function resolveAuthor(p)", html)
+        self.assertIn("emma-carter", html)
+        self.assertIn("KEEP_HOUSSAM_SLUGS", html)
+        self.assertIn("chunky-ribbed-crochet-scarf-pattern", html)
+        self.assertIn(".slice(0,6)", html)
+        self.assertIn("${author.initials}", html)
 
 if __name__ == "__main__":
     unittest.main()

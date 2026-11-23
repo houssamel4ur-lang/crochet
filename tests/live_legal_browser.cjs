@@ -90,7 +90,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve,ms));
             }
             if(route.startsWith('/posts/')) {
               const author=await page.locator('.article .meta').innerText();
-              assert.match(author,/By Houssam El Ouardy/);
+              assert.match(author,/By (Houssam El Ouardy|Emma Carter|Grace Miller|Sophie Hayes|Mia Thompson|Lily Bennett)/);
               assert.match(author,/Published [A-Z][a-z]+ \d{1,2}, 2026/);
               assert.match(author,/Updated [A-Z][a-z]+ \d{1,2}, 2026/);
               assert.match(author,/\d+ min read/);
