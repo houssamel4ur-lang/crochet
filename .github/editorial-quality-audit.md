@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **131**. Missing generated articles: **0**.
+Articles checked: **135**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -97,14 +97,18 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-string-of-hearts-desk-planter`](https://cozyloops.site/posts/crochet-string-of-hearts-desk-planter/) | 6 | yes | No automated issues found |
 | [`crochet-sunglasses-holder-strap`](https://cozyloops.site/posts/crochet-sunglasses-holder-strap/) | 3 | yes | No automated issues found |
 | [`crochet-tide-pool-limpets-on-a-pebble-mat`](https://cozyloops.site/posts/crochet-tide-pool-limpets-on-a-pebble-mat/) | 6 | yes | No automated issues found |
+| [`crochet-top-and-skirt-sets`](https://cozyloops.site/posts/crochet-top-and-skirt-sets/) | 3 | yes | No automated issues found |
 | [`crochet-treasure-chest-token-mat`](https://cozyloops.site/posts/crochet-treasure-chest-token-mat/) | 6 | yes | No automated issues found |
 | [`crochet-tulip-bouquet-stems-guide`](https://cozyloops.site/posts/crochet-tulip-bouquet-stems-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`daisy-granny-square-blanket-guide`](https://cozyloops.site/posts/daisy-granny-square-blanket-guide/) | 3 | yes | No automated issues found |
 | [`easy-crochet-beanie-pattern`](https://cozyloops.site/posts/easy-crochet-beanie-pattern/) | 3 | yes | No automated issues found |
 | [`easy-crochet-scarf-for-beginners`](https://cozyloops.site/posts/easy-crochet-scarf-for-beginners/) | 3 | yes | No automated issues found |
+| [`easy-lacy-crochet-summer-tops`](https://cozyloops.site/posts/easy-lacy-crochet-summer-tops/) | 3 | yes | No automated issues found |
 | [`fingerless-gloves-ribbed-cuffs-crochet`](https://cozyloops.site/posts/fingerless-gloves-ribbed-cuffs-crochet/) | 3 | yes | No automated issues found |
+| [`floral-crochet-tops-3d-flowers`](https://cozyloops.site/posts/floral-crochet-tops-3d-flowers/) | 3 | yes | No automated issues found |
 | [`gingerbread-man-amigurumi-crochet-pattern`](https://cozyloops.site/posts/gingerbread-man-amigurumi-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`granny-square-cardigan-pockets-crochet`](https://cozyloops.site/posts/granny-square-cardigan-pockets-crochet/) | 3 | yes | No automated issues found |
+| [`granny-square-crochet-tops`](https://cozyloops.site/posts/granny-square-crochet-tops/) | 3 | yes | No automated issues found |
 | [`granny-square-vest-free-crochet-pattern`](https://cozyloops.site/posts/granny-square-vest-free-crochet-pattern/) | 3 | yes | No automated issues found |
 | [`granny-stripe-crochet-scarf-pattern`](https://cozyloops.site/posts/granny-stripe-crochet-scarf-pattern/) | 3 | yes | No automated issues found |
 | [`heart-granny-square-shrug-crochet`](https://cozyloops.site/posts/heart-granny-square-shrug-crochet/) | 3 | yes | No automated issues found |
