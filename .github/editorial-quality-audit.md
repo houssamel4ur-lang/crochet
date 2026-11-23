@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **128**. Missing generated articles: **0**.
+Articles checked: **129**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -89,6 +89,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-sea-urchin-desk-ornament`](https://cozyloops.site/posts/crochet-sea-urchin-desk-ornament/) | 6 | yes | No automated issues found |
 | [`crochet-seahorse-silhouette-wall-pennant`](https://cozyloops.site/posts/crochet-seahorse-silhouette-wall-pennant/) | 6 | yes | No automated issues found |
 | [`crochet-snowman-amigurumi-scarf-top-hat`](https://cozyloops.site/posts/crochet-snowman-amigurumi-scarf-top-hat/) | 3 | yes | No automated issues found |
+| [`crochet-spell-scroll-pencil-wrap`](https://cozyloops.site/posts/crochet-spell-scroll-pencil-wrap/) | 6 | yes | No automated issues found |
 | [`crochet-star-garland-mantel-pattern`](https://cozyloops.site/posts/crochet-star-garland-mantel-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-strawberry-crossbody-bag-guide`](https://cozyloops.site/posts/crochet-strawberry-crossbody-bag-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-string-of-hearts-desk-planter`](https://cozyloops.site/posts/crochet-string-of-hearts-desk-planter/) | 6 | yes | No automated issues found |
