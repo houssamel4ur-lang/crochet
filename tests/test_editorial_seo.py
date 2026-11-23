@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from scripts.build_seo import (
     ROOT, IMAGE, normalize_article_content, concise_editorial_illustrations,
     render_page, seo_description, table_of_contents, has_physical_test_evidence,
+    extract_faq, related_articles,
 )
 
 class EditorialSeoQuality(unittest.TestCase):
@@ -129,6 +130,69 @@ class EditorialSeoQuality(unittest.TestCase):
         self.assertIn("dynamic-concept-cover", html)
         self.assertIn("filter(entry=>entry.level===2)", html)
         self.assertIn("['02','04','09'].includes(num)", html)
+
+    def test_faq_schema_parses_both_question_formats(self):
+        heading_style = (
+            "## Materials\n\nUse cotton yarn.\n\n"
+            "## Frequently Asked Questions\n\n"
+            "### Do I need floral wire?\n\n"
+            "Only for a bendable bouquet.\n\n"
+            "### Can I sell it?\n\n"
+            "Yes, you can sell the finished piece.\n"
+        )
+        self.assertEqual(extract_faq(heading_style), [
+            ("Do I need floral wire?", "Only for a bendable bouquet."),
+            ("Can I sell it?", "Yes, you can sell the finished piece."),
+        ])
+        bold_style = (
+            "## Frequently asked questions\n\n"
+            "**What yarn do I need?**\n\n"
+            "Smooth cotton yarn.\n\n"
+            "**How big is it?**\n\n"
+            "About 20 cm tall.\n"
+        )
+        self.assertEqual(extract_faq(bold_style), [
+            ("What yarn do I need?", "Smooth cotton yarn."),
+            ("How big is it?", "About 20 cm tall."),
+        ])
+        self.assertEqual(extract_faq("## Materials\n\nUse cotton yarn."), [])
+
+    def test_render_page_emits_faq_schema_only_when_faq_present(self):
+        with_faq = {
+            "slug": "faq-sample",
+            "title": "FAQ Sample Pattern",
+            "content": "## Materials\n\nUse cotton yarn.\n\n## Frequently Asked Questions\n\n### What hook do I need?\n\nA 3.5 mm hook.",
+            "excerpt": "A sample pattern with a frequently asked questions section.",
+        }
+        page = render_page(with_faq, "body{color:#29342d}", [])
+        self.assertIn('"@type": "FAQPage"', page)
+        self.assertIn("What hook do I need?", page)
+        without_faq = {
+            "slug": "no-faq-sample",
+            "title": "No FAQ Sample Pattern",
+            "content": "## Materials\n\nUse cotton yarn.",
+            "excerpt": "A sample pattern without any questions.",
+        }
+        self.assertNotIn("FAQPage", render_page(without_faq, "body{color:#29342d}", []))
+
+    def test_related_posts_link_six_same_category_first(self):
+        article = {"slug": "main", "title": "Main", "category": "Wearable Crochet"}
+        others = [
+            {"slug": f"same-{index}", "title": f"Same {index}", "category": "Wearable Crochet"}
+            for index in range(7)
+        ] + [
+            {"slug": f"other-{index}", "title": f"Other {index}", "category": "Amigurumi"}
+            for index in range(2)
+        ]
+        related = related_articles(article, others)
+        self.assertEqual(len(related), 6)
+        self.assertTrue(all(item["category"] == "Wearable Crochet" for item in related))
+        self.assertNotIn("main", [item["slug"] for item in related])
+        rendered = render_page(
+            {**article, "content": "## Materials\n\nUse cotton yarn."},
+            "body{color:#29342d}", [article] + others,
+        )
+        self.assertEqual(rendered.count('<li><a href="https://cozyloops.site/posts/'), 6)
 
 if __name__ == "__main__":
     unittest.main()

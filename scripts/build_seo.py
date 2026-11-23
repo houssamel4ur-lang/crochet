@@ -110,6 +110,59 @@ def table_of_contents(source):
             '<nav aria-label="Article sections"><ol>' + links + '</ol></nav></details>')
 
 
+def plain_text(value):
+    """Strip inline markdown for schema text."""
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", value or "")
+    text = text.replace("**", "").replace("__", "")
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def extract_faq(source):
+    """Question/answer pairs from the 'Frequently asked questions' section.
+
+    Questions are either '### ...?' headings (editorials) or bold lines ending
+    with '?' (Supabase drafts), each followed by its answer paragraph(s).
+    Stops at the next level-2 heading. Returns at most 8 pairs.
+    """
+    lines = (source or "").splitlines()
+    start = None
+    for index, line in enumerate(lines):
+        if re.match(r"^##\s+Frequently asked questions\s*$", line.strip(), re.IGNORECASE):
+            start = index + 1
+            break
+    if start is None:
+        return []
+    pairs = []
+    question = None
+    answer_lines = []
+
+    def flush():
+        nonlocal question, answer_lines
+        if question:
+            answer = plain_text(" ".join(answer_lines))
+            if answer:
+                pairs.append((question, answer[:500]))
+        question, answer_lines = None, []
+
+    for line in lines[start:]:
+        stripped = line.strip()
+        if re.match(r"^##\s+\S", stripped):
+            break
+        match = (re.match(r"^###\s+(.+?\?)\s*$", stripped)
+                 or re.match(r"^\*\*(.+?\?)\*\*\s*$", stripped))
+        if match:
+            flush()
+            question = plain_text(match.group(1))
+            continue
+        if stripped.startswith("### "):
+            flush()
+            continue
+        if question and stripped:
+            answer_lines.append(stripped)
+    flush()
+    return pairs[:8]
+
+
 def markdown(source):
     blocks = re.split(r"\n\s*\n", (source or "").strip())
     rendered = []
@@ -212,7 +265,7 @@ def load_articles():
             articles[item["slug"]] = item
     return sorted(articles.values(), key=lambda p: p.get("published_at") or p.get("created_at") or "", reverse=True)
 
-def related_articles(article, articles, limit=3):
+def related_articles(article, articles, limit=6):
     """Select other posts, prioritizing the same category."""
     others = [item for item in articles
               if item.get("slug") != article.get("slug")
@@ -430,6 +483,21 @@ def render_page(article, css, articles=None):
                   f'alt="{esc(cover_alt)}" width="{cover_width}" height="{cover_height}" '
                   f'fetchpriority="high" decoding="async">{image_disclosure}</figure>') if cover else ""
     structured_json = json.dumps(structured, ensure_ascii=False).replace("<", "\\u003c")
+    faq_pairs = extract_faq(article_content)
+    faq_json = ""
+    if faq_pairs:
+        faq_structured = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {"@type": "Question", "name": question,
+                 "acceptedAnswer": {"@type": "Answer", "text": answer}}
+                for question, answer in faq_pairs
+            ],
+        }
+        faq_json = ('<script type="application/ld+json">'
+                    + json.dumps(faq_structured, ensure_ascii=False).replace("<", "\\u003c")
+                    + '</script>')
     social_image = f'<meta property="og:image" content="{esc(cover)}">' if cover else ""
     return inject_hb_ads(f'''<!doctype html>
 <html lang="en">
@@ -453,6 +521,7 @@ def render_page(article, css, articles=None):
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(description)}">
 <script type="application/ld+json">{structured_json}</script>
+{faq_json}
 <script defer src="{BASE}scripts/article_analytics.js"></script>
 <script defer src="../../scripts/site_navigation.js"></script>
 <style>{css}
