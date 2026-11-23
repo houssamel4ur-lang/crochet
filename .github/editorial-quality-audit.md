@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **130**. Missing generated articles: **0**.
+Articles checked: **131**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -65,6 +65,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-lavender-sachet-cover`](https://cozyloops.site/posts/crochet-lavender-sachet-cover/) | 6 | yes | No automated issues found |
 | [`crochet-lithops-pebble-garden`](https://cozyloops.site/posts/crochet-lithops-pebble-garden/) | 6 | yes | No automated issues found |
 | [`crochet-manta-ray-applique-for-a-coastal-cushion`](https://cozyloops.site/posts/crochet-manta-ray-applique-for-a-coastal-cushion/) | 6 | yes | No automated issues found |
+| [`crochet-mimic-inspired-card-sleeve`](https://cozyloops.site/posts/crochet-mimic-inspired-card-sleeve/) | 6 | yes | No automated issues found |
 | [`crochet-mini-bakery-baguette`](https://cozyloops.site/posts/crochet-mini-bakery-baguette/) | 6 | yes | No automated issues found |
 | [`crochet-mini-berry-pie`](https://cozyloops.site/posts/crochet-mini-berry-pie/) | 6 | yes | No automated issues found |
 | [`crochet-mini-cinnamon-roll-display`](https://cozyloops.site/posts/crochet-mini-cinnamon-roll-display/) | 6 | yes | No automated issues found |
