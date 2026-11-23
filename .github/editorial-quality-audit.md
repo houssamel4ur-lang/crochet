@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **129**. Missing generated articles: **0**.
+Articles checked: **130**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -34,6 +34,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-christmas-tree-skirt-granny-stripes`](https://cozyloops.site/posts/crochet-christmas-tree-skirt-granny-stripes/) | 3 | yes | No automated issues found |
 | [`crochet-christmas-wreath-poinsettia-pattern`](https://cozyloops.site/posts/crochet-christmas-wreath-poinsettia-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-clam-shell-ring-presentation-pad`](https://cozyloops.site/posts/crochet-clam-shell-ring-presentation-pad/) | 6 | yes | No automated issues found |
+| [`crochet-coin-pile-initiative-markers`](https://cozyloops.site/posts/crochet-coin-pile-initiative-markers/) | 6 | yes | No automated issues found |
 | [`crochet-coord-set-shorts-crop-top`](https://cozyloops.site/posts/crochet-coord-set-shorts-crop-top/) | 3 | yes | No automated issues found |
 | [`crochet-daisy-flower-bookmark-free-pattern`](https://cozyloops.site/posts/crochet-daisy-flower-bookmark-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-dollhouse-bed-runner`](https://cozyloops.site/posts/crochet-dollhouse-bed-runner/) | 6 | yes | No automated issues found |
