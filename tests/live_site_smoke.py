@@ -9,12 +9,18 @@ from html.parser import HTMLParser
 from urllib.request import Request, urlopen
 from urllib.parse import urlsplit, urljoin
 from xml.etree import ElementTree as ET
+from pathlib import Path
 import json
+import re
 import time
 import unittest
 
 BASE = "https://cozyloops.site/"
 EXPECTED_HOST = "cozyloops.site"
+ROOT = Path(__file__).resolve().parent.parent
+
+def load_authors():
+    return json.loads((ROOT / "content" / "authors.json").read_text(encoding="utf-8"))
 
 def fetch(path, attempts=3):
     url = BASE + path
@@ -90,18 +96,29 @@ class LiveSiteTests(unittest.TestCase):
         urls = [e.text for e in root.findall(f"{ns}url/{ns}loc")]
         self.assertEqual(len(urls), len(set(urls)))
         legal = {"about", "contact", "privacy-policy", "terms", "disclosure", "cookie-policy", "sitemap"}
-        self.assertEqual(set(urls),
-            {BASE} | {BASE + "posts/" + slug + "/" for slug in self.manifest}
+        expected = ({BASE} | {BASE + "posts/" + slug + "/" for slug in self.manifest}
             | {BASE + slug + "/" for slug in legal})
+        # The author pages land with the first hourly rebuild after the merge,
+        # so the live sitemap is valid with or without them for a short window.
+        author_urls = {BASE + "authors/" + a["slug"] + "/" for a in load_authors()["authors"]}
+        self.assertIn(set(urls), (expected, expected | author_urls))
 
     def test_all_live_articles_are_crawlable(self):
         self.assertGreater(len(self.manifest), 0)
+        authors_data = load_authors()
+        names = {a["name"] for a in authors_data["authors"]} | {"Houssam El Ouardy"}
+        keep_slugs = set(authors_data["keep_houssam_slugs"])
         for slug in self.manifest:
             with self.subTest(slug=slug):
                 self.assertRegex(slug, r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
                 html = fetch("posts/" + slug + "/")
-                self.assertIn("By Houssam El Ouardy", html)
-                self.assertIn('"name": "Houssam El Ouardy"', html)
+                byline = re.search(r'<p class="meta">By ([^·<]+) ·', html)
+                self.assertIsNotNone(byline, "missing byline")
+                author_name = byline.group(1).strip()
+                self.assertIn(author_name, names)
+                self.assertIn('"name": "' + author_name + '"', html)
+                if slug in keep_slugs:
+                    self.assertEqual(author_name, "Houssam El Ouardy")
                 self.assertNotIn(("Hous" + "sal El Ouardy"), html)
                 tags = Tags()
                 tags.feed(html)
