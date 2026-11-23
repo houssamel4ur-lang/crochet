@@ -231,6 +231,37 @@ def improved_editorial_cover(item):
     # until a validated staged photo exists (handled above).
     return item
 
+def load_authors():
+    """Contributor profiles: author per article category."""
+    data = json.loads((ROOT / "content" / "authors.json").read_text(encoding="utf-8"))
+    authors = data.get("authors", [])
+    by_category = {}
+    for author in authors:
+        author["url"] = BASE + "authors/" + author["slug"] + "/"
+        for category in author.get("categories", []):
+            by_category[category] = author
+    return authors, by_category, set(data.get("keep_houssam_slugs", []))
+
+
+AUTHORS, AUTHORS_BY_CATEGORY, KEEP_HOUSSAM_SLUGS = load_authors()
+HOUSSAM_AUTHOR = {
+    "slug": "houssam-el-ouardy",
+    "name": "Houssam El Ouardy",
+    "initials": "HE",
+    "bio": "CozyLoops editor and site operator. This guide identifies concept imagery where applicable.",
+    "url": BASE + "about/",
+}
+
+
+def resolve_author(article):
+    """Article author: the category's contributor, Houssam for the ten
+    indexing-requested articles and for any unmapped category."""
+    slug = (article or {}).get("slug") or ""
+    if slug in KEEP_HOUSSAM_SLUGS:
+        return HOUSSAM_AUTHOR
+    return AUTHORS_BY_CATEGORY.get((article or {}).get("category") or "", HOUSSAM_AUTHOR)
+
+
 def load_articles():
     """Published Supabase articles and intentional GitHub editorials only."""
     editorials = json.loads((ROOT / "content" / "github_articles.json").read_text(encoding="utf-8"))
@@ -424,6 +455,7 @@ def render_page(article, css, articles=None):
     canonical = BASE + "posts/" + quote(slug) + "/"
     cover = safe_image(article.get("image_url"))
     category = str(article.get("category") or "Crochet Patterns")
+    author = resolve_author(article)
     related_html = render_related(article, articles or [])
     article_content, visual_note = normalize_article_content(article.get("content") or "")
     if visual_note:
@@ -442,7 +474,7 @@ def render_page(article, css, articles=None):
     published_label, modified_label = real_date_label(published), real_date_label(modified)
     body_words = len(re.findall(r"\b[\w'-]+\b", article_content))
     read_minutes = max(1, (body_words + 199) // 200)
-    byline_parts = ["By Houssam El Ouardy"]
+    byline_parts = ["By " + author["name"]]
     if published_label:
         byline_parts.append("Published " + published_label)
     if modified_label:
@@ -458,7 +490,7 @@ def render_page(article, css, articles=None):
         "mainEntityOfPage": canonical,
         "url": canonical,
         "publisher": {"@type": "Organization", "name": "CozyLoops"},
-        "author": {"@type": "Person", "name": "Houssam El Ouardy", "url": BASE + "about/"},
+        "author": {"@type": "Person", "name": author["name"], "url": author["url"]},
         **({"datePublished": published} if published_label else {}),
         **({"dateModified": modified} if modified_label else {}),
         "articleSection": category,
@@ -498,6 +530,7 @@ def render_page(article, css, articles=None):
         faq_json = ('<script type="application/ld+json">'
                     + json.dumps(faq_structured, ensure_ascii=False).replace("<", "\\u003c")
                     + '</script>')
+    author_bio_html = (f'<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">{esc(author["initials"])}</span><div><strong><a href="{esc(author["url"])}">{esc(author["name"])}</a></strong><p>{esc(author["bio"])} <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>')
     social_image = f'<meta property="og:image" content="{esc(cover)}">' if cover else ""
     return inject_hb_ads(f'''<!doctype html>
 <html lang="en">
@@ -585,7 +618,7 @@ def render_page(article, css, articles=None):
 {markdown(article_content)}
 {('<details class="article-disclosure"><summary>About this guide and its illustrations</summary><p>' + linked_text(visual_note) + '</p></details>') if visual_note and is_draft else ''}
 {original_status_html}
-<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">HE</span><div><strong><a href="{BASE}about/">Houssam El Ouardy</a></strong><p>CozyLoops editor and site operator. This guide identifies concept imagery where applicable. <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
+{author_bio_html}
 {related_html}
 <h2>Keep Creating</h2>
 <p>Explore more crochet articles and patterns at CozyLoops.</p>
@@ -596,6 +629,41 @@ def render_page(article, css, articles=None):
 <footer><div class="footer-inner"><div><a class="brand" href="{BASE}">CozyLoops ♡</a><p>Slow down, pick up your yarn, and create something lovely.</p></div><div><a href="{BASE}about/">About</a><a href="{BASE}contact/">Contact</a><a href="{BASE}privacy-policy/">Privacy Policy</a><a href="{BASE}terms/">Terms</a><a href="{BASE}disclosure/">Disclosure</a><a href="{BASE}cookie-policy/">Cookie Policy</a><a href="{BASE}sitemap/">Sitemap</a><a href="{BASE}sitemap.xml">XML Sitemap</a></div></div></footer>
 </body></html>
 ''')
+
+
+def render_author_page(author, articles, css):
+    """Bio page for one contributor, listing their articles."""
+    items = [item for item in articles if resolve_author(item)["slug"] == author["slug"]]
+    links = "".join(
+        f'<li><a href="{BASE}posts/{quote(item["slug"])}/">{esc(item["title"])}</a></li>'
+        for item in items
+    )
+    return f'''<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{esc(author["name"])} | CozyLoops</title>
+<meta name="description" content="{esc(author["bio"])}">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="{esc(author["url"])}">
+<link rel="icon" type="image/svg+xml" href="{BASE}favicon.svg">
+<style>{css}</style>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header><nav class="nav top-nav" aria-label="Main navigation"><a class="brand" href="{BASE}">CozyLoops ♡</a><div class="top-links" aria-label="Site pages"><a href="{BASE}#home">Home</a><a href="{BASE}#articles">Articles</a><a href="{BASE}#categories">Categories</a><a href="{BASE}about/">About</a><a href="{BASE}contact/">Contact</a></div></nav></header>
+<main id="content"><article class="article">
+<a class="back" href="{BASE}#articles">← Back to all articles</a>
+<h1>{esc(author["name"])}</h1>
+<section class="author-bio" aria-label="About the author"><span class="author-initials" aria-hidden="true">{esc(author["initials"])}</span><div><strong>{esc(author["name"])}</strong><p>{esc(author["bio"])} <a href="{BASE}contact/">Send a question or correction</a>.</p></div></section>
+<h2>Articles by {esc(author["name"])} ({len(items)})</h2>
+<ul>{links}</ul>
+</article></main>
+<footer><div class="footer-inner"><div><a class="brand" href="{BASE}">CozyLoops ♡</a><p>Slow down, pick up your yarn, and create something lovely.</p></div><div><a href="{BASE}about/">About</a><a href="{BASE}contact/">Contact</a><a href="{BASE}privacy-policy/">Privacy Policy</a><a href="{BASE}terms/">Terms</a><a href="{BASE}disclosure/">Disclosure</a><a href="{BASE}cookie-policy/">Cookie Policy</a><a href="{BASE}sitemap/">Sitemap</a><a href="{BASE}sitemap.xml">XML Sitemap</a></div></div></footer>
+</body></html>
+'''
+
 
 def protect_published_urls(previous, current, approved_removals=None):
     """Fail closed if the Supabase API silently omits previously published pages.
@@ -657,6 +725,11 @@ def main():
         page_dir.mkdir(parents=True, exist_ok=True)
         (page_dir / "index.html").write_text(render_page(item, css, articles), encoding="utf-8")
         sitemap.append(BASE + "posts/" + slug + "/")
+    for author in AUTHORS:
+        author_dir = ROOT / "authors" / author["slug"]
+        author_dir.mkdir(parents=True, exist_ok=True)
+        (author_dir / "index.html").write_text(render_author_page(author, articles, css), encoding="utf-8")
+        sitemap.append(author["url"])
     for slug in previous:
         if isinstance(slug, str) and SLUG.fullmatch(slug) and slug not in current:
             old = output_root / slug / "index.html"
