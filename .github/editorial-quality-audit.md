@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **148**. Missing generated articles: **0**.
+Articles checked: **149**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -91,6 +91,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-plant-hanger-beginners`](https://cozyloops.site/posts/crochet-plant-hanger-beginners/) | 3 | yes | No automated issues found |
 | [`crochet-polo-shirt-modern-pattern`](https://cozyloops.site/posts/crochet-polo-shirt-modern-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-potion-bottle-token-bag`](https://cozyloops.site/posts/crochet-potion-bottle-token-bag/) | 6 | yes | No automated issues found |
+| [`crochet-rune-stone-desk-set`](https://cozyloops.site/posts/crochet-rune-stone-desk-set/) | 6 | yes | No automated issues found |
 | [`crochet-scrunchies-set-of-three`](https://cozyloops.site/posts/crochet-scrunchies-set-of-three/) | 3 | yes | No automated issues found |
 | [`crochet-sea-urchin-desk-ornament`](https://cozyloops.site/posts/crochet-sea-urchin-desk-ornament/) | 6 | yes | No automated issues found |
 | [`crochet-seahorse-silhouette-wall-pennant`](https://cozyloops.site/posts/crochet-seahorse-silhouette-wall-pennant/) | 6 | yes | No automated issues found |
