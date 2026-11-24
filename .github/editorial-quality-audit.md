@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **150**. Missing generated articles: **0**.
+Articles checked: **151**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -40,6 +40,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-coin-pile-initiative-markers`](https://cozyloops.site/posts/crochet-coin-pile-initiative-markers/) | 6 | yes | No automated issues found |
 | [`crochet-coord-set-shorts-crop-top`](https://cozyloops.site/posts/crochet-coord-set-shorts-crop-top/) | 3 | yes | No automated issues found |
 | [`crochet-corset-tops-lace-up`](https://cozyloops.site/posts/crochet-corset-tops-lace-up/) | 3 | yes | No automated issues found |
+| [`crochet-cottagecore-acorn-keepsake`](https://cozyloops.site/posts/crochet-cottagecore-acorn-keepsake/) | 6 | yes | No automated issues found |
 | [`crochet-daisy-flower-bookmark-free-pattern`](https://cozyloops.site/posts/crochet-daisy-flower-bookmark-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-dollhouse-bed-runner`](https://cozyloops.site/posts/crochet-dollhouse-bed-runner/) | 6 | yes | No automated issues found |
 | [`crochet-dollhouse-bolster-cushion`](https://cozyloops.site/posts/crochet-dollhouse-bolster-cushion/) | 6 | yes | No automated issues found |
