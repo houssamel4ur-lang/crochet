@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **161**. Missing generated articles: **0**.
+Articles checked: **162**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -108,6 +108,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-sunglasses-holder-strap`](https://cozyloops.site/posts/crochet-sunglasses-holder-strap/) | 3 | yes | No automated issues found |
 | [`crochet-tavern-coaster-with-a-mug-motif`](https://cozyloops.site/posts/crochet-tavern-coaster-with-a-mug-motif/) | 6 | yes | No automated issues found |
 | [`crochet-tide-pool-limpets-on-a-pebble-mat`](https://cozyloops.site/posts/crochet-tide-pool-limpets-on-a-pebble-mat/) | 6 | yes | No automated issues found |
+| [`crochet-toadstool-needle-book-cover`](https://cozyloops.site/posts/crochet-toadstool-needle-book-cover/) | 6 | yes | No automated issues found |
 | [`crochet-top-and-skirt-sets`](https://cozyloops.site/posts/crochet-top-and-skirt-sets/) | 3 | yes | No automated issues found |
 | [`crochet-tops-with-floral-headpieces`](https://cozyloops.site/posts/crochet-tops-with-floral-headpieces/) | 3 | yes | No automated issues found |
 | [`crochet-treasure-chest-token-mat`](https://cozyloops.site/posts/crochet-treasure-chest-token-mat/) | 6 | yes | No automated issues found |
