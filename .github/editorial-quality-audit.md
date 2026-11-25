@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **162**. Missing generated articles: **0**.
+Articles checked: **163**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -61,6 +61,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-fern-frond-bookmark`](https://cozyloops.site/posts/crochet-fern-frond-bookmark/) | 6 | yes | No automated issues found |
 | [`crochet-flower-coasters-free-pattern`](https://cozyloops.site/posts/crochet-flower-coasters-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-flower-keychains-scrap-yarn-guide`](https://cozyloops.site/posts/crochet-flower-keychains-scrap-yarn-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`crochet-fox-face-cupboard-sachet-cover`](https://cozyloops.site/posts/crochet-fox-face-cupboard-sachet-cover/) | 6 | yes | No automated issues found |
 | [`crochet-gift-tags-mini-motifs-pattern`](https://cozyloops.site/posts/crochet-gift-tags-mini-motifs-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-granny-square-vest-and-striped-summer-top`](https://cozyloops.site/posts/crochet-granny-square-vest-and-striped-summer-top/) | 3 | yes | No automated issues found |
 | [`crochet-hanging-pea-vine-shelf-ornament`](https://cozyloops.site/posts/crochet-hanging-pea-vine-shelf-ornament/) | 6 | yes | No automated issues found |
