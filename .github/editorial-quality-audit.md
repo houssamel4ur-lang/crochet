@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **166**. Missing generated articles: **0**.
+Articles checked: **167**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -118,6 +118,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-treasure-chest-token-mat`](https://cozyloops.site/posts/crochet-treasure-chest-token-mat/) | 6 | yes | No automated issues found |
 | [`crochet-triangle-shawl-lace-kerchief`](https://cozyloops.site/posts/crochet-triangle-shawl-lace-kerchief/) | 3 | yes | No automated issues found |
 | [`crochet-tulip-bouquet-stems-guide`](https://cozyloops.site/posts/crochet-tulip-bouquet-stems-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`crochet-woodland-log-pencil-rest`](https://cozyloops.site/posts/crochet-woodland-log-pencil-rest/) | 6 | yes | No automated issues found |
 | [`daisy-granny-square-blanket-guide`](https://cozyloops.site/posts/daisy-granny-square-blanket-guide/) | 3 | yes | No automated issues found |
 | [`easy-crochet-beanie-pattern`](https://cozyloops.site/posts/easy-crochet-beanie-pattern/) | 3 | yes | No automated issues found |
 | [`easy-crochet-scarf-for-beginners`](https://cozyloops.site/posts/easy-crochet-scarf-for-beginners/) | 3 | yes | No automated issues found |
