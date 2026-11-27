@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **165**. Missing generated articles: **0**.
+Articles checked: **166**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -94,6 +94,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-patterns-for-beginners-guide`](https://cozyloops.site/posts/crochet-patterns-for-beginners-guide/) | 4 | yes | No automated issues found |
 | [`crochet-penguin-ornament-free-pattern`](https://cozyloops.site/posts/crochet-penguin-ornament-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-phone-pouch-crossbody-size-guide`](https://cozyloops.site/posts/crochet-phone-pouch-crossbody-size-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
+| [`crochet-pinecone-shelf-ornament`](https://cozyloops.site/posts/crochet-pinecone-shelf-ornament/) | 6 | yes | No automated issues found |
 | [`crochet-plant-hanger-beginners`](https://cozyloops.site/posts/crochet-plant-hanger-beginners/) | 3 | yes | No automated issues found |
 | [`crochet-polo-shirt-modern-pattern`](https://cozyloops.site/posts/crochet-polo-shirt-modern-pattern/) | 3 | yes | No automated issues found |
 | [`crochet-potion-bottle-token-bag`](https://cozyloops.site/posts/crochet-potion-bottle-token-bag/) | 6 | yes | No automated issues found |
