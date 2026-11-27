@@ -3,7 +3,7 @@
 Generated automatically from current static pages and the GitHub editorial catalog.
 This audit verifies technical properties; it **cannot certify** visual sharpness, pattern accuracy, copyright, or security.
 
-Articles checked: **167**. Missing generated articles: **0**.
+Articles checked: **169**. Missing generated articles: **0**.
 Articles with AI/editorial illustration provenance: **18**.
 
 | Article | Rendered images | Compact TOC | Editorial / technical findings |
@@ -59,6 +59,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-eucalyptus-place-setting-sprig`](https://cozyloops.site/posts/crochet-eucalyptus-place-setting-sprig/) | 6 | yes | No automated issues found |
 | [`crochet-fan-palm-for-a-bookshelf`](https://cozyloops.site/posts/crochet-fan-palm-for-a-bookshelf/) | 6 | yes | No automated issues found |
 | [`crochet-fern-frond-bookmark`](https://cozyloops.site/posts/crochet-fern-frond-bookmark/) | 6 | yes | No automated issues found |
+| [`crochet-firefly-jar-cover-for-an-led-display`](https://cozyloops.site/posts/crochet-firefly-jar-cover-for-an-led-display/) | 6 | yes | No automated issues found |
 | [`crochet-flower-coasters-free-pattern`](https://cozyloops.site/posts/crochet-flower-coasters-free-pattern/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-flower-keychains-scrap-yarn-guide`](https://cozyloops.site/posts/crochet-flower-keychains-scrap-yarn-guide/) | 4 | yes | Concept imagery: replace with real source photo before claiming a tested pattern; Contact-sheet crop: higher-resolution original needed |
 | [`crochet-fox-face-cupboard-sachet-cover`](https://cozyloops.site/posts/crochet-fox-face-cupboard-sachet-cover/) | 6 | yes | No automated issues found |
@@ -88,6 +89,7 @@ Articles with AI/editorial illustration provenance: **18**.
 | [`crochet-monstera-inspired-leaf-wall-tile`](https://cozyloops.site/posts/crochet-monstera-inspired-leaf-wall-tile/) | 6 | yes | No automated issues found |
 | [`crochet-moss-and-mushroom-terrarium-insert`](https://cozyloops.site/posts/crochet-moss-and-mushroom-terrarium-insert/) | 6 | yes | No automated issues found |
 | [`crochet-mushroom-dice-pouch`](https://cozyloops.site/posts/crochet-mushroom-dice-pouch/) | 6 | yes | No automated issues found |
+| [`crochet-mushroom-gills-wall-medallion`](https://cozyloops.site/posts/crochet-mushroom-gills-wall-medallion/) | 6 | yes | No automated issues found |
 | [`crochet-nautilus-inspired-spiral-medallion`](https://cozyloops.site/posts/crochet-nautilus-inspired-spiral-medallion/) | 6 | yes | No automated issues found |
 | [`crochet-oak-leaf-autumn-place-cards`](https://cozyloops.site/posts/crochet-oak-leaf-autumn-place-cards/) | 6 | yes | No automated issues found |
 | [`crochet-oyster-and-pearl-keepsake-display`](https://cozyloops.site/posts/crochet-oyster-and-pearl-keepsake-display/) | 6 | yes | No automated issues found |
